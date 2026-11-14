@@ -180,13 +180,14 @@ PLAN_FILE.write_text("\n".join(lines), encoding="utf-8")
 cards = []
 for item in video_packages:
     prompt_json = json.dumps(item["prompt"], ensure_ascii=False).replace("</", "<\\/")
+    post_json = json.dumps(item["caption"] + "\n\n" + item["hashtags"], ensure_ascii=False)
     cards.append(
         f"""
         <article class="card">
           <div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div>
           <h2>{escape(item["scene"])}</h2>
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
-          <button class="copy-post" data-post='{escape(json.dumps(item["caption"] + "\\n\\n" + item["hashtags"], ensure_ascii=False), quote=True)}'>Copy TikTok caption + hashtags</button>
+          <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
           <p class="tags">{escape(item["hashtags"])}</p>
         </article>
