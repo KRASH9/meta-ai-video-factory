@@ -404,6 +404,19 @@ a{color:#c7d4b8}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 <div class="metric"><strong id="likes">0</strong><span>Total likes</span></div>
 <div class="metric"><strong id="engagement">0</strong><span>Interactions (likes + comments + shares)</span></div>
 </div></section>
+<section class="panel"><h2>Add an older TikTok publication</h2>
+<p class="muted">Enter a link and the current or historical statistics. This record will be added to your publication archive.</p>
+<div class="controls" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+<label>Publication date<input id="old-date" type="date" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+<label>Video title / scene<input id="old-title" type="text" placeholder="e.g. Rainy forest" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+<label style="grid-column:1/-1">TikTok video URL<input id="old-url" type="url" placeholder="https://www.tiktok.com/..." style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+<label>Views<input id="old-views" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+<label>Likes<input id="old-likes" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+<label>Comments<input id="old-comments" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+<label>Shares<input id="old-shares" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+</div>
+<button id="add-old" type="button" style="width:100%;padding:13px;background:#b9c5a8;color:#172016;border:0;border-radius:10px;font-weight:700">Add to publication history</button>
+<p id="add-message" class="muted" aria-live="polite"></p></section>
 <section class="panel"><h2>Browse records</h2><div class="controls">
 <select id="sort"><option value="newest">Newest first</option><option value="views">Most views</option><option value="likes">Most likes</option></select>
 <select id="status"><option value="all">All statuses</option><option value="published">Published</option><option value="created">Created</option><option value="checked">Quality checked</option><option value="planned">Planned</option></select>
@@ -413,6 +426,20 @@ a{color:#c7d4b8}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 const key='quiet-place-publication-tracker-v1';let data={};
 try{data=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){data={};}
 const fmt=n=>Number(n||0).toLocaleString();
+document.getElementById('old-date').value=new Date().toISOString().slice(0,10);
+document.getElementById('add-old').addEventListener('click',()=>{
+ const date=document.getElementById('old-date').value;
+ const url=document.getElementById('old-url').value.trim();
+ if(!date||!url){document.getElementById('add-message').textContent='Please enter the publication date and TikTok URL.';return;}
+ try{new URL(url);}catch(e){document.getElementById('add-message').textContent='Please enter a valid URL.';return;}
+ const id='archive-'+Date.now();
+ data[id]={date,video:'Archive',title:document.getElementById('old-title').value.trim()||'Older TikTok publication',url,
+ views:document.getElementById('old-views').value||0,likes:document.getElementById('old-likes').value||0,
+ comments:document.getElementById('old-comments').value||0,shares:document.getElementById('old-shares').value||0,
+ status:'published',updatedAt:new Date().toLocaleString()};
+ try{localStorage.setItem(key,JSON.stringify(data));document.getElementById('add-message').textContent='Publication added to history.';location.reload();}
+ catch(e){document.getElementById('add-message').textContent='Could not save. Browser storage may be full or unavailable.';}
+});
 const records=Object.values(data).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||Number(b.video)-Number(a.video));
 const sum=k=>records.reduce((s,r)=>s+Number(r[k]||0),0);
 document.getElementById('count').textContent=records.length;
@@ -429,7 +456,7 @@ function render(){
  root.innerHTML=list.map(r=>{
  const statusLabel=(r.status||'planned').replace('checked','quality checked');
  const link=r.url?'<p class="url"><a href="'+String(r.url).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" target="_blank" rel="noopener">Open TikTok publication ↗</a></p>':'<p class="meta">No TikTok URL saved</p>';
- return '<article class="entry"><div class="meta">'+(r.date||'Date not set')+' · Video '+(r.video||'?')+'</div><h3>Quiet Place publication</h3><span class="pill">'+statusLabel+'</span>'+link+
+ return '<article class="entry"><div class="meta">'+(r.date||'Date not set')+' · Video '+(r.video||'?')+'</div><h3>'+String(r.title||'Quiet Place publication').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</h3><span class="pill">'+statusLabel+'</span>'+link+
  '<div class="stats"><div><b>'+fmt(r.views)+'</b>Views</div><div><b>'+fmt(r.likes)+'</b>Likes</div><div><b>'+fmt(r.comments)+'</b>Comments</div><div><b>'+fmt(r.shares)+'</b>Shares</div></div><div class="meta">Last saved: '+(r.updatedAt||'—')+'</div></article>';
  }).join('');
 }
