@@ -13,7 +13,9 @@ DASHBOARD_FILE = OUTPUT_DIR / "index.html"
 META_AI_CHAT_URL = "https://www.meta.ai/share/c/iqLO8gdyHr?utm_source=android_meta_ai_sl"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
-today = datetime.now(WARSAW).date()
+generated_at = datetime.now(WARSAW)
+today = generated_at.date()
+generated_at_label = generated_at.strftime("%Y-%m-%d %H:%M:%S %Z")
 date_seed = today.strftime("%Y-%m-%d")
 
 # Seasonal direction follows the current calendar season in Warsaw / Central Europe.
@@ -109,6 +111,7 @@ lines = [
     "# QUIET PLACE — Daily Content Plan",
     "",
     f"Date: {today.isoformat()}",
+    f"Prompts generated at: {generated_at_label} (Warsaw local time)",
     "Brand: Quiet Place",
     "Mission: Leave the noise behind.",
     f"Seasonal direction: {season_name.title()} in Central Europe.",
@@ -273,7 +276,7 @@ button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15
 <body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div>
 <h1>Daily Content Studio</h1>
-<p class="muted">DATE_PLACEHOLDER · 3 videos · prompts + TikTok publishing text</p>
+<p class="muted">DATE_PLACEHOLDER · PROMPTS_CREATED_PLACEHOLDER · 3 videos · prompts + TikTok publishing text</p>
 <a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">PUBLICATION</a>
 <a class="primary" style="background:#252a24;color:#f3f3ef" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">Open Quiet Place on TikTok</a>
 <div id="status" class="status" aria-live="polite">Copy a video prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
@@ -343,7 +346,7 @@ document.querySelectorAll('.copy,.copy-post').forEach(button=>{
 });
 </script>
 </body></html>"""
-dashboard = dashboard.replace("DATE_PLACEHOLDER", today.isoformat()).replace("META_AI_URL_PLACEHOLDER", META_AI_CHAT_URL)
+dashboard = dashboard.replace("DATE_PLACEHOLDER", today.isoformat()).replace("PROMPTS_CREATED_PLACEHOLDER", "Created " + generated_at.strftime("%H:%M:%S %Z") + " (Warsaw time)").replace("META_AI_URL_PLACEHOLDER", META_AI_CHAT_URL)
 DASHBOARD_FILE.write_text(dashboard, encoding="utf-8")
 
 print(f"Quiet Place package created: {OUTPUT_DIR}")
