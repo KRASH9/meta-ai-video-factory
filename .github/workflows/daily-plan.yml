@@ -1,4 +1,3 @@
-
 name: Quiet Place - Daily Content Studio
 
 on:
@@ -8,12 +7,18 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   create-plan:
     name: Generate daily content plan
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -33,3 +38,12 @@ jobs:
           name: quiet-place-daily-content
           path: output/
           retention-days: 7
+
+      - name: Upload site to GitHub Pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: output/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
