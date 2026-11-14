@@ -151,7 +151,8 @@ for index, (category, scene) in enumerate(selected, start=1):
     camera_note = camera_approaches[index - 1]
     prompt = build_prompt(scene, camera_note)
     caption = captions[category]
-    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "hashtags": hashtags})
+    video_hashtags = build_hashtags(category, scene)
+    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "hashtags": video_hashtags})
     video_dir = OUTPUT_DIR / f"video-{index:02d}"
     video_dir.mkdir(parents=True, exist_ok=True)
 
