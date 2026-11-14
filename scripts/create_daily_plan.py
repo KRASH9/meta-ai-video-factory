@@ -43,9 +43,9 @@ for category in required_categories:
     used_scenes.add(scene)
 
 camera_approaches = [
-    "Place the phone securely on a stable surface at natural standing height. Use a completely fixed, locked-off frame.",
-    "Set the phone firmly against a stable support from a nearby natural viewpoint. Keep the camera absolutely still for the entire shot.",
-    "Use a fixed wider phone view from a nearby path or open spot. No handheld filming; keep the frame locked and steady."
+    "Use a stable, mostly steady smartphone frame with only very subtle, slow natural movement if it improves the view. No shake, jitter, vibration, wobble, bouncing, fast panning, tilting, zooming or abrupt reframing.",
+    "Keep the smartphone camera steady and immersive. A barely noticeable slow adjustment is acceptable, but no handheld shake, jitter, fast movement, sweeping motion or sudden perspective shifts.",
+    "Choose a simple, natural composition and hold it mostly steady. Allow only very subtle slow camera movement; never use a drone, sweeping move, fast pan, tilt, zoom or shaky handheld motion."
 ]
 
 captions = {
@@ -58,24 +58,19 @@ hashtags = "#QuietPlace #PeacefulMoments #NatureSounds #SlowLiving #RelaxingNatu
 
 def build_prompt(scene, camera_note):
     return (
-        f"Create a realistic casual smartphone video in vertical 9:16 format, showing {scene}. "
-        "It should feel like a visitor quietly filmed a real place on a good phone, "
-        "not like a movie, advert or staged travel production. "
+        f"Create a quiet, beautiful nature video for TikTok and Instagram in vertical 9:16 format, showing {scene}. "
+        "Choose a fresh, varied natural place and composition; avoid repeating the same type of scenery every day. "
+        "The mood is calm, peaceful, beautiful and immersive, like a real visitor quietly capturing a special place on a good smartphone. "
         f"{camera_note} "
-        "Use natural available daylight, realistic exposure, believable everyday colors "
-        "and ordinary smartphone detail. Make one single continuous shot with a fixed, "
-        "locked camera and stable composition from the first frame to the last. "
-        "The camera must not move at all: no shake, jitter, vibration, wobble, bouncing, "
-        "panning, tilting, zooming, reframing, rolling shutter wobble or sudden perspective shifts. "
-        "Keep the horizon and all background objects stable. Only the real-world subject may move, "
-        "gently and naturally, such as small water ripples, slow rain or a slight breeze in leaves. "
-        "Keep motion smooth, subtle and physically consistent; avoid flicker, stutter, morphing, "
-        "warping, duplicated objects and abrupt changes between frames. "
-        "Use authentic environmental sound only. "
-        "No cinematic lighting, color grading, dramatic sun rays, exaggerated fog or mist, "
-        "artificial bokeh, slow motion, drone view, camera movement, visual effects, "
-        "music, people, crowds, text, logos or transitions. "
-        "Avoid the polished synthetic look of AI-generated footage."
+        "Use natural, soft, realistic light, believable everyday colors and ordinary smartphone detail. "
+        "No people, crowds, speech, talking or music with lyrics. Use only soft, authentic ambient sound from this place. "
+        "Aim for a seamless natural loop: the ending should flow smoothly into the beginning, with matching framing and no visible cut. "
+        "Use cyclical, physically believable natural movement where suitable, such as a wave coming and going, grass swaying back and forth, "
+        "leaves moving gently or steady snowfall. Keep movement calm and consistent. "
+        "No drone shots, sweeping camera moves, fast cuts, transitions or slow motion. "
+        "No cinematic grading, dramatic sun rays, exaggerated fog or mist, artificial bokeh, visual effects, text, subtitles, logos or watermarks. "
+        "Beautiful, clean and realistic, but not overly polished or synthetic; small natural imperfections are welcome. "
+        "Avoid flicker, stutter, morphing, warping, duplicated objects, abrupt changes or unstable backgrounds."
     )
 
 video_packages = []
@@ -109,8 +104,9 @@ for index, (category, scene) in enumerate(selected, start=1):
         "[ ] Vertical 9:16 format\n"
         "[ ] Looks like a real place filmed casually on a good smartphone\n"
         "[ ] Natural light and believable colors\n"
-        "[ ] Camera is completely stable: no shake, jitter, wobble, pan, tilt or zoom\n"
-        "[ ] Motion is smooth and natural; no flicker, stutter, morphing or warping\n"
+        "[ ] Camera is mostly steady; no shake, jitter, fast pans, tilts or zooms\n"
+        "[ ] Natural motion is smooth and physically believable; no flicker, stutter, morphing or warping\n"
+        "[ ] Ending flows naturally into the beginning where a seamless loop is intended\n"
         "[ ] Ambient environmental sound only; no music\n"
         "[ ] No text, logos, visual effects or transitions\n"
         "[ ] No visible generation defects or strange objects\n"
@@ -155,8 +151,9 @@ for index, (category, scene) in enumerate(selected, start=1):
         "",
         "- [ ] Vertical 9:16 format",
         "- [ ] Natural, believable smartphone footage",
-        "- [ ] Completely stable camera; no shake, jitter, pan, tilt or zoom",
+        "- [ ] Stable, mostly steady camera; no shake, jitter or fast camera moves",
         "- [ ] Smooth natural movement; no flicker, stutter or warping",
+        "- [ ] Seamless loop where the scene supports it",
         "- [ ] Ambient sound only",
         "- [ ] No visual defects, text or logos",
         "- [ ] Suitable for Quiet Place",
@@ -171,8 +168,9 @@ lines.extend([
     "- Authentic everyday realism matters more than cinematic beauty.",
     "- Each video should feel like a casual phone recording of a real place.",
     "- Use natural light, believable colors and ordinary camera framing.",
-    "- Use a fixed, locked-off camera: absolutely no shake, jitter, wobble, pan, tilt or zoom.\n"
-    "- Keep subject movement subtle, smooth and natural; reject flicker, stutter, morphing or warping.",
+    "- Keep the camera stable and mostly steady; allow only very subtle slow movement, never jitter or fast sweeping.\n"
+    "- Prefer seamless natural loops with matching start/end framing and cyclical movement where suitable.\n"
+    "- Keep subject movement smooth and physically believable; reject flicker, stutter, morphing or warping.",
     "- Use natural ambient sound only; no background music.",
     "- The three videos must use different scenes and camera approaches.",
     "- Scene selection comes from config/topics.json.",
