@@ -10,6 +10,7 @@ CONFIG = ROOT / "config" / "topics.json"
 OUTPUT_DIR = ROOT / "output"
 PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 DASHBOARD_FILE = OUTPUT_DIR / "index.html"
+CONTENT_FILE = OUTPUT_DIR / "content.html"
 HISTORY_FILE = OUTPUT_DIR / "history.html"
 META_AI_CHAT_URL = "https://www.meta.ai/share/c/iqLO8gdyHr?utm_source=android_meta_ai_sl"
 
@@ -320,7 +321,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .calendar-day:disabled{opacity:.25}
 .pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:10px;color:#ffb17b}
 .history-link{display:block;text-decoration:none;color:#ff9a52;border:1px solid #57351e;padding:13px;border-radius:11px;text-align:center;font-weight:700;margin:12px 0}
-.open-content-cta{display:block;width:100%;margin:16px 0 22px;padding:16px;background:#ff7a24;color:#1a1009;border:0;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.04em}
+.open-content-cta{display:block;width:100%;margin:16px 0 22px;padding:16px;background:#ff7a24;color:#1a1009;border:0;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.04em;text-align:center;text-decoration:none}
 .note{font-size:11px;margin:14px 0}
 @media(min-width:600px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:22px}.card{padding:20px}}
 </style></head><body><main>
@@ -328,7 +329,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <section id="overview" class="view active">
 <h1>Overview</h1><p class="muted">DATE_PLACEHOLDER · Created PROMPTS_CREATED_PLACEHOLDER · 3 new videos ready</p>
 <div class="hero"><div class="eyebrow accent">DAILY CONTENT STUDIO</div><h2 style="font-size:22px;margin-top:8px">Your next quiet moment starts here.</h2><p>Generate your nature videos with Meta AI, then prepare each post for TikTok.</p>
-<div class="hero-actions"><button class="action action-primary" type="button" data-tab="content">OPEN CONTENT STUDIO →</button><a class="action action-secondary" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">TikTok profile ↗</a></div></div>
+<div class="hero-actions"><a class="action action-primary" href="content.html">OPEN CONTENT STUDIO →</a><a class="action action-secondary" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">TikTok profile ↗</a></div></div>
 <section class="panel"><div class="eyebrow">CHANNEL OVERVIEW</div><div class="section-head"><h2>Performance</h2><small>Saved records</small></div>
 <div class="kpis"><div class="metric"><strong id="total-views">0</strong><span>Views</span></div><div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div><div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div></div>
 <svg class="growth" viewBox="0 0 600 120" preserveAspectRatio="none" aria-label="Illustrative performance trend"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff7a24" stop-opacity=".35"/><stop offset="1" stop-color="#ff7a24" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12 L600 120 L0 120Z" fill="url(#area)"/><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12" fill="none" stroke="#ff7a24" stroke-width="3"/></svg>
@@ -338,7 +339,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <a class="history-link" href="history.html">OPEN PUBLICATION HISTORY &amp; ANALYTICS ↗</a>
 <div class="section-head"><h2>Today's content</h2><small>3 videos</small></div>
 <div id="today-summary"></div>
-<button type="button" class="open-content-cta" data-tab="content">VIEW 3 PROMPTS &amp; PUBLICATIONS →</button>
+<a class="open-content-cta" href="content.html">VIEW 3 PROMPTS &amp; PUBLICATIONS →</a>
 </section>
 <section id="content" class="view">
 <h1>Content Studio</h1><p class="muted">Your three seasonal prompts, captions and publishing trackers.</p>
@@ -439,6 +440,29 @@ updateDashboard();
 </script></body></html>"""
 dashboard = dashboard.replace("DATE_PLACEHOLDER", today.isoformat()).replace("PROMPTS_CREATED_PLACEHOLDER", generated_at.strftime("%H:%M:%S %Z") + " Warsaw time").replace("META_AI_URL_PLACEHOLDER", META_AI_CHAT_URL)
 DASHBOARD_FILE.write_text(dashboard, encoding="utf-8")
+
+content_page = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quiet Place — Content Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#090909;--panel:#191919;--line:#303030;--muted:#a1a1a1;--text:#f5f5f5;--orange:#ff7a24}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,sans-serif;padding:18px 16px 50px}main{max-width:760px;margin:auto}
+a{color:#ff9a52}.top{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.14em;font-weight:700;color:#ccc}.back{display:inline-block;margin:18px 0;padding:10px 14px;border:1px solid #57351e;border-radius:10px;text-decoration:none}
+h1{font-size:28px;margin:10px 0 4px}.muted{color:var(--muted);font-size:13px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;margin:15px 0}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:#ccc;font-weight:700}h2{font-size:18px;line-height:1.4}
+button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:700;font-size:14px;margin:6px 0;cursor:pointer}
+.copy{background:#efefea;color:#171717}.copy-post{background:#303030;color:white}.caption{margin:13px 0 4px}.tags{font-size:12px;color:#aaa;overflow-wrap:anywhere}
+.tracker{border-top:1px solid var(--line);margin-top:15px;padding-top:13px;display:grid;gap:10px}.tracker label{display:grid;gap:5px;font-size:12px;color:#bbb}
+.tracker input,.tracker select{width:100%;background:#101010;color:white;border:1px solid #414141;border-radius:9px;padding:11px;font:inherit}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record{background:var(--orange);color:#1a1009}.saved-note{font-size:11px;color:#999}.status{color:#ffad72;font-size:12px}
+</style></head><body><main><div class="top"><span>🟠 QUIET PLACE</span><span>LEAVE THE NOISE BEHIND</span></div>
+<a class="back" href="index.html">← Back to Overview</a><h1>Content Studio</h1><p class="muted">Three daily prompts · Meta AI video prompts · TikTok captions and tracking</p><div id="status" class="status">Copy a prompt, create your video, then save publication details.</div>
+""" + "\n".join(cards) + """
+</main><script>
+const key='quiet-place-publication-tracker-v1';let data={};try{data=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}
+document.querySelectorAll('.copy,.copy-post').forEach(b=>b.addEventListener('click',async()=>{const value=JSON.parse(b.dataset.prompt||b.dataset.post);try{if(navigator.clipboard&&isSecureContext)await navigator.clipboard.writeText(value);else{const t=document.createElement('textarea');t.value=value;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error();t.remove();}document.getElementById('status').textContent='Copied ✓';}catch(e){document.getElementById('status').textContent='Copy blocked by browser. Try again.';}}));
+document.querySelectorAll('.tracker').forEach(card=>{const id=card.dataset.date+'-video-'+card.dataset.video,old=data[id]||{};card.querySelectorAll('[data-field]').forEach(f=>{if(old[f.dataset.field]!==undefined)f.value=old[f.dataset.field];});if(old.updatedAt)card.querySelector('.saved-note').textContent='Saved '+old.updatedAt;card.querySelector('.save-record').addEventListener('click',()=>{const r={date:card.dataset.date,video:card.dataset.video};card.querySelectorAll('[data-field]').forEach(f=>r[f.dataset.field]=f.value);r.updatedAt=new Date().toLocaleString();data[id]=r;try{localStorage.setItem(key,JSON.stringify(data));card.querySelector('.saved-note').textContent='Saved '+r.updatedAt;}catch(e){card.querySelector('.saved-note').textContent='Could not save';}});});
+</script></body></html>"""
+content_page = content_page.replace("DATE_PLACEHOLDER", today.isoformat())
+CONTENT_FILE.write_text(content_page, encoding="utf-8")
 
 # Dedicated history page, sharing the same browser-local tracker store as the daily studio.
 history_page = """<!doctype html>
