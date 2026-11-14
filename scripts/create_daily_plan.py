@@ -201,7 +201,7 @@ button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15
 <p class="muted">DATE_PLACEHOLDER · Three copy-ready video prompts</p>
 <a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Meta AI</a>
 <div id="status" class="status" aria-live="polite">Choose a video and copy its prompt. Then paste it into Meta AI.</div>
-""" + "\\n".join(cards) + """
+""" + "\n".join(cards) + """
 <p class="note">This dashboard prepares and copies prompts only. Meta AI video generation and saving the finished video still require your action.</p>
 </main>
 <script>
