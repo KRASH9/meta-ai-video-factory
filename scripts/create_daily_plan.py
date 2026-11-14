@@ -10,7 +10,7 @@ CONFIG = ROOT / "config" / "topics.json"
 OUTPUT_DIR = ROOT / "output"
 PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 DASHBOARD_FILE = OUTPUT_DIR / "index.html"
-META_AI_CHAT_URL = "https://www.meta.ai/share/c/iqLO8gdyHr"
+META_AI_CHAT_URL = "https://www.meta.ai/vibes"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 today = datetime.now(WARSAW).date()
@@ -213,7 +213,7 @@ button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div>
 <h1>Daily Content Studio</h1>
 <p class="muted">DATE_PLACEHOLDER · 3 videos · prompts + TikTok publishing text</p>
-<a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Meta AI</a>
+<a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Vibes</a>
 <a class="primary" style="background:#252a24;color:#f3f3ef" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">Open Quiet Place on TikTok</a>
 <div id="status" class="status" aria-live="polite">Copy a video prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
 """ + "\n".join(cards) + """
