@@ -47,6 +47,12 @@ jobs:
         if: steps.timecheck.outputs.run == 'true'
         run: python scripts/create_daily_plan.py
 
+      - name: Include legal pages in website
+        if: steps.timecheck.outputs.run == 'true'
+        run: |
+          cp terms.html output/terms.html
+          cp privacy.html output/privacy.html
+
       - name: Save daily content package
         if: steps.timecheck.outputs.run == 'true'
         uses: actions/upload-artifact@v5
