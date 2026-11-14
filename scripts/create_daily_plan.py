@@ -190,6 +190,25 @@ for item in video_packages:
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
           <p class="tags">{escape(item["hashtags"])}</p>
+          <div class="tracker" data-video="{item["index"]}" data-date="DATE_PLACEHOLDER">
+            <label>Status
+              <select data-field="status">
+                <option value="planned">Planned</option>
+                <option value="created">Created</option>
+                <option value="checked">Quality checked</option>
+                <option value="published">Published</option>
+              </select>
+            </label>
+            <label>TikTok post URL<input data-field="url" type="url" placeholder="Paste published video link"></label>
+            <div class="metrics">
+              <label>Views<input data-field="views" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+              <label>Likes<input data-field="likes" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+              <label>Comments<input data-field="comments" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+              <label>Shares<input data-field="shares" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+            </div>
+            <button class="save-record" type="button">Save tracking data</button>
+            <small class="saved-note" aria-live="polite">Not saved yet</small>
+          </div>
         </article>
         """
     )
@@ -207,6 +226,10 @@ main{max-width:680px;margin:auto}.muted{color:#a8aaa4}.card{background:#1b1d1a;b
 button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15px 16px;text-align:center;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer}
 .copy{background:#e4e8dc;color:#172016}.copy-post{background:#30362e;color:#f3f3ef;margin-top:10px}.primary{background:#9eb18c;color:#11190f;margin:20px 0}.caption{margin:14px 0 4px}.tags{font-size:13px;color:#b6b9b0;overflow-wrap:anywhere}
 .status{min-height:24px;color:#b9c5a8;font-size:14px;margin-top:8px}.note{font-size:13px;color:#a8aaa4;margin:18px 0}
+.tracker{border-top:1px solid #343731;margin-top:18px;padding-top:14px;display:grid;gap:10px}.tracker label{display:grid;gap:5px;color:#c7c9c1;font-size:13px}
+.tracker input,.tracker select{width:100%;min-width:0;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px;padding:11px;font:inherit}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.save-record,.export{background:#b9c5a8;color:#172016}.saved-note{color:#a8aaa4}
+.analytics{background:#1b1d1a;border:1px solid #343731;border-radius:16px;padding:18px;margin:18px 0}.totals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#101310;border-radius:10px;padding:12px}.metric strong{display:block;font-size:22px}.metric span{font-size:12px;color:#a8aaa4}
 </style>
 </head>
 <body><main>
@@ -216,10 +239,51 @@ button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15
 <a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">PUBLICATION</a>
 <a class="primary" style="background:#252a24;color:#f3f3ef" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">Open Quiet Place on TikTok</a>
 <div id="status" class="status" aria-live="polite">Copy a video prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
+<section class="analytics">
+  <div class="eyebrow">PUBLICATION TRACKER</div><h2>Daily performance</h2>
+  <div class="totals">
+    <div class="metric"><strong id="total-views">0</strong><span>Views</span></div>
+    <div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div>
+    <div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div>
+    <div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div>
+  </div>
+  <p class="note">Totals update when you save each video's data.</p>
+  <button class="export" id="export-csv" type="button">Export tracking CSV</button>
+</section>
 """ + "\n".join(cards) + """
 <p class="note">This dashboard prepares and copies text only. Generate and save videos in Meta AI, then upload them manually in TikTok. For realistic AI-generated scenes, check TikTok's AI disclosure setting before posting.</p>
 </main>
 <script>
+const trackerKey='quiet-place-publication-tracker-v1';
+let trackerData={};
+try{trackerData=JSON.parse(localStorage.getItem(trackerKey)||'{}')||{};}catch(e){trackerData={};}
+const trackerCards=[...document.querySelectorAll('.tracker')];
+function recordId(card){return card.dataset.date+'-video-'+card.dataset.video;}
+function updateTotals(){
+  const totals={views:0,likes:0,comments:0,shares:0};
+  Object.values(trackerData).forEach(record=>Object.keys(totals).forEach(k=>totals[k]+=Number(record[k]||0)));
+  Object.entries(totals).forEach(([k,v])=>{const el=document.getElementById('total-'+k);if(el)el.textContent=v.toLocaleString();});
+}
+trackerCards.forEach(card=>{
+  const id=recordId(card),saved=trackerData[id]||{};
+  card.querySelectorAll('[data-field]').forEach(field=>{if(saved[field.dataset.field]!==undefined)field.value=saved[field.dataset.field];});
+  if(saved.updatedAt)card.querySelector('.saved-note').textContent='Saved '+saved.updatedAt;
+  card.querySelector('.save-record').addEventListener('click',()=>{
+    const record={date:card.dataset.date,video:card.dataset.video};
+    card.querySelectorAll('[data-field]').forEach(field=>record[field.dataset.field]=field.value);
+    record.updatedAt=new Date().toLocaleString();
+    trackerData[id]=record;
+    try{localStorage.setItem(trackerKey,JSON.stringify(trackerData));card.querySelector('.saved-note').textContent='Saved '+record.updatedAt;updateTotals();}
+    catch(e){card.querySelector('.saved-note').textContent='Could not save on this browser';}
+  });
+});
+updateTotals();
+document.getElementById('export-csv').addEventListener('click',()=>{
+  const columns=['date','video','status','url','views','likes','comments','shares','updatedAt'];
+  const rows=[columns.join(','),...Object.values(trackerData).map(r=>columns.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))];
+  const blob=new Blob([rows.join('\\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='quiet-place-publication-tracker.csv';a.click();URL.revokeObjectURL(url);
+});
 document.querySelectorAll('.copy,.copy-post').forEach(button=>{
   button.addEventListener('click',async()=>{
     const prompt=JSON.parse(button.dataset.prompt || button.dataset.post);
