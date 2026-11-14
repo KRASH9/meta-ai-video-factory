@@ -408,14 +408,14 @@ history_page = """<!doctype html>
 <title>Quiet Place — Publication History</title>
 <style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:20px;background:#101110;color:#f3f3ef;font:15px/1.5 system-ui,-apple-system,sans-serif}
-main{max-width:760px;margin:auto}.muted,small{color:#a8aaa4}.eyebrow{font-size:12px;letter-spacing:.12em;color:#b9c5a8;font-weight:700}
+main{max-width:760px;margin:auto}.muted,small{color:#a1a1a1}.eyebrow{font-size:12px;letter-spacing:.12em;color:#ff9a52;font-weight:700}
 h1{font-size:27px;margin:8px 0}h2{font-size:19px;margin:8px 0 14px}
-a{color:#c7d4b8}.back{display:inline-block;margin:8px 0 18px;text-decoration:none}
-.panel,.entry{background:#1b1d1a;border:1px solid #343731;border-radius:15px;padding:16px;margin:14px 0}
+a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:none}
+.panel,.entry{background:#1b1d1a;border:1px solid #303030;border-radius:15px;padding:16px;margin:14px 0}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#101310;border-radius:10px;padding:12px}.metric strong{display:block;font-size:22px}.metric span{font-size:12px;color:#a8aaa4}
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.controls select,.controls button{background:#252a24;color:#f3f3ef;border:1px solid #454a40;border-radius:9px;padding:10px;font:inherit}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.controls select,.controls button{background:#303030;color:#f3f3ef;border:1px solid #494949;border-radius:9px;padding:10px;font:inherit}
 .entry h3{font-size:16px;margin:5px 0 8px}.meta{font-size:12px;color:#a8aaa4}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}.stats div{background:#101310;padding:8px;border-radius:8px;font-size:12px}.stats b{display:block;font-size:16px}
-.pill{display:inline-block;border:1px solid #53604c;border-radius:20px;padding:2px 8px;font-size:11px;color:#c7d4b8}
+.pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:11px;color:#c7d4b8}
 .empty{padding:20px;text-align:center;color:#a8aaa4}.danger{color:#e6b4a9}.url{overflow-wrap:anywhere}
 </style></head><body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div><h1>Publication History &amp; Analytics</h1>
@@ -439,7 +439,7 @@ a{color:#c7d4b8}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 <label>Comments<input id="old-comments" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
 <label>Shares<input id="old-shares" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
 </div>
-<button id="add-old" type="button" style="width:100%;padding:13px;background:#b9c5a8;color:#172016;border:0;border-radius:10px;font-weight:700">Add to publication history</button>
+<button id="add-old" type="button" style="width:100%;padding:13px;background:#b9c5a8;color:#1a1009;border:0;border-radius:10px;font-weight:700">Add to publication history</button>
 <p id="add-message" class="muted" aria-live="polite"></p></section>
 <section class="panel"><h2>Browse records</h2><div class="controls">
 <select id="sort"><option value="newest">Newest first</option><option value="views">Most views</option><option value="likes">Most likes</option></select>
