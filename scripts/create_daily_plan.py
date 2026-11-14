@@ -283,99 +283,119 @@ for item in video_packages:
     )
 
 dashboard = """<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quiet Place — Daily Studio</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiet Place — Studio</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:22px;background:#101110;color:#f3f3ef;font:16px/1.5 system-ui,-apple-system,sans-serif}
-main{max-width:680px;margin:auto}.muted{color:#a8aaa4}.card{background:#1b1d1a;border:1px solid #343731;border-radius:16px;padding:18px;margin:16px 0}
-.eyebrow{font-size:12px;letter-spacing:.12em;color:#b9c5a8;font-weight:700}h1{font-size:28px;margin:8px 0}h2{font-size:19px;line-height:1.35;margin:10px 0 16px}
-button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15px 16px;text-align:center;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer}
-.copy{background:#e4e8dc;color:#172016}.copy-post{background:#30362e;color:#f3f3ef;margin-top:10px}.primary{background:#9eb18c;color:#11190f;margin:20px 0}.caption{margin:14px 0 4px}.tags{font-size:13px;color:#b6b9b0;overflow-wrap:anywhere}
-.status{min-height:24px;color:#b9c5a8;font-size:14px;margin-top:8px}.note{font-size:13px;color:#a8aaa4;margin:18px 0}
-.tracker{border-top:1px solid #343731;margin-top:18px;padding-top:14px;display:grid;gap:10px}.tracker label{display:grid;gap:5px;color:#c7c9c1;font-size:13px}
-.tracker input,.tracker select{width:100%;min-width:0;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px;padding:11px;font:inherit}
-.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.save-record,.export{background:#b9c5a8;color:#172016}.saved-note{color:#a8aaa4}
-.analytics{background:#1b1d1a;border:1px solid #343731;border-radius:16px;padding:18px;margin:18px 0}.totals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#101310;border-radius:10px;padding:12px}.metric strong{display:block;font-size:22px}.metric span{font-size:12px;color:#a8aaa4}
-</style>
-</head>
-<body><main>
-<div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div>
-<h1>Daily Content Studio</h1>
-<p class="muted">DATE_PLACEHOLDER · PROMPTS_CREATED_PLACEHOLDER · 3 videos · prompts + TikTok publishing text</p>
-<a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">PUBLICATION</a>
-<a class="primary" style="background:#252a24;color:#f3f3ef" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">Open Quiet Place on TikTok</a>
-<a class="primary" style="background:#30362e;color:#f3f3ef" href="history.html">PUBLICATION HISTORY &amp; ANALYTICS</a>
-<div id="status" class="status" aria-live="polite">Copy a video prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
-<section class="analytics">
-  <div class="eyebrow">PUBLICATION TRACKER</div><h2>Daily performance</h2>
-  <div class="totals">
-    <div class="metric"><strong id="total-views">0</strong><span>Views</span></div>
-    <div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div>
-    <div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div>
-    <div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div>
-  </div>
-  <p class="note">Totals update when you save each video's data.</p>
-  <button class="export" id="export-csv" type="button">Export tracking CSV</button>
+:root{color-scheme:dark;--bg:#090909;--panel:#191919;--panel2:#222;--line:#303030;--muted:#a1a1a1;--text:#f5f5f5;--orange:#ff7a24;--green:#38b879}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,sans-serif;padding:18px 16px 100px}
+main{max-width:760px;margin:auto}.topline{display:flex;align-items:center;justify-content:space-between;color:#d0d0d0;font-size:12px;letter-spacing:.15em;font-weight:700}
+.logo{display:flex;align-items:center;gap:8px}.logo-mark{width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 16px #ff7a2470}
+h1{font-size:27px;line-height:1.15;margin:20px 0 4px}h2{font-size:18px;margin:0 0 12px}h3{font-size:16px;margin:6px 0 10px}
+.muted,.meta,.note{color:var(--muted)}.muted{font-size:13px}.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:16px;margin:14px 0}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:#c4c4c4;font-weight:700}.accent{color:var(--orange)}
+.hero{background:linear-gradient(135deg,#24160e,#171717 58%);border:1px solid #49301e;border-radius:18px;padding:18px;margin:18px 0}
+.hero p{color:#c8c8c8;font-size:13px;margin:5px 0 15px}.hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.action-primary{background:var(--orange);color:#1a1009}.action-secondary{background:#303030;color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{background:#101010;border:1px solid #282828;border-radius:12px;padding:13px}.metric strong{display:block;font-size:23px;line-height:1.2}.metric span{font-size:11px;color:#a5a5a5}
+.growth{height:120px;width:100%;display:block;margin-top:8px}.chart-labels{display:flex;justify-content:space-between;color:#777;font-size:10px}
+.nav{position:fixed;z-index:10;bottom:0;left:0;right:0;background:#151515f2;border-top:1px solid #303030;backdrop-filter:blur(14px);display:flex;justify-content:center;padding:9px 8px max(12px,env(safe-area-inset-bottom))}
+.nav-inner{width:min(760px,100%);display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.nav button{background:transparent;color:#888;padding:8px 3px;font-size:10px;border-radius:10px}.nav button.active{color:var(--orange);background:#2b1b12}.nav .nav-icon{display:block;font-size:17px;margin-bottom:2px}
+.view{display:none}.view.active{display:block}
+.card{margin:12px 0}.eyebrow{color:#c6c6c6}.copy{background:#efefea;color:#171717;width:100%;margin:8px 0 0}.copy-post{background:#303030;color:#fff;width:100%;margin-top:8px}
+.caption{margin:12px 0 4px}.tags{font-size:12px;color:#b3b3b3;overflow-wrap:anywhere}.status{min-height:20px;color:#ffad72;font-size:12px;margin:8px 0}
+.tracker{border-top:1px solid var(--line);margin-top:15px;padding-top:13px;display:grid;gap:9px}.tracker label{display:grid;gap:5px;color:#bdbdbd;font-size:12px}
+.tracker input,.tracker select{width:100%;min-width:0;background:#101010;color:#fff;border:1px solid #414141;border-radius:9px;padding:10px;font:inherit}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record,.export{background:var(--orange);color:#1a1009;width:100%}.saved-note{color:#999;font-size:11px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px}.section-head small{color:#888}
+.list-row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #303030;font-size:13px}.list-row:last-child{border:0}
+.pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:10px;color:#ffb17b}
+.history-link{display:block;text-decoration:none;color:#ff9a52;border:1px solid #57351e;padding:13px;border-radius:11px;text-align:center;font-weight:700;margin:12px 0}
+.note{font-size:11px;margin:14px 0}
+@media(min-width:600px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:22px}.card{padding:20px}}
+</style></head><body><main>
+<div class="topline"><div class="logo"><span class="logo-mark"></span> QUIET PLACE</div><span class="muted">LEAVE THE NOISE BEHIND</span></div>
+<section id="overview" class="view active">
+<h1>Overview</h1><p class="muted">DATE_PLACEHOLDER · Created PROMPTS_CREATED_PLACEHOLDER · 3 new videos ready</p>
+<div class="hero"><div class="eyebrow accent">DAILY CONTENT STUDIO</div><h2 style="font-size:22px;margin-top:8px">Your next quiet moment starts here.</h2><p>Generate your nature videos with Meta AI, then prepare each post for TikTok.</p>
+<div class="hero-actions"><a class="action action-primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Meta AI ↗</a><a class="action action-secondary" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">TikTok profile ↗</a></div></div>
+<section class="panel"><div class="eyebrow">CHANNEL OVERVIEW</div><div class="section-head"><h2>Performance</h2><small>Saved records</small></div>
+<div class="kpis"><div class="metric"><strong id="total-views">0</strong><span>Views</span></div><div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div><div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div></div>
+<svg class="growth" viewBox="0 0 600 120" preserveAspectRatio="none" aria-label="Illustrative performance trend"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#38b879" stop-opacity=".35"/><stop offset="1" stop-color="#38b879" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12 L600 120 L0 120Z" fill="url(#area)"/><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12" fill="none" stroke="#38b879" stroke-width="3"/></svg>
+<div class="chart-labels"><span>Recent</span><span>Performance history</span><span>Today</span></div>
+<p class="note">The line is a visual placeholder until enough dated performance snapshots are recorded. Totals use saved publication data.</p>
 </section>
+<a class="history-link" href="history.html">OPEN PUBLICATION HISTORY &amp; ANALYTICS ↗</a>
+<div class="section-head"><h2>Today's content</h2><small>3 videos</small></div>
+<div id="today-summary"></div>
+</section>
+<section id="content" class="view">
+<h1>Content Studio</h1><p class="muted">Your three seasonal prompts, captions and publishing trackers.</p>
+<div id="status" class="status" aria-live="polite">Copy a prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
 """ + "\n".join(cards) + """
-<p class="note">This dashboard prepares and copies text only. Generate and save videos in Meta AI, then upload them manually in TikTok. For realistic AI-generated scenes, check TikTok's AI disclosure setting before posting.</p>
+<p class="note">Generate and save videos in Meta AI, then upload them manually in TikTok. Check TikTok's AI disclosure setting for realistic generated scenes.</p>
+</section>
+<section id="calendar" class="view"><h1>Calendar</h1><p class="muted">Your publication timeline, based on saved records.</p><div class="panel" id="calendar-list"></div></section>
+<section id="analytics" class="view"><h1>Analytics</h1><p class="muted">Compare saved performance across all publications.</p><div class="panel"><div class="kpis"><div class="metric"><strong id="a-views">0</strong><span>Total views</span></div><div class="metric"><strong id="a-likes">0</strong><span>Total likes</span></div><div class="metric"><strong id="a-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="a-shares">0</strong><span>Shares</span></div></div><div class="section-head"><h2>Top publications</h2><small>By views</small></div><div id="top-posts"></div></div><a class="history-link" href="history.html">OPEN FULL HISTORY ↗</a></section>
 </main>
+<nav class="nav"><div class="nav-inner">
+<button class="active" data-tab="overview"><span class="nav-icon">⌂</span>Overview</button>
+<button data-tab="calendar"><span class="nav-icon">▦</span>Calendar</button>
+<button data-tab="content"><span class="nav-icon">▤</span>Content</button>
+<button data-tab="analytics"><span class="nav-icon">▥</span>Analytics</button>
+<button onclick="location.href='history.html'"><span class="nav-icon">↗</span>History</button>
+</div></nav>
 <script>
-const trackerKey='quiet-place-publication-tracker-v1';
-let trackerData={};
+const trackerKey='quiet-place-publication-tracker-v1';let trackerData={};
 try{trackerData=JSON.parse(localStorage.getItem(trackerKey)||'{}')||{};}catch(e){trackerData={};}
-const trackerCards=[...document.querySelectorAll('.tracker')];
+const cards=[...document.querySelectorAll('.tracker')];
 function recordId(card){return card.dataset.date+'-video-'+card.dataset.video;}
-function updateTotals(){
-  const totals={views:0,likes:0,comments:0,shares:0};
-  Object.values(trackerData).forEach(record=>Object.keys(totals).forEach(k=>totals[k]+=Number(record[k]||0)));
-  Object.entries(totals).forEach(([k,v])=>{const el=document.getElementById('total-'+k);if(el)el.textContent=v.toLocaleString();});
+function fmt(v){return Number(v||0).toLocaleString();}
+function records(){return Object.values(trackerData);}
+function updateDashboard(){
+ const totals={views:0,likes:0,comments:0,shares:0};
+ records().forEach(r=>Object.keys(totals).forEach(k=>totals[k]+=Number(r[k]||0)));
+ Object.entries(totals).forEach(([k,v])=>{['total-'+k,'a-'+k].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(v);});});
+ const sorted=records().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ const cal=document.getElementById('calendar-list');
+ if(cal)cal.innerHTML=sorted.length?sorted.map(r=>'<div class="list-row"><span>'+r.date+' · Video '+r.video+'</span><span>'+fmt(r.views)+' views</span></div>').join(''):'<p class="muted">No saved publications yet.</p>';
+ const top=document.getElementById('top-posts');
+ if(top)top.innerHTML=records().sort((a,b)=>Number(b.views||0)-Number(a.views||0)).slice(0,5).map(r=>'<div class="list-row"><span>'+r.date+' · Video '+r.video+'</span><b>'+fmt(r.views)+' views</b></div>').join('')||'<p class="muted">Add publication stats to see rankings.</p>';
+ const summary=document.getElementById('today-summary');
+ if(summary)summary.innerHTML=cards.map(c=>'<div class="list-row"><span>Video '+c.dataset.video+' · '+(c.querySelector('h2')?.textContent||'Scene')+'</span><span class="pill">Ready</span></div>').join('');
 }
-trackerCards.forEach(card=>{
-  const id=recordId(card),saved=trackerData[id]||{};
-  card.querySelectorAll('[data-field]').forEach(field=>{if(saved[field.dataset.field]!==undefined)field.value=saved[field.dataset.field];});
-  if(saved.updatedAt)card.querySelector('.saved-note').textContent='Saved '+saved.updatedAt;
-  card.querySelector('.save-record').addEventListener('click',()=>{
-    const record={date:card.dataset.date,video:card.dataset.video};
-    card.querySelectorAll('[data-field]').forEach(field=>record[field.dataset.field]=field.value);
-    record.updatedAt=new Date().toLocaleString();
-    trackerData[id]=record;
-    try{localStorage.setItem(trackerKey,JSON.stringify(trackerData));card.querySelector('.saved-note').textContent='Saved '+record.updatedAt;updateTotals();}
-    catch(e){card.querySelector('.saved-note').textContent='Could not save on this browser';}
-  });
+cards.forEach(card=>{
+ const id=recordId(card),saved=trackerData[id]||{};
+ card.querySelectorAll('[data-field]').forEach(f=>{if(saved[f.dataset.field]!==undefined)f.value=saved[f.dataset.field];});
+ if(saved.updatedAt)card.querySelector('.saved-note').textContent='Saved '+saved.updatedAt;
+ card.querySelector('.save-record').addEventListener('click',()=>{
+  const rec={date:card.dataset.date,video:card.dataset.video};
+  card.querySelectorAll('[data-field]').forEach(f=>rec[f.dataset.field]=f.value);
+  rec.updatedAt=new Date().toLocaleString();trackerData[id]=rec;
+  try{localStorage.setItem(trackerKey,JSON.stringify(trackerData));card.querySelector('.saved-note').textContent='Saved '+rec.updatedAt;updateDashboard();}
+  catch(e){card.querySelector('.saved-note').textContent='Could not save on this browser';}
+ });
 });
-updateTotals();
+document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===btn.dataset.tab));
+ document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b===btn));
+ window.scrollTo({top:0,behavior:'smooth'});
+}));
+document.querySelectorAll('.copy,.copy-post').forEach(btn=>btn.addEventListener('click',async()=>{
+ const value=JSON.parse(btn.dataset.prompt||btn.dataset.post),label=btn.textContent;
+ try{await navigator.clipboard.writeText(value);document.getElementById('status').textContent='Copied. Paste it into your selected app.';btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=label,1600);}
+ catch(e){document.getElementById('status').textContent='Copy blocked by browser. Please try again or use the text package.';}
+}));
 document.getElementById('export-csv').addEventListener('click',()=>{
-  const columns=['date','video','status','url','views','likes','comments','shares','updatedAt'];
-  const rows=[columns.join(','),...Object.values(trackerData).map(r=>columns.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))];
-  const blob=new Blob([rows.join('\\n')],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='quiet-place-publication-tracker.csv';a.click();URL.revokeObjectURL(url);
+ const cols=['date','video','status','url','views','likes','comments','shares','updatedAt'];
+ const rows=[cols.join(','),...records().map(r=>cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))];
+ const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='quiet-place-publication-tracker.csv';a.click();URL.revokeObjectURL(url);
 });
-document.querySelectorAll('.copy,.copy-post').forEach(button=>{
-  button.addEventListener('click',async()=>{
-    const prompt=JSON.parse(button.dataset.prompt || button.dataset.post);
-    const originalLabel=button.textContent;
-    try{
-      if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(prompt);}
-      else{
-        const field=document.createElement('textarea');field.value=prompt;
-        field.style.position='fixed';field.style.opacity='0';document.body.appendChild(field);
-        field.focus();field.select();const ok=document.execCommand('copy');field.remove();
-        if(!ok) throw new Error('Clipboard unavailable');
-      }
-      document.getElementById('status').textContent=button.classList.contains('copy-post')?'TikTok caption and hashtags copied. Paste them into your TikTok post.':'Meta AI prompt copied. Paste it into your Meta AI chat.';
-      button.textContent='Copied ✓';setTimeout(()=>button.textContent=originalLabel,1800);
-    }catch(e){
-      document.getElementById('status').textContent='Copy was blocked. Use the individual prompt .txt file instead.';
-    }
-  });
-});
-</script>
-</body></html>"""
-dashboard = dashboard.replace("DATE_PLACEHOLDER", today.isoformat()).replace("PROMPTS_CREATED_PLACEHOLDER", "Created " + generated_at.strftime("%H:%M:%S %Z") + " (Warsaw time)").replace("META_AI_URL_PLACEHOLDER", META_AI_CHAT_URL)
+updateDashboard();
+</script></body></html>"""
+dashboard = dashboard.replace("DATE_PLACEHOLDER", today.isoformat()).replace("PROMPTS_CREATED_PLACEHOLDER", generated_at.strftime("%H:%M:%S %Z") + " Warsaw time").replace("META_AI_URL_PLACEHOLDER", META_AI_CHAT_URL)
 DASHBOARD_FILE.write_text(dashboard, encoding="utf-8")
 
 # Dedicated history page, sharing the same browser-local tracker store as the daily studio.
