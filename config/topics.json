@@ -1,17 +1,40 @@
-
 {
-  "topics": [
-    "misty mountain lake at sunrise",
-    "ocean waves on a black volcanic beach",
-    "a quiet forest after rainfall",
-    "snow falling in a pine forest",
-    "a waterfall surrounded by lush greenery",
-    "golden sunset over a calm desert",
-    "aerial view of turquoise tropical water",
-    "gentle rain falling on a peaceful garden",
-    "slow moving clouds above mountain peaks",
-    "a river flowing through an autumn forest",
-    "northern lights dancing above snowy mountains",
-    "waves washing over a white sand beach"
-  ]
+  "categories": {
+    "Nature & Water": [
+      "a small clear stream running over uneven stones beside a grassy bank",
+      "gentle waves reaching a quiet pebble beach on an overcast day",
+      "a still lake with reeds moving slightly in the breeze",
+      "rain drops making small ripples in a village pond",
+      "a narrow river passing under an old stone footbridge",
+      "water flowing over a low natural rock ledge in a woodland",
+      "a quiet shoreline with driftwood and shallow waves",
+      "a simple wooden pier beside calm water on an ordinary morning",
+      "a small waterfall in a green public nature reserve",
+      "the tide slowly moving across wet sand under a cloudy sky"
+    ],
+    "Forest & Weather": [
+      "a narrow dirt path through a quiet pine forest after rain",
+      "tree branches moving gently during a light summer breeze",
+      "small drops of rain falling from leaves onto a forest path",
+      "fresh snow resting on the branches beside a woodland trail",
+      "an ordinary cloudy morning in a dense green forest",
+      "sunlight naturally reaching a small patch of grass between trees",
+      "autumn leaves scattered across a damp park path",
+      "a quiet birch grove with leaves moving in the wind",
+      "low clouds passing behind a forested hillside, filmed from the ground",
+      "a wet wooden bench beneath trees in a nearly empty park"
+    ],
+    "Cozy Quiet Places": [
+      "rain running down the window of a quiet countryside cottage",
+      "an empty narrow European street just after a light shower",
+      "a small courtyard with potted plants and an old stone floor",
+      "a simple garden fountain in a quiet residential garden",
+      "a wooden veranda looking out onto a green garden",
+      "a quiet village lane with modest houses on an overcast afternoon",
+      "a small outdoor table beside a cottage window on a calm morning",
+      "a peaceful garden path with ordinary plants and slightly uneven stones",
+      "a simple cabin porch with trees visible beyond it",
+      "a quiet park shelter while rain falls outside"
+    ]
+  }
 }
