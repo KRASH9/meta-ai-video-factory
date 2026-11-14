@@ -1,5 +1,5 @@
 
-name: Daily video plan
+name: Quiet Place - Daily Content Studio
 
 on:
   workflow_dispatch:
@@ -11,22 +11,25 @@ permissions:
 
 jobs:
   create-plan:
+    name: Generate daily content plan
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
-      - name: Create daily plan
+      - name: Generate Quiet Place content
         run: python scripts/create_daily_plan.py
 
-      - name: Upload plan
-        uses: actions/upload-artifact@v4
+      - name: Save daily content package
+        uses: actions/upload-artifact@v5
         with:
-          name: daily-video-plan
+          name: quiet-place-daily-content
           path: output/daily-plan.md
           retention-days: 7
