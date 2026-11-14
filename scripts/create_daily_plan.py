@@ -10,7 +10,7 @@ CONFIG = ROOT / "config" / "topics.json"
 OUTPUT_DIR = ROOT / "output"
 PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 DASHBOARD_FILE = OUTPUT_DIR / "index.html"
-META_AI_CHAT_URL = "https://www.meta.ai/prompt/a0cea6a9-d0b5-4264-97e0-bf2938faaa60"
+META_AI_CHAT_URL = "https://www.meta.ai/share/c/iqLO8gdyHr"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 today = datetime.now(WARSAW).date()
