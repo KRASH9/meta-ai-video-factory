@@ -204,7 +204,7 @@ for index, (category, scene) in enumerate(selected, start=1):
         "",
         "**Hashtags:**",
         "",
-        hashtags,
+        video_hashtags,
         "",
         f"**Copy-ready folder:** video-{index:02d}/",
         "",
