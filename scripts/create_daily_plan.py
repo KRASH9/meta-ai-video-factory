@@ -16,6 +16,36 @@ WARSAW = ZoneInfo("Europe/Warsaw")
 today = datetime.now(WARSAW).date()
 date_seed = today.strftime("%Y-%m-%d")
 
+# Seasonal direction follows the current calendar season in Warsaw / Central Europe.
+month = today.month
+if month in (9, 10, 11):
+    season_name = "autumn"
+    seasonal_direction = (
+        "Set the scene unmistakably in autumn in Central Europe, appropriate to the current part of the season. "
+        "Use believable autumn details such as fallen yellow, amber and brown leaves, damp paths, bare or partly bare branches, "
+        "cool overcast light, gentle rain, low natural mist, quiet grey-blue water and muted earthy colors. "
+        "In late autumn, show mostly fallen leaves and increasingly bare trees. "
+        "Do not show lush summer greenery, tropical vegetation, blossoms, sakura, summer sunshine or snow unless it is naturally present."
+    )
+elif month in (12, 1, 2):
+    season_name = "winter"
+    seasonal_direction = (
+        "Set the scene in winter in Central Europe: bare trees, cold muted light, frost, occasional realistic snow, "
+        "winter rain, still water or subdued evergreen forest. Do not show lush summer foliage, autumn foliage or spring blossoms."
+    )
+elif month in (3, 4, 5):
+    season_name = "spring"
+    seasonal_direction = (
+        "Set the scene in spring in Central Europe: fresh new leaves, delicate blossoms where seasonally plausible, "
+        "soft rain, brighter but gentle daylight and renewed greenery. Do not show peak summer heat or autumn foliage."
+    )
+else:
+    season_name = "summer"
+    seasonal_direction = (
+        "Set the scene in summer in Central Europe: full green foliage, warm but natural daylight, rivers, lakes, "
+        "meadows and gentle summer weather. Do not show autumn leaves, winter frost or snow."
+    )
+
 config = json.loads(CONFIG.read_text(encoding="utf-8"))
 categories = config.get("categories", {})
 
@@ -81,9 +111,10 @@ lines = [
     f"Date: {today.isoformat()}",
     "Brand: Quiet Place",
     "Mission: Leave the noise behind.",
+    f"Seasonal direction: {season_name.title()} in Central Europe.",
     "",
     "Three ready-to-produce videos. Individual copy-ready files are included in this package.",
-    "The goal is a believable quiet moment, not a cinematic travel scene.",
+    f"The goal is a believable quiet moment, not a cinematic travel scene. Seasonal setting: {season_name.title()} in Central Europe.",
     ""
 ]
 
