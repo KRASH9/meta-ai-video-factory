@@ -52,6 +52,7 @@ jobs:
         run: |
           cp terms.html output/terms.html
           cp privacy.html output/privacy.html
+          cp tiktok-developers-site-verification=8WMSXUWisvE0Ks0g0rvHq3k2SNivdsf3 output/tiktok-developers-site-verification=8WMSXUWisvE0Ks0g0rvHq3k2SNivdsf3
 
       - name: Save daily content package
         if: steps.timecheck.outputs.run == 'true'
