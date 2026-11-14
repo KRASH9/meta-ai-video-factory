@@ -198,8 +198,8 @@ button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15
 <body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div>
 <h1>Daily Content Studio</h1>
-<p class="muted">""" + today.isoformat() + """ · Three copy-ready video prompts</p>
-<a class="primary" href="""" + META_AI_CHAT_URL + """" target="_blank" rel="noopener">Open your Meta AI conversation</a>
+<p class="muted">DATE_PLACEHOLDER · Three copy-ready video prompts</p>
+<a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open your Meta AI conversation</a>
 <div id="status" class="status" aria-live="polite">Choose a video and copy its prompt. Then paste it into Meta AI.</div>
 """ + "\\n".join(cards) + """
 <p class="note">This dashboard prepares and copies prompts only. Meta AI video generation and saving the finished video still require your action.</p>
@@ -225,6 +225,7 @@ document.querySelectorAll('.copy').forEach(button=>{
 });
 </script>
 </body></html>"""
+dashboard = dashboard.replace("DATE_PLACEHOLDER", today.isoformat()).replace("META_AI_URL_PLACEHOLDER", META_AI_CHAT_URL)
 DASHBOARD_FILE.write_text(dashboard, encoding="utf-8")
 
 print(f"Quiet Place package created: {OUTPUT_DIR}")
