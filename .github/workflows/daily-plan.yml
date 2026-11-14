@@ -31,5 +31,5 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: quiet-place-daily-content
-          path: output/daily-plan.md
+          path: output/
           retention-days: 7
