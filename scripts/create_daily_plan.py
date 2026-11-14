@@ -320,6 +320,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .calendar-day:disabled{opacity:.25}
 .pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:10px;color:#ffb17b}
 .history-link{display:block;text-decoration:none;color:#ff9a52;border:1px solid #57351e;padding:13px;border-radius:11px;text-align:center;font-weight:700;margin:12px 0}
+.open-content-cta{display:block;width:100%;margin:16px 0 22px;padding:16px;background:#ff7a24;color:#1a1009;border:0;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.04em}
 .note{font-size:11px;margin:14px 0}
 @media(min-width:600px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:22px}.card{padding:20px}}
 </style></head><body><main>
@@ -337,6 +338,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <a class="history-link" href="history.html">OPEN PUBLICATION HISTORY &amp; ANALYTICS ↗</a>
 <div class="section-head"><h2>Today's content</h2><small>3 videos</small></div>
 <div id="today-summary"></div>
+<button type="button" class="open-content-cta" data-tab="content">OPEN CONTENT STUDIO →</button>
 </section>
 <section id="content" class="view">
 <h1>Content Studio</h1><p class="muted">Your three seasonal prompts, captions and publishing trackers.</p>
