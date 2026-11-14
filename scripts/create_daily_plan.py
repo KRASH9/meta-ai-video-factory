@@ -310,6 +310,14 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record,.export{background:var(--orange);color:#1a1009;width:100%}.saved-note{color:#999;font-size:11px}
 .section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px}.section-head small{color:#888}
 .list-row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #303030;font-size:13px}.list-row:last-child{border:0}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}
+.calendar-grid .weekday{font-size:10px;color:#999;padding:5px 0}
+.calendar-day{background:#101010;color:#eee;border:1px solid #303030;border-radius:8px;min-height:38px;padding:7px 2px;font-size:12px;position:relative}
+.calendar-day.has-post{border-color:#9b5529;color:#ffad72}
+.calendar-day.selected{background:#ff7a24;color:#1a1009;border-color:#ff7a24;font-weight:800}
+.calendar-day .dot{display:block;width:5px;height:5px;border-radius:50%;background:#ff7a24;margin:2px auto 0}
+.calendar-day.selected .dot{background:#1a1009}
+.calendar-day:disabled{opacity:.25}
 .pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:10px;color:#ffb17b}
 .history-link{display:block;text-decoration:none;color:#ff9a52;border:1px solid #57351e;padding:13px;border-radius:11px;text-align:center;font-weight:700;margin:12px 0}
 .note{font-size:11px;margin:14px 0}
@@ -336,7 +344,9 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 """ + "\n".join(cards) + """
 <p class="note">Generate and save videos in Meta AI, then upload them manually in TikTok. Check TikTok's AI disclosure setting for realistic generated scenes.</p>
 </section>
-<section id="calendar" class="view"><h1>Calendar</h1><p class="muted">Your publication timeline, based on saved records.</p><div class="panel" id="calendar-list"></div></section>
+<section id="calendar" class="view"><h1>Publication Calendar</h1><p class="muted">Choose a date to see videos published or tracked on that day.</p>
+<div class="panel"><div class="section-head"><button id="month-prev" class="action action-secondary" type="button">‹</button><h2 id="month-label">Month</h2><button id="month-next" class="action action-secondary" type="button">›</button></div>
+<div class="calendar-grid" id="calendar-grid"></div><div class="section-head"><h2 id="selected-date-label">Selected date</h2><small id="selected-count">0 publications</small></div><div id="calendar-list"></div></div></section>
 <section id="analytics" class="view"><h1>Analytics</h1><p class="muted">Compare saved performance across all publications.</p><div class="panel"><div class="kpis"><div class="metric"><strong id="a-views">0</strong><span>Total views</span></div><div class="metric"><strong id="a-likes">0</strong><span>Total likes</span></div><div class="metric"><strong id="a-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="a-shares">0</strong><span>Shares</span></div></div><div class="section-head"><h2>Top publications</h2><small>By views</small></div><div id="top-posts"></div><button id="export-csv" class="action action-primary" type="button" style="width:100%;margin-top:16px">Export tracking CSV</button></div><a class="history-link" href="history.html">OPEN FULL HISTORY ↗</a></section>
 </main>
 <nav class="nav"><div class="nav-inner">
@@ -353,13 +363,36 @@ const cards=[...document.querySelectorAll('.tracker')];
 function recordId(card){return card.dataset.date+'-video-'+card.dataset.video;}
 function fmt(v){return Number(v||0).toLocaleString();}
 function records(){return Object.values(trackerData);}
+let calendarMonth=new Date();calendarMonth.setDate(1);
+let selectedCalendarDate=new Date().toISOString().slice(0,10);
+function renderCalendar(){
+ const grid=document.getElementById('calendar-grid');if(!grid)return;
+ const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
+ document.getElementById('month-label').textContent=calendarMonth.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+ const counts={};records().forEach(r=>{if(r.date)counts[r.date]=(counts[r.date]||0)+1;});
+ const first=new Date(year,month,1),offset=(first.getDay()+6)%7,days=new Date(year,month+1,0).getDate();
+ const names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+ grid.innerHTML=names.map(n=>'<div class="weekday">'+n+'</div>').join('');
+ for(let i=0;i<offset;i++)grid.insertAdjacentHTML('beforeend','<div></div>');
+ for(let day=1;day<=days;day++){
+  const date=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0'),count=counts[date]||0;
+  const b=document.createElement('button');b.type='button';b.className='calendar-day'+(count?' has-post':'')+(date===selectedCalendarDate?' selected':'');
+  b.textContent=day;if(count){const dot=document.createElement('span');dot.className='dot';b.appendChild(dot);}
+  b.addEventListener('click',()=>{selectedCalendarDate=date;renderCalendar();});grid.appendChild(b);
+ }
+ const dayRecords=records().filter(r=>r.date===selectedCalendarDate);
+ document.getElementById('selected-date-label').textContent=new Date(selectedCalendarDate+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ document.getElementById('selected-count').textContent=dayRecords.length+' publication'+(dayRecords.length===1?'':'s');
+ const list=document.getElementById('calendar-list');
+ list.innerHTML=dayRecords.length?dayRecords.map(r=>'<div class="list-row"><span>'+String(r.title||('Video '+r.video)).replace(/</g,'&lt;')+'</span><span>'+fmt(r.views)+' views</span></div>').join(''):'<p class="muted">No publications saved for this date.</p>';
+}
+document.getElementById('month-prev').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()-1);renderCalendar();});
+document.getElementById('month-next').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()+1);renderCalendar();});
 function updateDashboard(){
  const totals={views:0,likes:0,comments:0,shares:0};
  records().forEach(r=>Object.keys(totals).forEach(k=>totals[k]+=Number(r[k]||0)));
  Object.entries(totals).forEach(([k,v])=>{['total-'+k,'a-'+k].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(v);});});
- const sorted=records().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
- const cal=document.getElementById('calendar-list');
- if(cal)cal.innerHTML=sorted.length?sorted.map(r=>'<div class="list-row"><span>'+r.date+' · Video '+r.video+'</span><span>'+fmt(r.views)+' views</span></div>').join(''):'<p class="muted">No saved publications yet.</p>';
+ renderCalendar();
  const top=document.getElementById('top-posts');
  if(top)top.innerHTML=records().sort((a,b)=>Number(b.views||0)-Number(a.views||0)).slice(0,5).map(r=>'<div class="list-row"><span>'+r.date+' · Video '+r.video+'</span><b>'+fmt(r.views)+' views</b></div>').join('')||'<p class="muted">Add publication stats to see rankings.</p>';
  const summary=document.getElementById('today-summary');
@@ -377,11 +410,14 @@ cards.forEach(card=>{
   catch(e){card.querySelector('.saved-note').textContent='Could not save on this browser';}
  });
 });
-document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
- document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===btn.dataset.tab));
- document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b===btn));
+function activateTab(tab){
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===tab));
+ document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+ if(tab==='calendar')renderCalendar();
  window.scrollTo({top:0,behavior:'smooth'});
-}));
+}
+document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
+if(location.hash==='#content')activateTab('content');
 document.querySelectorAll('.copy,.copy-post').forEach(btn=>btn.addEventListener('click',async()=>{
  const value=JSON.parse(btn.dataset.prompt||btn.dataset.post),label=btn.textContent;
  try{
