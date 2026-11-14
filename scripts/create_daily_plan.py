@@ -120,19 +120,25 @@ def build_hashtags(category, scene):
 
 def build_prompt(scene, camera_note):
     return (
-        f"Create a quiet, beautiful nature video for TikTok and Instagram in vertical 9:16 format, showing {scene}. "
-        "Choose a fresh, varied natural place and composition; avoid repeating the same type of scenery every day. "
-        "The mood is calm, peaceful, beautiful and immersive, like a real visitor quietly capturing a special place on a good smartphone. "
+        f"Create a beautiful, immersive nature video for TikTok and Instagram in vertical 9:16 format, showing {scene}. "
+        "The setting must feel authentic to the current season in Warsaw and Central Europe. "
+        f"{seasonal_direction} "
+        "Keep the Quiet Place identity: peaceful and restorative, but visually captivating enough to make someone pause while scrolling. "
+        "Give the scene one clear visual focal point and a pleasing sense of depth, with foreground, middle distance and background where natural. "
+        "Use a richer, more expressive version of the real seasonal palette: warm amber, copper, golden yellow and deep earthy tones for autumn; "
+        "natural contrast and gentle color separation without oversaturation, artificial filters or a fake cinematic look. "
+        "Avoid flat, washed-out grey images. Even on an overcast day, preserve detail, subtle warmth and color in leaves, water and surroundings. "
+        "Light should remain believable and soft; a natural warm reflection or gentle brighter patch is welcome when plausible, never artificial sunbeams. "
         f"{camera_note} "
-        "Use natural, soft, realistic light, believable everyday colors and ordinary smartphone detail. "
+        "Keep the camera smooth and stable, with only subtle slow movement. The scene itself should have gently noticeable, continuous natural motion: "
+        "leaves drifting or swaying, water rippling, rain falling, branches moving softly or reflections changing. "
+        "Make the motion soothing but visible; avoid a lifeless frozen frame and avoid gusty, chaotic movement. "
         "No people, crowds, speech, talking or music with lyrics. Use only soft, authentic ambient sound from this place. "
-        "Aim for a seamless natural loop: the ending should flow smoothly into the beginning, with matching framing and no visible cut. "
-        "Use cyclical, physically believable natural movement where suitable, such as a wave coming and going, grass swaying back and forth, "
-        "leaves moving gently or steady snowfall. Keep movement calm and consistent. "
-        "No drone shots, sweeping camera moves, fast cuts, transitions or slow motion. "
-        "No cinematic grading, dramatic sun rays, exaggerated fog or mist, artificial bokeh, visual effects, text, subtitles, logos or watermarks. "
-        "Beautiful, clean and realistic, but not overly polished or synthetic; small natural imperfections are welcome. "
-        "Avoid flicker, stutter, morphing, warping, duplicated objects, abrupt changes or unstable backgrounds."
+        "Aim for a seamless natural loop where suitable: the ending should flow smoothly into the beginning, with matching framing and no visible cut. "
+        "Use cyclical, physically believable movement. No drone shots, sweeping camera moves, fast cuts, transitions or slow motion. "
+        "No artificial bokeh, visual effects, text, subtitles, logos or watermarks. "
+        "Beautiful, clean and realistic, with natural imperfections; not overly polished or synthetic. "
+        "Avoid camera shake, jitter, vibration, flicker, stutter, morphing, warping, duplicated objects, abrupt changes or unstable backgrounds."
     )
 
 video_packages = []
@@ -168,8 +174,9 @@ for index, (category, scene) in enumerate(selected, start=1):
         "QUIET PLACE — VIDEO QUALITY CHECK\n\n"
         "[ ] Vertical 9:16 format\n"
         "[ ] Looks like a real place filmed casually on a good smartphone\n"
-        "[ ] Natural light and believable colors\n"
+        "[ ] Natural seasonal setting and visibly rich but believable seasonal colors\n"
         "[ ] Camera is mostly steady; no shake, jitter, fast pans, tilts or zooms\n"
+        "[ ] Clear visual focal point, pleasing depth and visible but gentle natural movement\n"
         "[ ] Natural motion is smooth and physically believable; no flicker, stutter, morphing or warping\n"
         "[ ] Ending flows naturally into the beginning where a seamless loop is intended\n"
         "[ ] Ambient environmental sound only; no music\n"
@@ -232,7 +239,8 @@ lines.extend([
     "",
     "- Authentic everyday realism matters more than cinematic beauty.",
     "- Each video should feel like a casual phone recording of a real place.",
-    "- Use natural light, believable colors and ordinary camera framing.",
+    "- Use soft natural light, rich but believable seasonal colors, a clear focal point and visual depth.",
+    "- Make scenes visually engaging without sacrificing the calm, realistic Quiet Place identity.",
     "- Keep the camera stable and mostly steady; allow only very subtle slow movement, never jitter or fast sweeping.\n"
     "- Prefer seamless natural loops with matching start/end framing and cyclical movement where suitable.\n"
     "- Keep subject movement smooth and physically believable; reject flicker, stutter, morphing or warping.",
