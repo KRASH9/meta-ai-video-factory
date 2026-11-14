@@ -5,7 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "0 7 * * *"
+    # GitHub cron is UTC. Check both DST offsets; the gate runs only at 05:00 Warsaw time.
+    - cron: "0 3,4 * * *"
 
 permissions:
   contents: read
@@ -23,18 +24,31 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Check Warsaw schedule time
+        id: timecheck
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$(TZ=Europe/Warsaw date +%H)" = "05" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout repository
+        if: steps.timecheck.outputs.run == 'true'
         uses: actions/checkout@v5
 
       - name: Set up Python
+        if: steps.timecheck.outputs.run == 'true'
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
       - name: Generate Quiet Place content
+        if: steps.timecheck.outputs.run == 'true'
         run: python scripts/create_daily_plan.py
 
       - name: Save daily content package
+        if: steps.timecheck.outputs.run == 'true'
         uses: actions/upload-artifact@v5
         with:
           name: quiet-place-daily-content
@@ -42,10 +56,12 @@ jobs:
           retention-days: 7
 
       - name: Upload site to GitHub Pages
+        if: steps.timecheck.outputs.run == 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: output/
 
       - name: Deploy to GitHub Pages
+        if: steps.timecheck.outputs.run == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
