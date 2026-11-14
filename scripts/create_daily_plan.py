@@ -6,7 +6,8 @@ import random
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "topics.json"
-OUTPUT = ROOT / "output" / "daily-plan.md"
+OUTPUT_DIR = ROOT / "output"
+PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 today = datetime.now(WARSAW).date()
@@ -38,21 +39,10 @@ for category in required_categories:
     selected.append((category, scene))
     used_scenes.add(scene)
 
-# Different simple phone-camera approaches keep the three videos from
-# feeling like copies while preserving the everyday, non-cinematic look.
 camera_approaches = [
-    (
-        "Hold the phone at a natural standing height from the edge of the "
-        "scene. Keep the view mostly steady, with only subtle hand movement."
-    ),
-    (
-        "Film from a nearby natural viewpoint, including a little foreground "
-        "detail. Make no deliberate camera move; let the scene provide the motion."
-    ),
-    (
-        "Use an ordinary wider phone view from a nearby path or open spot. "
-        "Keep the framing casual and slightly imperfect, as in a real visit."
-    )
+    "Hold the phone at a natural standing height from the edge of the scene. Keep the view mostly steady, with only subtle hand movement.",
+    "Film from a nearby natural viewpoint, including a little foreground detail. Make no deliberate camera move; let the scene provide the motion.",
+    "Use an ordinary wider phone view from a nearby path or open spot. Keep the framing casual and slightly imperfect, as in a real visit."
 ]
 
 captions = {
@@ -61,6 +51,25 @@ captions = {
     "Cozy Quiet Places": "Some places make you breathe a little easier. 🤍"
 }
 
+hashtags = "#QuietPlace #PeacefulMoments #NatureSounds #SlowLiving #RelaxingNature"
+
+def build_prompt(scene, camera_note):
+    return (
+        f"Create a realistic casual smartphone video in vertical 9:16 format, showing {scene}. "
+        "It should feel like a visitor quietly filmed a real place on a good phone, "
+        "not like a movie, advert or staged travel production. "
+        f"{camera_note} "
+        "Use natural available daylight, realistic exposure, believable everyday colors "
+        "and ordinary smartphone detail. Preserve small imperfections in framing; do not "
+        "make the scene look artificially perfect. Show only movement that naturally "
+        "belongs there, such as flowing water, leaves moving or rain falling. "
+        "Use authentic environmental sound only. "
+        "No cinematic lighting, color grading, dramatic sun rays, exaggerated fog or mist, "
+        "artificial bokeh, slow motion, drone view, sweeping camera movement, visual effects, "
+        "music, people, crowds, text, logos or transitions. "
+        "Avoid the polished synthetic look of AI-generated footage."
+    )
+
 lines = [
     "# QUIET PLACE — Daily Content Plan",
     "",
@@ -68,29 +77,33 @@ lines = [
     "Brand: Quiet Place",
     "Mission: Leave the noise behind.",
     "",
-    "Create three peaceful, original videos using Meta AI.",
+    "Three ready-to-produce videos. Individual copy-ready files are included in this package.",
     "The goal is a believable quiet moment, not a cinematic travel scene.",
     ""
 ]
 
 for index, (category, scene) in enumerate(selected, start=1):
     camera_note = camera_approaches[index - 1]
-    prompt = (
-        f"Create a realistic casual smartphone video in vertical 9:16 format, "
-        f"showing {scene}. "
-        "It should feel like a visitor quietly filmed a real place on a good "
-        "phone, not like a movie, advert or staged travel production. "
-        f"{camera_note} "
-        "Use natural available daylight, realistic exposure, believable "
-        "everyday colors and ordinary smartphone detail. Preserve small "
-        "imperfections in framing; do not make the scene look artificially "
-        "perfect. Show only movement that naturally belongs there, such as "
-        "flowing water, leaves moving or rain falling. "
-        "Use authentic environmental sound only. "
-        "No cinematic lighting, color grading, dramatic sun rays, exaggerated "
-        "fog or mist, artificial bokeh, slow motion, drone view, sweeping "
-        "camera movement, visual effects, music, people, crowds, text, logos "
-        "or transitions. Avoid the polished synthetic look of AI-generated footage."
+    prompt = build_prompt(scene, camera_note)
+    caption = captions[category]
+    video_dir = OUTPUT_DIR / f"video-{index:02d}"
+    video_dir.mkdir(parents=True, exist_ok=True)
+
+    (video_dir / "01-meta-ai-prompt.txt").write_text(prompt + "\n", encoding="utf-8")
+    (video_dir / "02-tiktok-caption-and-hashtags.txt").write_text(
+        f"{caption}\n\n{hashtags}\n", encoding="utf-8"
+    )
+    (video_dir / "03-quality-checklist.txt").write_text(
+        "QUIET PLACE — VIDEO QUALITY CHECK\n\n"
+        "[ ] Vertical 9:16 format\n"
+        "[ ] Looks like a real place filmed casually on a good smartphone\n"
+        "[ ] Natural light and believable colors\n"
+        "[ ] Natural movement; no artificial camera moves\n"
+        "[ ] Ambient environmental sound only; no music\n"
+        "[ ] No text, logos, visual effects or transitions\n"
+        "[ ] No visible generation defects or strange objects\n"
+        "[ ] Suitable for the calm Quiet Place identity\n",
+        encoding="utf-8"
     )
 
     lines.extend([
@@ -98,9 +111,7 @@ for index, (category, scene) in enumerate(selected, start=1):
         "",
         f"**Scene:** {scene}",
         "",
-        "**Camera approach:**",
-        "",
-        camera_note,
+        f"**Camera approach:** {camera_note}",
         "",
         "**Meta AI prompt:**",
         "",
@@ -108,19 +119,21 @@ for index, (category, scene) in enumerate(selected, start=1):
         "",
         "**TikTok caption:**",
         "",
-        captions[category],
+        caption,
         "",
         "**Hashtags:**",
         "",
-        "#QuietPlace #PeacefulMoments #NatureSounds #SlowLiving #RelaxingNature",
+        hashtags,
         "",
-        "**Production checklist:**",
+        f"**Copy-ready folder:** video-{index:02d}/",
         "",
-        "- [ ] Generate in Meta AI",
-        "- [ ] Save the video",
-        "- [ ] Check that the place and movement look natural",
-        "- [ ] Check ambient sound and vertical format",
-        "- [ ] Prepare for TikTok",
+        "**Quality checklist:**",
+        "",
+        "- [ ] Vertical 9:16 format",
+        "- [ ] Natural, believable smartphone footage",
+        "- [ ] Natural movement and ambient sound",
+        "- [ ] No visual defects, text or logos",
+        "- [ ] Suitable for Quiet Place",
         ""
     ])
 
@@ -136,16 +149,15 @@ lines.extend([
     "- Use natural ambient sound only; no background music.",
     "- The three videos must use different scenes and camera approaches.",
     "- Scene selection comes from config/topics.json.",
-    "- This planner selects scenes for the current day; it does not yet keep "
-    "a persistent history of previously published scenes.",
+    "- This planner does not yet keep a persistent history of previously published scenes.",
     "- Never publish a defective or unsuitable video.",
     ""
 ])
 
-OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-OUTPUT.write_text("\n".join(lines), encoding="utf-8")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+PLAN_FILE.write_text("\n".join(lines), encoding="utf-8")
 
-print(f"Quiet Place plan created: {OUTPUT}")
+print(f"Quiet Place package created: {OUTPUT_DIR}")
 print(f"Date: {today.isoformat()}")
 print("Videos planned: 3")
 for index, (category, scene) in enumerate(selected, start=1):
