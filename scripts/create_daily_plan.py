@@ -10,6 +10,7 @@ CONFIG = ROOT / "config" / "topics.json"
 OUTPUT_DIR = ROOT / "output"
 PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 DASHBOARD_FILE = OUTPUT_DIR / "index.html"
+HISTORY_FILE = OUTPUT_DIR / "history.html"
 META_AI_CHAT_URL = "https://www.meta.ai/share/c/iqLO8gdyHr?utm_source=android_meta_ai_sl"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
@@ -306,6 +307,7 @@ button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15
 <p class="muted">DATE_PLACEHOLDER · PROMPTS_CREATED_PLACEHOLDER · 3 videos · prompts + TikTok publishing text</p>
 <a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">PUBLICATION</a>
 <a class="primary" style="background:#252a24;color:#f3f3ef" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">Open Quiet Place on TikTok</a>
+<a class="primary" style="background:#30362e;color:#f3f3ef" href="history.html">PUBLICATION HISTORY &amp; ANALYTICS</a>
 <div id="status" class="status" aria-live="polite">Copy a video prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
 <section class="analytics">
   <div class="eyebrow">PUBLICATION TRACKER</div><h2>Daily performance</h2>
@@ -375,6 +377,68 @@ document.querySelectorAll('.copy,.copy-post').forEach(button=>{
 </body></html>"""
 dashboard = dashboard.replace("DATE_PLACEHOLDER", today.isoformat()).replace("PROMPTS_CREATED_PLACEHOLDER", "Created " + generated_at.strftime("%H:%M:%S %Z") + " (Warsaw time)").replace("META_AI_URL_PLACEHOLDER", META_AI_CHAT_URL)
 DASHBOARD_FILE.write_text(dashboard, encoding="utf-8")
+
+# Dedicated history page, sharing the same browser-local tracker store as the daily studio.
+history_page = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiet Place — Publication History</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:20px;background:#101110;color:#f3f3ef;font:15px/1.5 system-ui,-apple-system,sans-serif}
+main{max-width:760px;margin:auto}.muted,small{color:#a8aaa4}.eyebrow{font-size:12px;letter-spacing:.12em;color:#b9c5a8;font-weight:700}
+h1{font-size:27px;margin:8px 0}h2{font-size:19px;margin:8px 0 14px}
+a{color:#c7d4b8}.back{display:inline-block;margin:8px 0 18px;text-decoration:none}
+.panel,.entry{background:#1b1d1a;border:1px solid #343731;border-radius:15px;padding:16px;margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#101310;border-radius:10px;padding:12px}.metric strong{display:block;font-size:22px}.metric span{font-size:12px;color:#a8aaa4}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.controls select,.controls button{background:#252a24;color:#f3f3ef;border:1px solid #454a40;border-radius:9px;padding:10px;font:inherit}
+.entry h3{font-size:16px;margin:5px 0 8px}.meta{font-size:12px;color:#a8aaa4}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}.stats div{background:#101310;padding:8px;border-radius:8px;font-size:12px}.stats b{display:block;font-size:16px}
+.pill{display:inline-block;border:1px solid #53604c;border-radius:20px;padding:2px 8px;font-size:11px;color:#c7d4b8}
+.empty{padding:20px;text-align:center;color:#a8aaa4}.danger{color:#e6b4a9}.url{overflow-wrap:anywhere}
+</style></head><body><main>
+<div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div><h1>Publication History &amp; Analytics</h1>
+<p class="muted">Your saved TikTok publication records, across daily content plans.</p>
+<a class="back" href="index.html">← Back to Daily Content Studio</a>
+<section class="panel"><div class="eyebrow">CHANNEL OVERVIEW</div><h2>All saved publications</h2>
+<div class="grid">
+<div class="metric"><strong id="count">0</strong><span>Publications tracked</span></div>
+<div class="metric"><strong id="views">0</strong><span>Total views</span></div>
+<div class="metric"><strong id="likes">0</strong><span>Total likes</span></div>
+<div class="metric"><strong id="engagement">0</strong><span>Interactions (likes + comments + shares)</span></div>
+</div></section>
+<section class="panel"><h2>Browse records</h2><div class="controls">
+<select id="sort"><option value="newest">Newest first</option><option value="views">Most views</option><option value="likes">Most likes</option></select>
+<select id="status"><option value="all">All statuses</option><option value="published">Published</option><option value="created">Created</option><option value="checked">Quality checked</option><option value="planned">Planned</option></select>
+</div><div id="records"></div></section>
+<p class="muted">Data is read from the same browser storage as Daily Content Studio. It stays on this device and browser; clearing site data or switching devices can remove or hide it. Export CSV from the studio regularly as a backup.</p>
+</main><script>
+const key='quiet-place-publication-tracker-v1';let data={};
+try{data=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){data={};}
+const fmt=n=>Number(n||0).toLocaleString();
+const records=Object.values(data).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||Number(b.video)-Number(a.video));
+const sum=k=>records.reduce((s,r)=>s+Number(r[k]||0),0);
+document.getElementById('count').textContent=records.length;
+document.getElementById('views').textContent=fmt(sum('views'));
+document.getElementById('likes').textContent=fmt(sum('likes'));
+document.getElementById('engagement').textContent=fmt(sum('likes')+sum('comments')+sum('shares'));
+function render(){
+ const sort=document.getElementById('sort').value,status=document.getElementById('status').value;
+ let list=records.filter(r=>status==='all'||(r.status||'planned')===status);
+ if(sort==='views')list.sort((a,b)=>Number(b.views||0)-Number(a.views||0));
+ if(sort==='likes')list.sort((a,b)=>Number(b.likes||0)-Number(a.likes||0));
+ const root=document.getElementById('records');
+ if(!list.length){root.innerHTML='<div class="empty">No saved publication records yet. Save a video in Daily Content Studio and it will appear here.</div>';return;}
+ root.innerHTML=list.map(r=>{
+ const statusLabel=(r.status||'planned').replace('checked','quality checked');
+ const link=r.url?'<p class="url"><a href="'+String(r.url).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" target="_blank" rel="noopener">Open TikTok publication ↗</a></p>':'<p class="meta">No TikTok URL saved</p>';
+ return '<article class="entry"><div class="meta">'+(r.date||'Date not set')+' · Video '+(r.video||'?')+'</div><h3>Quiet Place publication</h3><span class="pill">'+statusLabel+'</span>'+link+
+ '<div class="stats"><div><b>'+fmt(r.views)+'</b>Views</div><div><b>'+fmt(r.likes)+'</b>Likes</div><div><b>'+fmt(r.comments)+'</b>Comments</div><div><b>'+fmt(r.shares)+'</b>Shares</div></div><div class="meta">Last saved: '+(r.updatedAt||'—')+'</div></article>';
+ }).join('');
+}
+document.getElementById('sort').addEventListener('change',render);
+document.getElementById('status').addEventListener('change',render);
+render();
+</script></body></html>"""
+HISTORY_FILE.write_text(history_page, encoding="utf-8")
+
 
 print(f"Quiet Place package created: {OUTPUT_DIR}")
 print(f"Date: {today.isoformat()}")
