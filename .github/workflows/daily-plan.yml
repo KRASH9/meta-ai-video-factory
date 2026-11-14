@@ -1,0 +1,32 @@
+
+name: Daily video plan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  create-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create daily plan
+        run: python scripts/create_daily_plan.py
+
+      - name: Upload plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-video-plan
+          path: output/daily-plan.md
+          retention-days: 7
