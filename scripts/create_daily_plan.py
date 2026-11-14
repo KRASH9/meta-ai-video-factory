@@ -10,7 +10,7 @@ CONFIG = ROOT / "config" / "topics.json"
 OUTPUT_DIR = ROOT / "output"
 PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 DASHBOARD_FILE = OUTPUT_DIR / "index.html"
-META_AI_CHAT_URL = "https://www.meta.ai/vibes"
+META_AI_CHAT_URL = "https://www.meta.ai/?utm_source=android_meta_ai_sl&utm_campaign=igd_convo_share"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 today = datetime.now(WARSAW).date()
