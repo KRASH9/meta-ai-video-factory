@@ -64,19 +64,21 @@ lines = [
 
 for index, (category, scene) in enumerate(selected, start=1):
     prompt = (
-        f"Create a peaceful, photorealistic vertical 9:16 video "
+        f"Create a realistic casual smartphone video, vertical 9:16, "
         f"showing {scene}. "
-        "Make the environment feel quiet, safe and natural. "
-        "Use soft realistic daylight, natural colors and gentle "
-        "atmospheric detail. "
-        "Show subtle continuous movement: water, leaves, clouds, "
-        "rain or mist, depending on the scene. "
-        "Use a static camera or extremely slow smooth movement. "
-        "Preserve visual consistency and make the ending connect "
-        "naturally to the beginning for a possible seamless loop. "
-        "Prioritize authentic ambient sounds of the environment. "
-        "No people, no crowds, no text, no logos, no fast cuts, "
-        "no dramatic effects, no artificial visual spectacle."
+        "Make it look like a real place casually filmed by a visitor, "
+        "not a movie, travel commercial or professionally staged production. "
+        "Use ordinary natural daylight, believable colors and realistic "
+        "smartphone camera detail. Keep natural imperfections in framing "
+        "and exposure; slight handheld movement is acceptable. "
+        "Show only the movement that would naturally happen in the scene. "
+        "Keep the composition simple and believable. "
+        "Use authentic ambient environmental sound only. "
+        "No cinematic lighting, no color grading, no dramatic sun rays, "
+        "no exaggerated fog or mist, no artificial bokeh, no slow motion, "
+        "no drone shots, no sweeping camera moves, no visual effects, "
+        "no music, no people, no crowds, no text, no logos, no transitions. "
+        "Avoid the polished, synthetic look of AI-generated footage."
     )
 
     caption = {
@@ -118,9 +120,11 @@ lines.extend([
     "",
     "## Daily quality standards",
     "",
-    "- Calm atmosphere is more important than spectacle.",
-    "- No unnecessary transitions or fast editing.",
-    "- Natural ambient sound is preferred.",
+    "- Authentic everyday realism is more important than cinematic beauty.",
+    "- Videos should feel like casual smartphone footage of a real place.",
+    "- Use natural light, believable colors and ordinary camera framing.",
+    "- Avoid cinematic grading, dramatic effects and artificial perfection.",
+    "- Natural ambient sound is preferred; no background music.",
     "- Avoid repeating recently published scenes.",
     "- Never publish a defective or unsuitable video.",
     ""
