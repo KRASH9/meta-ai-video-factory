@@ -447,10 +447,10 @@ button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:700;font-
 .tracker{border-top:1px solid var(--line);margin-top:15px;padding-top:13px;display:grid;gap:10px}.tracker label{display:grid;gap:5px;font-size:12px;color:#bbb}
 .tracker input,.tracker select{width:100%;background:#101010;color:white;border:1px solid #414141;border-radius:9px;padding:11px;font:inherit}
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record{background:var(--orange);color:#1a1009}.saved-note{font-size:11px;color:#999}.status{color:#ffad72;font-size:12px}
-</style></head><body><main><div class="top"><span>🟠 QUIET PLACE</span><span>LEAVE THE NOISE BEHIND</span></div>
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#151515;display:grid;grid-template-columns:repeat(5,1fr);padding:10px 4px;z-index:20}.bottom-nav a{text-align:center;color:#999;text-decoration:none;font-size:11px;padding:6px 1px}.bottom-nav b{display:block;font-size:18px}.bottom-nav .active{color:#ff7a24}</style></head><body><main><div class="top"><span>🟠 QUIET PLACE</span><span>LEAVE THE NOISE BEHIND</span></div>
 <a class="back" href="index.html">← Back to Overview</a><h1>Content Studio</h1><p class="muted">Three daily prompts · Meta AI video prompts · TikTok captions and tracking</p><div id="status" class="status">Copy a prompt, create your video, then save publication details.</div>
 """ + "\n".join(cards) + """
-</main><script>
+</main><nav class="bottom-nav"><a href="index.html"><b>⌂</b>Overview</a><a href="calendar.html"><b>▦</b>Calendar</a><a class="active" href="content.html"><b>▤</b>Content</a><a href="analytics.html"><b>▥</b>Analytics</a><a href="history.html"><b>↗</b>History</a></nav><script>
 const key='quiet-place-publication-tracker-v1';let data={};try{data=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}
 document.querySelectorAll('.copy,.copy-post').forEach(b=>b.addEventListener('click',async()=>{const value=JSON.parse(b.dataset.prompt||b.dataset.post);try{if(navigator.clipboard&&isSecureContext)await navigator.clipboard.writeText(value);else{const t=document.createElement('textarea');t.value=value;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error();t.remove();}document.getElementById('status').textContent='Copied ✓';}catch(e){document.getElementById('status').textContent='Copy blocked by browser. Try again.';}}));
 document.querySelectorAll('.tracker').forEach(card=>{const id=card.dataset.date+'-video-'+card.dataset.video,old=data[id]||{};card.querySelectorAll('[data-field]').forEach(f=>{if(old[f.dataset.field]!==undefined)f.value=old[f.dataset.field];});if(old.updatedAt)card.querySelector('.saved-note').textContent='Saved '+old.updatedAt;card.querySelector('.save-record').addEventListener('click',()=>{const r={date:card.dataset.date,video:card.dataset.video};card.querySelectorAll('[data-field]').forEach(f=>r[f.dataset.field]=f.value);r.updatedAt=new Date().toLocaleString();data[id]=r;try{localStorage.setItem(key,JSON.stringify(data));card.querySelector('.saved-note').textContent='Saved '+r.updatedAt;}catch(e){card.querySelector('.saved-note').textContent='Could not save';}});});
@@ -473,7 +473,7 @@ a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 .entry h3{font-size:16px;margin:5px 0 8px}.meta{font-size:12px;color:#a8aaa4}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}.stats div{background:#101010;padding:8px;border-radius:8px;font-size:12px}.stats b{display:block;font-size:16px}
 .pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:11px;color:#ffb17b}
 .empty{padding:20px;text-align:center;color:#a8aaa4}.danger{color:#e6b4a9}.url{overflow-wrap:anywhere}
-</style></head><body><main>
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#151515;display:grid;grid-template-columns:repeat(5,1fr);padding:10px 4px;z-index:20}.bottom-nav a{text-align:center;color:#999;text-decoration:none;font-size:11px;padding:6px 1px}.bottom-nav b{display:block;font-size:18px}.bottom-nav .active{color:#ff7a24}</style></head><body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div><h1>Publication History &amp; Analytics</h1>
 <p class="muted">Your saved TikTok publication records, across daily content plans.</p>
 <div class="history-actions"><a class="back" href="index.html">← Overview</a><a class="back primary-back" href="index.html#content">← Back to publications / Content Studio</a></div>
@@ -502,7 +502,7 @@ a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 <select id="status"><option value="all">All statuses</option><option value="published">Published</option><option value="created">Created</option><option value="checked">Quality checked</option><option value="planned">Planned</option></select>
 </div><div id="records"></div></section>
 <p class="muted">Data is read from the same browser storage as Daily Content Studio. It stays on this device and browser; clearing site data or switching devices can remove or hide it. Export CSV from the studio regularly as a backup.</p>
-</main><script>
+</main><nav class="bottom-nav"><a href="index.html"><b>⌂</b>Overview</a><a href="calendar.html"><b>▦</b>Calendar</a><a href="content.html"><b>▤</b>Content</a><a href="analytics.html"><b>▥</b>Analytics</a><a class="active" href="history.html"><b>↗</b>History</a></nav><script>
 const key='quiet-place-publication-tracker-v1';let data={};
 try{data=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){data={};}
 const fmt=n=>Number(n||0).toLocaleString();
