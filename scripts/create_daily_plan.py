@@ -86,7 +86,33 @@ captions = {
     "Cozy Quiet Places": "Some places make you breathe a little easier. 🤍"
 }
 
-hashtags = "#QuietPlace #PeacefulMoments #NatureSounds #SlowLiving #RelaxingNature"
+# Keep a small brand core, then match the remaining tags to the actual scene.
+brand_hashtags = ["#QuietPlace", "#SlowLiving"]
+
+def build_hashtags(category, scene):
+    text = scene.lower()
+    tags = []
+    if any(word in text for word in ("rain", "rainy", "shower", "wet")):
+        tags += ["#RainSounds", "#RainyDay", "#AutumnRain"]
+    if any(word in text for word in ("forest", "woodland", "birch", "pine", "tree", "trees")):
+        tags += ["#ForestSounds", "#AutumnForest", "#ForestWalk"]
+    if any(word in text for word in ("lake", "river", "waterfall", "water", "shore", "beach", "waves", "pond", "tide")):
+        tags += ["#NatureSounds", "#WaterSounds", "#PeacefulNature"]
+    if any(word in text for word in ("mist", "fog", "cloud", "overcast")):
+        tags += ["#MistyMorning", "#QuietMoments", "#MoodyNature"]
+    if any(word in text for word in ("street", "village", "cottage", "courtyard", "veranda", "cabin", "bench", "cobblestone")):
+        tags += ["#QuietPlaces", "#HiddenPlaces", "#SlowLiving"]
+    if season_name == "autumn":
+        tags += ["#AutumnVibes", "#LateAutumn"]
+    elif season_name == "winter":
+        tags += ["#WinterNature", "#WinterMood"]
+    elif season_name == "spring":
+        tags += ["#SpringNature", "#SpringMood"]
+    else:
+        tags += ["#SummerNature", "#SummerMood"]
+    # Preserve order and avoid duplicates; use up to five relevant tags.
+    unique = list(dict.fromkeys(brand_hashtags + tags))
+    return " ".join(unique[:5])
 
 def build_prompt(scene, camera_note):
     return (
@@ -131,7 +157,7 @@ for index, (category, scene) in enumerate(selected, start=1):
 
     (video_dir / "01-meta-ai-prompt.txt").write_text(prompt + "\n", encoding="utf-8")
     (video_dir / "02-tiktok-caption-and-hashtags.txt").write_text(
-        f"{caption}\n\n{hashtags}\n", encoding="utf-8"
+        f"{caption}\n\n{video_hashtags}\n", encoding="utf-8"
     )
     (video_dir / "03-quality-checklist.txt").write_text(
         "QUIET PLACE — VIDEO QUALITY CHECK\n\n"
