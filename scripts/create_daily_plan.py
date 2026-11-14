@@ -10,7 +10,7 @@ CONFIG = ROOT / "config" / "topics.json"
 OUTPUT_DIR = ROOT / "output"
 PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 DASHBOARD_FILE = OUTPUT_DIR / "index.html"
-META_AI_CHAT_URL = "https://www.meta.ai/share/c/L12c13fOl4?utm_source=android_meta_ai_sl"
+META_AI_CHAT_URL = "https://www.meta.ai/"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 today = datetime.now(WARSAW).date()
@@ -164,7 +164,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PLAN_FILE.write_text("\n".join(lines), encoding="utf-8")
 
 
-# Mobile dashboard: copy a prompt, then open the existing Meta AI conversation.
+# Mobile dashboard: copy a prompt, then open the Meta AI website.
 cards = []
 for item in video_packages:
     prompt_json = json.dumps(item["prompt"], ensure_ascii=False).replace("</", "<\\/")
@@ -199,7 +199,7 @@ button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div>
 <h1>Daily Content Studio</h1>
 <p class="muted">DATE_PLACEHOLDER · Three copy-ready video prompts</p>
-<a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open your Meta AI conversation</a>
+<a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Meta AI</a>
 <div id="status" class="status" aria-live="polite">Choose a video and copy its prompt. Then paste it into Meta AI.</div>
 """ + "\\n".join(cards) + """
 <p class="note">This dashboard prepares and copies prompts only. Meta AI video generation and saving the finished video still require your action.</p>
