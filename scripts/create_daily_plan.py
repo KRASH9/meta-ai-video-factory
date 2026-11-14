@@ -447,7 +447,7 @@ history_page = """<!doctype html>
 main{max-width:760px;margin:auto}.muted,small{color:#a1a1a1}.eyebrow{font-size:12px;letter-spacing:.12em;color:#ff9a52;font-weight:700}
 h1{font-size:27px;margin:8px 0}h2{font-size:19px;margin:8px 0 14px}
 a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:none}
-.panel,.entry{background:#191919;border:1px solid #303030;border-radius:15px;padding:16px;margin:14px 0}
+.history-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 18px}.history-actions .back{margin:0;padding:10px 13px;border:1px solid #57351e;border-radius:10px;text-decoration:none}.history-actions .primary-back{background:#ff7a24;color:#1a1009;border-color:#ff7a24;font-weight:700}\n.panel,.entry{background:#191919;border:1px solid #303030;border-radius:15px;padding:16px;margin:14px 0}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#101010;border-radius:10px;padding:12px}.metric strong{display:block;font-size:22px}.metric span{font-size:12px;color:#a8aaa4}
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.controls select,.controls button{background:#303030;color:#f3f3ef;border:1px solid #494949;border-radius:9px;padding:10px;font:inherit}
 .entry h3{font-size:16px;margin:5px 0 8px}.meta{font-size:12px;color:#a8aaa4}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}.stats div{background:#101010;padding:8px;border-radius:8px;font-size:12px}.stats b{display:block;font-size:16px}
@@ -456,7 +456,7 @@ a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 </style></head><body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div><h1>Publication History &amp; Analytics</h1>
 <p class="muted">Your saved TikTok publication records, across daily content plans.</p>
-<a class="back" href="index.html">← Back to Daily Content Studio</a>
+<div class="history-actions"><a class="back" href="index.html">← Overview</a><a class="back primary-back" href="index.html#content">← Back to publications / Content Studio</a></div>
 <section class="panel"><div class="eyebrow">CHANNEL OVERVIEW</div><h2>All saved publications</h2>
 <div class="grid">
 <div class="metric"><strong id="count">0</strong><span>Publications tracked</span></div>
