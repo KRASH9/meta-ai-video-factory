@@ -322,7 +322,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <div class="hero-actions"><a class="action action-primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Meta AI ↗</a><a class="action action-secondary" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">TikTok profile ↗</a></div></div>
 <section class="panel"><div class="eyebrow">CHANNEL OVERVIEW</div><div class="section-head"><h2>Performance</h2><small>Saved records</small></div>
 <div class="kpis"><div class="metric"><strong id="total-views">0</strong><span>Views</span></div><div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div><div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div></div>
-<svg class="growth" viewBox="0 0 600 120" preserveAspectRatio="none" aria-label="Illustrative performance trend"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff7a24" stop-opacity=".35"/><stop offset="1" stop-color="#38b879" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12 L600 120 L0 120Z" fill="url(#area)"/><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12" fill="none" stroke="#ff7a24" stroke-width="3"/></svg>
+<svg class="growth" viewBox="0 0 600 120" preserveAspectRatio="none" aria-label="Illustrative performance trend"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff7a24" stop-opacity=".35"/><stop offset="1" stop-color="#ff7a24" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12 L600 120 L0 120Z" fill="url(#area)"/><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12" fill="none" stroke="#ff7a24" stroke-width="3"/></svg>
 <div class="chart-labels"><span>Recent</span><span>Performance history</span><span>Today</span></div>
 <p class="note">The line is a visual placeholder until enough dated performance snapshots are recorded. Totals use saved publication data.</p>
 </section>
@@ -411,11 +411,11 @@ history_page = """<!doctype html>
 main{max-width:760px;margin:auto}.muted,small{color:#a1a1a1}.eyebrow{font-size:12px;letter-spacing:.12em;color:#ff9a52;font-weight:700}
 h1{font-size:27px;margin:8px 0}h2{font-size:19px;margin:8px 0 14px}
 a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:none}
-.panel,.entry{background:#1b1d1a;border:1px solid #303030;border-radius:15px;padding:16px;margin:14px 0}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#101310;border-radius:10px;padding:12px}.metric strong{display:block;font-size:22px}.metric span{font-size:12px;color:#a8aaa4}
+.panel,.entry{background:#191919;border:1px solid #303030;border-radius:15px;padding:16px;margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:#101010;border-radius:10px;padding:12px}.metric strong{display:block;font-size:22px}.metric span{font-size:12px;color:#a8aaa4}
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.controls select,.controls button{background:#303030;color:#f3f3ef;border:1px solid #494949;border-radius:9px;padding:10px;font:inherit}
-.entry h3{font-size:16px;margin:5px 0 8px}.meta{font-size:12px;color:#a8aaa4}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}.stats div{background:#101310;padding:8px;border-radius:8px;font-size:12px}.stats b{display:block;font-size:16px}
-.pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:11px;color:#c7d4b8}
+.entry h3{font-size:16px;margin:5px 0 8px}.meta{font-size:12px;color:#a8aaa4}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}.stats div{background:#101010;padding:8px;border-radius:8px;font-size:12px}.stats b{display:block;font-size:16px}
+.pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:11px;color:#ffb17b}
 .empty{padding:20px;text-align:center;color:#a8aaa4}.danger{color:#e6b4a9}.url{overflow-wrap:anywhere}
 </style></head><body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div><h1>Publication History &amp; Analytics</h1>
@@ -431,15 +431,15 @@ a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 <section class="panel"><h2>Add an older TikTok publication</h2>
 <p class="muted">Enter a link and the current or historical statistics. This record will be added to your publication archive.</p>
 <div class="controls" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
-<label>Publication date<input id="old-date" type="date" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
-<label>Video title / scene<input id="old-title" type="text" placeholder="e.g. Rainy forest" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
-<label style="grid-column:1/-1">TikTok video URL<input id="old-url" type="url" placeholder="https://www.tiktok.com/..." style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
-<label>Views<input id="old-views" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
-<label>Likes<input id="old-likes" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
-<label>Comments<input id="old-comments" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
-<label>Shares<input id="old-shares" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101310;color:#f3f3ef;border:1px solid #454a40;border-radius:9px"></label>
+<label>Publication date<input id="old-date" type="date" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
+<label>Video title / scene<input id="old-title" type="text" placeholder="e.g. Rainy forest" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
+<label style="grid-column:1/-1">TikTok video URL<input id="old-url" type="url" placeholder="https://www.tiktok.com/..." style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
+<label>Views<input id="old-views" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
+<label>Likes<input id="old-likes" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
+<label>Comments<input id="old-comments" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
+<label>Shares<input id="old-shares" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
 </div>
-<button id="add-old" type="button" style="width:100%;padding:13px;background:#b9c5a8;color:#1a1009;border:0;border-radius:10px;font-weight:700">Add to publication history</button>
+<button id="add-old" type="button" style="width:100%;padding:13px;background:#ff9a52;color:#1a1009;border:0;border-radius:10px;font-weight:700">Add to publication history</button>
 <p id="add-message" class="muted" aria-live="polite"></p></section>
 <section class="panel"><h2>Browse records</h2><div class="controls">
 <select id="sort"><option value="newest">Newest first</option><option value="views">Most views</option><option value="likes">Most likes</option></select>
