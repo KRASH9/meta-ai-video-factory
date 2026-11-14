@@ -286,7 +286,7 @@ dashboard = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quiet Place — Studio</title>
 <style>
-:root{color-scheme:dark;--bg:#090909;--panel:#191919;--panel2:#222;--line:#303030;--muted:#a1a1a1;--text:#f5f5f5;--orange:#ff7a24;--green:#38b879}
+:root{color-scheme:dark;--bg:#090909;--panel:#191919;--panel2:#222;--line:#303030;--muted:#a1a1a1;--text:#f5f5f5;--orange:#ff7a24;--green:#ff7a24}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,sans-serif;padding:18px 16px 100px}
 main{max-width:760px;margin:auto}.topline{display:flex;align-items:center;justify-content:space-between;color:#d0d0d0;font-size:12px;letter-spacing:.15em;font-weight:700}
 .logo{display:flex;align-items:center;gap:8px}.logo-mark{width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 16px #ff7a2470}
@@ -322,7 +322,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <div class="hero-actions"><a class="action action-primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Meta AI ↗</a><a class="action action-secondary" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">TikTok profile ↗</a></div></div>
 <section class="panel"><div class="eyebrow">CHANNEL OVERVIEW</div><div class="section-head"><h2>Performance</h2><small>Saved records</small></div>
 <div class="kpis"><div class="metric"><strong id="total-views">0</strong><span>Views</span></div><div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div><div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div></div>
-<svg class="growth" viewBox="0 0 600 120" preserveAspectRatio="none" aria-label="Illustrative performance trend"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#38b879" stop-opacity=".35"/><stop offset="1" stop-color="#38b879" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12 L600 120 L0 120Z" fill="url(#area)"/><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12" fill="none" stroke="#38b879" stroke-width="3"/></svg>
+<svg class="growth" viewBox="0 0 600 120" preserveAspectRatio="none" aria-label="Illustrative performance trend"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff7a24" stop-opacity=".35"/><stop offset="1" stop-color="#38b879" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12 L600 120 L0 120Z" fill="url(#area)"/><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12" fill="none" stroke="#ff7a24" stroke-width="3"/></svg>
 <div class="chart-labels"><span>Recent</span><span>Performance history</span><span>Today</span></div>
 <p class="note">The line is a visual placeholder until enough dated performance snapshots are recorded. Totals use saved publication data.</p>
 </section>
@@ -384,8 +384,12 @@ document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click
 }));
 document.querySelectorAll('.copy,.copy-post').forEach(btn=>btn.addEventListener('click',async()=>{
  const value=JSON.parse(btn.dataset.prompt||btn.dataset.post),label=btn.textContent;
- try{await navigator.clipboard.writeText(value);document.getElementById('status').textContent='Copied. Paste it into your selected app.';btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=label,1600);}
- catch(e){document.getElementById('status').textContent='Copy blocked by browser. Please try again or use the text package.';}
+ try{
+  if(navigator.clipboard&&window.isSecureContext) await navigator.clipboard.writeText(value);
+  else {const field=document.createElement('textarea');field.value=value;field.style.position='fixed';field.style.opacity='0';document.body.appendChild(field);field.focus();field.select();const ok=document.execCommand('copy');field.remove();if(!ok)throw new Error('copy failed');}
+  const status=document.getElementById('status');if(status)status.textContent='Copied. Paste it into your selected app.';
+  btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=label,1600);
+ }catch(e){const status=document.getElementById('status');if(status)status.textContent='Copy was blocked by the browser. Please try again.';}
 }));
 document.getElementById('export-csv').addEventListener('click',()=>{
  const cols=['date','video','status','url','views','likes','comments','shares','updatedAt'];
