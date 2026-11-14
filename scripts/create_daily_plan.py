@@ -111,6 +111,18 @@ for index, (category, scene) in enumerate(selected, start=1):
         "[ ] Suitable for the calm Quiet Place identity\n",
         encoding="utf-8"
     )
+    (video_dir / "04-tiktok-publishing-checklist.txt").write_text(
+        "QUIET PLACE — TIKTOK PUBLISHING CHECK\n\n"
+        "[ ] Watch the full exported video before posting\n"
+        "[ ] Confirm vertical 9:16 framing and 10-second duration target if applicable\n"
+        "[ ] Copy the prepared caption and hashtags\n"
+        "[ ] Choose a clear cover frame\n"
+        "[ ] Review visibility, comments and other post settings\n"
+        "[ ] Because this video is generated with AI and depicts a realistic-looking scene, "
+        "check TikTok's AI-generated content disclosure setting before publishing\n"
+        "[ ] Publish manually in TikTok and confirm the post appears on the profile\n",
+        encoding="utf-8"
+    )
 
     lines.extend([
         f"## Video {index} — {category}",
@@ -174,6 +186,7 @@ for item in video_packages:
           <div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div>
           <h2>{escape(item["scene"])}</h2>
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
+          <button class="copy-post" data-post='{escape(json.dumps(item["caption"] + "\\n\\n" + item["hashtags"], ensure_ascii=False), quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
           <p class="tags">{escape(item["hashtags"])}</p>
         </article>
@@ -191,23 +204,25 @@ dashboard = """<!doctype html>
 main{max-width:680px;margin:auto}.muted{color:#a8aaa4}.card{background:#1b1d1a;border:1px solid #343731;border-radius:16px;padding:18px;margin:16px 0}
 .eyebrow{font-size:12px;letter-spacing:.12em;color:#b9c5a8;font-weight:700}h1{font-size:28px;margin:8px 0}h2{font-size:19px;line-height:1.35;margin:10px 0 16px}
 button,a.primary{display:block;width:100%;border:0;border-radius:12px;padding:15px 16px;text-align:center;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer}
-.copy{background:#e4e8dc;color:#172016}.primary{background:#9eb18c;color:#11190f;margin:20px 0}.caption{margin:14px 0 4px}.tags{font-size:13px;color:#b6b9b0;overflow-wrap:anywhere}
+.copy{background:#e4e8dc;color:#172016}.copy-post{background:#30362e;color:#f3f3ef;margin-top:10px}.primary{background:#9eb18c;color:#11190f;margin:20px 0}.caption{margin:14px 0 4px}.tags{font-size:13px;color:#b6b9b0;overflow-wrap:anywhere}
 .status{min-height:24px;color:#b9c5a8;font-size:14px;margin-top:8px}.note{font-size:13px;color:#a8aaa4;margin:18px 0}
 </style>
 </head>
 <body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div>
 <h1>Daily Content Studio</h1>
-<p class="muted">DATE_PLACEHOLDER · Three copy-ready video prompts</p>
+<p class="muted">DATE_PLACEHOLDER · 3 videos · prompts + TikTok publishing text</p>
 <a class="primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">Open Meta AI</a>
-<div id="status" class="status" aria-live="polite">Choose a video and copy its prompt. Then paste it into Meta AI.</div>
+<a class="primary" style="background:#252a24;color:#f3f3ef" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">Open Quiet Place on TikTok</a>
+<div id="status" class="status" aria-live="polite">Copy a video prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
 """ + "\n".join(cards) + """
-<p class="note">This dashboard prepares and copies prompts only. Meta AI video generation and saving the finished video still require your action.</p>
+<p class="note">This dashboard prepares and copies text only. Generate and save videos in Meta AI, then upload them manually in TikTok. For realistic AI-generated scenes, check TikTok's AI disclosure setting before posting.</p>
 </main>
 <script>
-document.querySelectorAll('.copy').forEach(button=>{
+document.querySelectorAll('.copy,.copy-post').forEach(button=>{
   button.addEventListener('click',async()=>{
-    const prompt=JSON.parse(button.dataset.prompt);
+    const prompt=JSON.parse(button.dataset.prompt || button.dataset.post);
+    const originalLabel=button.textContent;
     try{
       if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(prompt);}
       else{
@@ -216,8 +231,8 @@ document.querySelectorAll('.copy').forEach(button=>{
         field.focus();field.select();const ok=document.execCommand('copy');field.remove();
         if(!ok) throw new Error('Clipboard unavailable');
       }
-      document.getElementById('status').textContent='Prompt copied. Open Meta AI and paste it into the chat.';
-      button.textContent='Copied ✓';setTimeout(()=>button.textContent='Copy Meta AI prompt',1800);
+      document.getElementById('status').textContent=button.classList.contains('copy-post')?'TikTok caption and hashtags copied. Paste them into your TikTok post.':'Meta AI prompt copied. Paste it into your Meta AI chat.';
+      button.textContent='Copied ✓';setTimeout(()=>button.textContent=originalLabel,1800);
     }catch(e){
       document.getElementById('status').textContent='Copy was blocked. Use the individual prompt .txt file instead.';
     }
