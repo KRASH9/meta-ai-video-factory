@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -14,41 +13,53 @@ today = datetime.now(WARSAW).date()
 date_seed = today.strftime("%Y-%m-%d")
 
 config = json.loads(CONFIG.read_text(encoding="utf-8"))
-topics = config["topics"]
+categories = config.get("categories", {})
 
-# Three content directions for Quiet Place.
-categories = {
-    "Nature & Water": [
-        "a quiet lake surrounded by pine trees at dawn",
-        "a gentle waterfall flowing through a mossy forest",
-        "soft ocean waves reaching a peaceful empty beach",
-        "a clear stream flowing over smooth stones",
-        "a misty river reflecting the morning sky",
-        "gentle rain falling on a still lake"
-    ],
-    "Forest & Atmosphere": [
-        "a peaceful pine forest covered in soft morning mist",
-        "gentle snow falling between tall evergreen trees",
-        "warm sunlight passing through a quiet bamboo forest",
-        "a forest path after a gentle rainfall",
-        "slow clouds moving above a green mountain valley",
-        "soft autumn leaves moving in a light breeze"
-    ],
-    "Cozy Quiet Places": [
-        "a peaceful Japanese garden with a small stone lantern",
-        "a quiet wooden cabin beside a calm lake",
-        "a small garden with a gentle flowing fountain",
-        "an empty old European street after light rain",
-        "a warm campfire glowing quietly in a forest clearing",
-        "a peaceful countryside cottage at sunrise"
-    ]
-}
+required_categories = [
+    "Nature & Water",
+    "Forest & Weather",
+    "Cozy Quiet Places"
+]
+
+missing = [name for name in required_categories if not categories.get(name)]
+if missing:
+    raise ValueError(f"Missing or empty topic categories: {', '.join(missing)}")
 
 rng = random.Random(date_seed)
-
 selected = []
-for category, options in categories.items():
-    selected.append((category, rng.choice(options)))
+used_scenes = set()
+
+for category in required_categories:
+    options = categories[category]
+    available = [scene for scene in options if scene not in used_scenes]
+    if not available:
+        raise ValueError(f"No unused scenes available in category: {category}")
+    scene = rng.choice(available)
+    selected.append((category, scene))
+    used_scenes.add(scene)
+
+# Different simple phone-camera approaches keep the three videos from
+# feeling like copies while preserving the everyday, non-cinematic look.
+camera_approaches = [
+    (
+        "Hold the phone at a natural standing height from the edge of the "
+        "scene. Keep the view mostly steady, with only subtle hand movement."
+    ),
+    (
+        "Film from a nearby natural viewpoint, including a little foreground "
+        "detail. Make no deliberate camera move; let the scene provide the motion."
+    ),
+    (
+        "Use an ordinary wider phone view from a nearby path or open spot. "
+        "Keep the framing casual and slightly imperfect, as in a real visit."
+    )
+]
+
+captions = {
+    "Nature & Water": "Take a moment. Let nature slow you down. 🌿",
+    "Forest & Weather": "A quiet moment away from the noise. 🍃",
+    "Cozy Quiet Places": "Some places make you breathe a little easier. 🤍"
+}
 
 lines = [
     "# QUIET PLACE — Daily Content Plan",
@@ -58,39 +69,38 @@ lines = [
     "Mission: Leave the noise behind.",
     "",
     "Create three peaceful, original videos using Meta AI.",
-    "Prioritize calm, natural realism and a feeling of presence.",
+    "The goal is a believable quiet moment, not a cinematic travel scene.",
     ""
 ]
 
 for index, (category, scene) in enumerate(selected, start=1):
+    camera_note = camera_approaches[index - 1]
     prompt = (
-        f"Create a realistic casual smartphone video, vertical 9:16, "
+        f"Create a realistic casual smartphone video in vertical 9:16 format, "
         f"showing {scene}. "
-        "Make it look like a real place casually filmed by a visitor, "
-        "not a movie, travel commercial or professionally staged production. "
-        "Use ordinary natural daylight, believable colors and realistic "
-        "smartphone camera detail. Keep natural imperfections in framing "
-        "and exposure; slight handheld movement is acceptable. "
-        "Show only the movement that would naturally happen in the scene. "
-        "Keep the composition simple and believable. "
-        "Use authentic ambient environmental sound only. "
-        "No cinematic lighting, no color grading, no dramatic sun rays, "
-        "no exaggerated fog or mist, no artificial bokeh, no slow motion, "
-        "no drone shots, no sweeping camera moves, no visual effects, "
-        "no music, no people, no crowds, no text, no logos, no transitions. "
-        "Avoid the polished, synthetic look of AI-generated footage."
+        "It should feel like a visitor quietly filmed a real place on a good "
+        "phone, not like a movie, advert or staged travel production. "
+        f"{camera_note} "
+        "Use natural available daylight, realistic exposure, believable "
+        "everyday colors and ordinary smartphone detail. Preserve small "
+        "imperfections in framing; do not make the scene look artificially "
+        "perfect. Show only movement that naturally belongs there, such as "
+        "flowing water, leaves moving or rain falling. "
+        "Use authentic environmental sound only. "
+        "No cinematic lighting, color grading, dramatic sun rays, exaggerated "
+        "fog or mist, artificial bokeh, slow motion, drone view, sweeping "
+        "camera movement, visual effects, music, people, crowds, text, logos "
+        "or transitions. Avoid the polished synthetic look of AI-generated footage."
     )
-
-    caption = {
-        "Nature & Water": "Take a moment. Let nature slow you down. 🌿",
-        "Forest & Atmosphere": "A quiet moment away from the noise. 🍃",
-        "Cozy Quiet Places": "Some places make you breathe a little easier. 🤍"
-    }[category]
 
     lines.extend([
         f"## Video {index} — {category}",
         "",
         f"**Scene:** {scene}",
+        "",
+        "**Camera approach:**",
+        "",
+        camera_note,
         "",
         "**Meta AI prompt:**",
         "",
@@ -98,19 +108,18 @@ for index, (category, scene) in enumerate(selected, start=1):
         "",
         "**TikTok caption:**",
         "",
-        caption,
+        captions[category],
         "",
         "**Hashtags:**",
         "",
-        "#QuietPlace #PeacefulMoments #NatureSounds "
-        "#SlowLiving #RelaxingNature",
+        "#QuietPlace #PeacefulMoments #NatureSounds #SlowLiving #RelaxingNature",
         "",
         "**Production checklist:**",
         "",
         "- [ ] Generate in Meta AI",
         "- [ ] Save the video",
-        "- [ ] Check visual quality and natural motion",
-        "- [ ] Check sound and video format",
+        "- [ ] Check that the place and movement look natural",
+        "- [ ] Check ambient sound and vertical format",
         "- [ ] Prepare for TikTok",
         ""
     ])
@@ -120,12 +129,15 @@ lines.extend([
     "",
     "## Daily quality standards",
     "",
-    "- Authentic everyday realism is more important than cinematic beauty.",
-    "- Videos should feel like casual smartphone footage of a real place.",
+    "- Authentic everyday realism matters more than cinematic beauty.",
+    "- Each video should feel like a casual phone recording of a real place.",
     "- Use natural light, believable colors and ordinary camera framing.",
-    "- Avoid cinematic grading, dramatic effects and artificial perfection.",
-    "- Natural ambient sound is preferred; no background music.",
-    "- Avoid repeating recently published scenes.",
+    "- Keep camera movement simple; do not add dramatic effects.",
+    "- Use natural ambient sound only; no background music.",
+    "- The three videos must use different scenes and camera approaches.",
+    "- Scene selection comes from config/topics.json.",
+    "- This planner selects scenes for the current day; it does not yet keep "
+    "a persistent history of previously published scenes.",
     "- Never publish a defective or unsuitable video.",
     ""
 ])
@@ -136,3 +148,5 @@ OUTPUT.write_text("\n".join(lines), encoding="utf-8")
 print(f"Quiet Place plan created: {OUTPUT}")
 print(f"Date: {today.isoformat()}")
 print("Videos planned: 3")
+for index, (category, scene) in enumerate(selected, start=1):
+    print(f"{index}. {category}: {scene}")
