@@ -12,6 +12,8 @@ PLAN_FILE = OUTPUT_DIR / "daily-plan.md"
 DASHBOARD_FILE = OUTPUT_DIR / "index.html"
 CONTENT_FILE = OUTPUT_DIR / "content.html"
 HISTORY_FILE = OUTPUT_DIR / "history.html"
+CALENDAR_FILE = OUTPUT_DIR / "calendar.html"
+ANALYTICS_FILE = OUTPUT_DIR / "analytics.html"
 META_AI_CHAT_URL = "https://www.meta.ai/share/c/iqLO8gdyHr?utm_source=android_meta_ai_sl"
 
 WARSAW = ZoneInfo("Europe/Warsaw")
