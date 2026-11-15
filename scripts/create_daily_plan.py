@@ -310,7 +310,7 @@ for item in video_packages:
     cards.append(
         f"""
         <article class="card">
-          <div class="card-head"><div><div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div><h2>{escape(item["scene"])}</h2></div><button class="force-refresh" type="button" data-prompt-options='{escape(prompt_options_json, quote=True)}'>↻</button></div>
+          <div class="card-head"><div><div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div><h2>{escape(item["scene"])}</h2></div><button class="force-refresh" style="display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 34px!important;width:34px!important;min-width:34px!important;height:34px!important;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;color:#ffad72!important;font-size:26px!important;line-height:1!important" aria-label="Generate a new prompt" title="Generate a new prompt" type="button" data-prompt-options='{escape(prompt_options_json, quote=True)}'>↻</button></div>
           <div class="prompt-meta"><span class="refresh-star"></span><span class="prompt-time">Prompt updated: {escape(generated_at_label)} Warsaw time</span></div>
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
