@@ -1,0 +1,39 @@
+name: Quiet Place - Deploy Published Content
+
+on:
+  workflow_run:
+    workflows: ["Quiet Place - Daily Content Studio"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: quiet-place-pages-deployment
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy generated site to GitHub Pages
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download generated content package
+        uses: actions/download-artifact@v4
+        with:
+          name: quiet-place-daily-content
+          run-id: ${{ github.event.workflow_run.id }}
+          repository: ${{ github.repository }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: site
+
+      - name: Upload site to GitHub Pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
