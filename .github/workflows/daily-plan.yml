@@ -5,8 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # GitHub cron is UTC. Check both DST offsets; the gate runs only at 05:00 Warsaw time.
-    - cron: "0 3,4 * * *"
+    # Winter schedule: 04:00 UTC = 05:00 in Warsaw. Change to 03:00 UTC during summer time.
+    - cron: "0 4 * * *"
 
 permissions:
   contents: read
@@ -22,17 +22,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Check Warsaw schedule time
-        id: timecheck
-        run: |
-          if [ "${{ github.event_name }}" != "schedule" ] || [ "$(TZ=Europe/Warsaw date +%H)" = "05" ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "run=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Checkout repository
-        if: steps.timecheck.outputs.run == 'true'
         uses: actions/checkout@v5
 
       - name: Set up Python
