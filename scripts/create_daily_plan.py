@@ -475,7 +475,7 @@ a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.controls select,.controls button{background:#303030;color:#f3f3ef;border:1px solid #494949;border-radius:9px;padding:10px;font:inherit}
 .entry h3{font-size:16px;margin:5px 0 8px}.meta{font-size:12px;color:#a8aaa4}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}.stats div{background:#101010;padding:8px;border-radius:8px;font-size:12px}.stats b{display:block;font-size:16px}
 .pill{display:inline-block;border:1px solid #61432e;border-radius:20px;padding:2px 8px;font-size:11px;color:#ffb17b}
-.empty{padding:20px;text-align:center;color:#a8aaa4}.danger{color:#e6b4a9}.url{overflow-wrap:anywhere}
+.empty{padding:20px;text-align:center;color:#a8aaa4}.danger{color:#e6b4a9}.url{overflow-wrap:anywhere}.record-actions{display:flex;gap:8px;margin-top:14px}.record-actions button{flex:1;padding:10px;border-radius:9px;border:1px solid #494949;background:#303030;color:#f3f3ef;font:inherit}.record-actions .delete-record{border-color:#75433b;color:#ffb5a8}.edit-form{display:none;margin-top:12px;padding:12px;background:#101010;border:1px solid #494949;border-radius:10px;gap:9px}.edit-form.open{display:grid}.edit-form label{display:grid;gap:4px;color:#aaa;font-size:12px}.edit-form input,.edit-form select{width:100%;padding:10px;background:#191919;color:#fff;border:1px solid #494949;border-radius:8px;font:inherit}.edit-form .edit-actions{display:flex;gap:8px}.edit-form button{flex:1;padding:11px;border:0;border-radius:8px;background:#ff9a52;color:#1a1009;font-weight:700}.edit-form .cancel-edit{background:#333;color:#fff}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#151515;display:grid;grid-template-columns:repeat(5,1fr);padding:10px 4px;z-index:20}.bottom-nav a{text-align:center;color:#999;text-decoration:none;font-size:11px;padding:6px 1px}.bottom-nav b{display:block;font-size:18px}.bottom-nav .active{color:#ff7a24}</style></head><body><main>
 <div class="eyebrow">QUIET PLACE · LEAVE THE NOISE BEHIND</div><h1>Publication History &amp; Analytics</h1>
 <p class="muted">Your saved TikTok publication records, across daily content plans.</p>
@@ -523,29 +523,48 @@ document.getElementById('add-old').addEventListener('click',()=>{
  try{localStorage.setItem(key,JSON.stringify(data));document.getElementById('add-message').textContent='Publication added to history.';location.reload();}
  catch(e){document.getElementById('add-message').textContent='Could not save. Browser storage may be full or unavailable.';}
 });
-const records=Object.values(data).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||Number(b.video)-Number(a.video));
-const sum=k=>records.reduce((s,r)=>s+Number(r[k]||0),0);
-document.getElementById('count').textContent=records.length;
-document.getElementById('views').textContent=fmt(sum('views'));
-document.getElementById('likes').textContent=fmt(sum('likes'));
-document.getElementById('engagement').textContent=fmt(sum('likes')+sum('comments')+sum('shares'));
+function getRecords(){return Object.entries(data).map(([id,r])=>({...r,_id:id})).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||String(b.video||'').localeCompare(String(a.video||'')));}
+const sum=k=>getRecords().reduce((s,r)=>s+Number(r[k]||0),0);
+function refreshSummary(){const rs=getRecords();document.getElementById('count').textContent=rs.length;document.getElementById('views').textContent=fmt(sum('views'));document.getElementById('likes').textContent=fmt(sum('likes'));document.getElementById('engagement').textContent=fmt(sum('likes')+sum('comments')+sum('shares'));}
+const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 function render(){
  const sort=document.getElementById('sort').value,status=document.getElementById('status').value;
- let list=records.filter(r=>status==='all'||(r.status||'planned')===status);
+ let list=getRecords().filter(r=>status==='all'||(r.status||'planned')===status);
  if(sort==='views')list.sort((a,b)=>Number(b.views||0)-Number(a.views||0));
  if(sort==='likes')list.sort((a,b)=>Number(b.likes||0)-Number(a.likes||0));
  const root=document.getElementById('records');
  if(!list.length){root.innerHTML='<div class="empty">No saved publication records yet. Save a video in Daily Content Studio and it will appear here.</div>';return;}
  root.innerHTML=list.map(r=>{
  const statusLabel=(r.status||'planned').replace('checked','quality checked');
- const link=r.url?'<p class="url"><a href="'+String(r.url).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" target="_blank" rel="noopener">Open TikTok publication ↗</a></p>':'<p class="meta">No TikTok URL saved</p>';
- return '<article class="entry"><div class="meta">'+(r.date||'Date not set')+' · Video '+(r.video||'?')+'</div><h3>'+String(r.title||'Quiet Place publication').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</h3><span class="pill">'+statusLabel+'</span>'+link+
- '<div class="stats"><div><b>'+fmt(r.views)+'</b>Views</div><div><b>'+fmt(r.likes)+'</b>Likes</div><div><b>'+fmt(r.comments)+'</b>Comments</div><div><b>'+fmt(r.shares)+'</b>Shares</div></div><div class="meta">Last saved: '+(r.updatedAt||'—')+'</div></article>';
+ const link=r.url?'<p class="url"><a href="'+esc(r.url)+'" target="_blank" rel="noopener">Open TikTok publication ↗</a></p>':'<p class="meta">No TikTok URL saved</p>';
+ return '<article class="entry" data-record-id="'+esc(r._id)+'"><div class="meta">'+esc(r.date||'Date not set')+' · Video '+esc(r.video||'?')+'</div><h3>'+esc(r.title||'Quiet Place publication')+'</h3><span class="pill">'+esc(statusLabel)+'</span>'+link+
+ '<div class="stats"><div><b>'+fmt(r.views)+'</b>Views</div><div><b>'+fmt(r.likes)+'</b>Likes</div><div><b>'+fmt(r.comments)+'</b>Comments</div><div><b>'+fmt(r.shares)+'</b>Shares</div></div><div class="meta">Last saved: '+esc(r.updatedAt||'—')+'</div>'+
+ '<div class="record-actions"><button type="button" class="edit-record">Edit</button><button type="button" class="delete-record">Delete</button></div>'+
+ '<form class="edit-form"><label>Publication date<input name="date" type="date" value="'+esc(r.date||'')+'" required></label><label>Title / scene<input name="title" type="text" value="'+esc(r.title||'Quiet Place publication')+'"></label><label>TikTok URL<input name="url" type="url" value="'+esc(r.url||'')+'"></label><label>Status<select name="status"><option value="planned" '+((r.status||'planned')==='planned'?'selected':'')+'>Planned</option><option value="created" '+(r.status==='created'?'selected':'')+'>Created</option><option value="checked" '+(r.status==='checked'?'selected':'')+'>Quality checked</option><option value="published" '+(r.status==='published'?'selected':'')+'>Published</option></select></label><div class="grid"><label>Views<input name="views" type="number" min="0" value="'+esc(r.views||0)+'"></label><label>Likes<input name="likes" type="number" min="0" value="'+esc(r.likes||0)+'"></label><label>Comments<input name="comments" type="number" min="0" value="'+esc(r.comments||0)+'"></label><label>Shares<input name="shares" type="number" min="0" value="'+esc(r.shares||0)+'"></label></div><div class="edit-actions"><button type="submit">Save changes</button><button type="button" class="cancel-edit">Cancel</button></div></form></article>';
  }).join('');
+ root.querySelectorAll('.entry').forEach(card=>{
+  const id=card.dataset.recordId,form=card.querySelector('.edit-form');
+  card.querySelector('.edit-record').addEventListener('click',()=>form.classList.toggle('open'));
+  card.querySelector('.cancel-edit').addEventListener('click',()=>form.classList.remove('open'));
+  form.addEventListener('submit',e=>{
+   e.preventDefault();const fd=new FormData(form),old=data[id]||{};
+   const updated={...old,date:fd.get('date'),title:fd.get('title').trim(),url:fd.get('url').trim(),status:fd.get('status'),views:fd.get('views')||0,likes:fd.get('likes')||0,comments:fd.get('comments')||0,shares:fd.get('shares')||0,updatedAt:new Date().toLocaleString()};
+   if(updated.url){try{new URL(updated.url);}catch(err){alert('Enter a valid publication URL or leave it empty.');return;}}
+   data[id]=updated;
+   try{localStorage.setItem(key,JSON.stringify(data));refreshSummary();render();}
+   catch(err){alert('Could not save changes. Browser storage may be unavailable.');}
+  });
+  card.querySelector('.delete-record').addEventListener('click',()=>{
+   if(!confirm('Delete this publication record permanently from this browser?'))return;
+   delete data[id];
+   try{localStorage.setItem(key,JSON.stringify(data));refreshSummary();render();}
+   catch(err){alert('Could not delete the record. Browser storage may be unavailable.');}
+  });
+ });
 }
 document.getElementById('sort').addEventListener('change',render);
 document.getElementById('status').addEventListener('change',render);
-render();
+refreshSummary();render();
 </script></body></html>"""
 HISTORY_FILE.write_text(history_page, encoding="utf-8")
 calendar_page = """<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quiet Place Calendar</title><style>:root{color-scheme:dark}body{margin:0;background:#090909;color:#f5f5f5;font:15px system-ui;padding:20px 16px 90px}main{max-width:700px;margin:auto}.panel{background:#191919;border:1px solid #333;border-radius:16px;padding:16px}.head{display:flex;justify-content:space-between;align-items:center}.head button{background:#333;color:white;padding:10px;border:0;border-radius:8px}.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}.day{padding:9px 1px;background:#101010;color:white;border:1px solid #333;border-radius:8px}.day.has{border-color:#ff7a24;color:#ff9a52}.day.sel{background:#ff7a24;color:#111}.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#151515;display:grid;grid-template-columns:repeat(5,1fr);padding:10px 4px}.bottom-nav a{text-align:center;color:#999;text-decoration:none;font-size:11px}.bottom-nav b{display:block;font-size:18px}.bottom-nav .active{color:#ff7a24}</style></head><body><main><h1>Publication Calendar</h1><section class="panel"><div class="head"><button id="prev">‹</button><h2 id="month"></h2><button id="next">›</button></div><div class="grid" id="grid"></div><h3 id="date"></h3><div id="items"></div></section></main><nav class="bottom-nav"><a href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><b>⌂</b>Overview</a><a class="active" href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><b>▦</b>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><b>▤</b>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><b>▥</b>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><b>↗</b>History</a></nav><script>let d={};try{d=JSON.parse(localStorage.getItem('quiet-place-publication-tracker-v1')||'{}')}catch(e){}let rs=Object.values(d),m=new Date();m.setDate(1);let sel=new Date().toISOString().slice(0,10);function draw(){let y=m.getFullYear(),mo=m.getMonth(),g=document.getElementById('grid');document.getElementById('month').textContent=m.toLocaleDateString('en',{month:'long',year:'numeric'});g.innerHTML=['M','T','W','T','F','S','S'].map(x=>'<span>'+x+'</span>').join('');for(let i=0;i<(new Date(y,mo,1).getDay()+6)%7;i++)g.innerHTML+='<i></i>';for(let n=1;n<=new Date(y,mo+1,0).getDate();n++){let dt=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(n).padStart(2,'0'),b=document.createElement('button');b.textContent=n;b.className='day'+(rs.some(r=>r.date===dt)?' has':'')+(dt===sel?' sel':'');b.onclick=()=>{sel=dt;draw()};g.append(b)}document.getElementById('date').textContent=sel;let a=rs.filter(r=>r.date===sel);document.getElementById('items').innerHTML=a.length?a.map(r=>'<p>'+(r.title||('Video '+r.video))+' — '+Number(r.views||0).toLocaleString()+' views</p>').join(''):'<p>No publications saved for this date.</p>'}document.getElementById('prev').onclick=()=>{m.setMonth(m.getMonth()-1);draw()};document.getElementById('next').onclick=()=>{m.setMonth(m.getMonth()+1);draw()};draw();</script></body></html>"""
