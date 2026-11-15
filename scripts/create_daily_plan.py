@@ -320,6 +320,7 @@ for item in video_packages:
               <label>Likes<input data-field="likes" type="number" min="0" inputmode="numeric" placeholder="0"></label>
               <label>Comments<input data-field="comments" type="number" min="0" inputmode="numeric" placeholder="0"></label>
               <label>Shares<input data-field="shares" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+              <label>Favorites / saves<input data-field="saves" type="number" min="0" inputmode="numeric" placeholder="0"></label>
             </div>
             <button class="save-record" type="button">Save tracking data</button>
             <small class="saved-note" aria-live="polite">Not saved yet</small>
@@ -376,7 +377,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <div class="hero"><div class="eyebrow accent">DAILY CONTENT STUDIO</div><h2 style="font-size:22px;margin-top:8px">Your next quiet moment starts here.</h2><p>Generate your nature videos with Meta AI, then prepare each post for TikTok.</p>
 <div class="hero-actions"><a class="action action-primary" href="META_AI_URL_PLACEHOLDER" target="_blank" rel="noopener">OPEN CONTENT STUDIO →</a><a class="action action-secondary" href="https://www.tiktok.com/@quiet.place_7" target="_blank" rel="noopener">TikTok profile ↗</a></div></div>
 <section class="panel"><div class="eyebrow">CHANNEL OVERVIEW</div><div class="section-head"><h2>Performance</h2><small>Saved records</small></div>
-<div class="kpis"><div class="metric"><strong id="total-views">0</strong><span>Views</span></div><div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div><div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div></div>
+<div class="kpis"><div class="metric"><strong id="total-views">0</strong><span>Views</span></div><div class="metric"><strong id="total-likes">0</strong><span>Likes</span></div><div class="metric"><strong id="total-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="total-shares">0</strong><span>Shares</span></div><div class="metric"><strong id="total-saves">0</strong><span>Favorites</span></div></div>
 <svg class="growth" viewBox="0 0 600 120" preserveAspectRatio="none" aria-label="Illustrative performance trend"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff7a24" stop-opacity=".35"/><stop offset="1" stop-color="#ff7a24" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12 L600 120 L0 120Z" fill="url(#area)"/><path d="M0 100 L55 82 L105 88 L160 55 L215 66 L270 32 L325 48 L380 26 L435 45 L490 18 L545 38 L600 12" fill="none" stroke="#ff7a24" stroke-width="3"/></svg>
 <div class="chart-labels"><span>Recent</span><span>Performance history</span><span>Today</span></div>
 <p class="note">The line is a visual placeholder until enough dated performance snapshots are recorded. Totals use saved publication data.</p>
@@ -395,7 +396,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <section id="calendar" class="view"><h1>Publication Calendar</h1><p class="muted">Choose a date to see videos published or tracked on that day.</p>
 <div class="panel"><div class="section-head"><button id="month-prev" class="action action-secondary" type="button">‹</button><h2 id="month-label">Month</h2><button id="month-next" class="action action-secondary" type="button">›</button></div>
 <div class="calendar-grid" id="calendar-grid"></div><div class="section-head"><h2 id="selected-date-label">Selected date</h2><small id="selected-count">0 publications</small></div><div id="calendar-list"></div></div></section>
-<section id="analytics" class="view"><h1>Analytics</h1><p class="muted">Compare saved performance across all publications.</p><div class="panel"><div class="kpis"><div class="metric"><strong id="a-views">0</strong><span>Total views</span></div><div class="metric"><strong id="a-likes">0</strong><span>Total likes</span></div><div class="metric"><strong id="a-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="a-shares">0</strong><span>Shares</span></div></div><div class="section-head"><h2>Top publications</h2><small>By views</small></div><div id="top-posts"></div><button id="export-csv" class="action action-primary" type="button" style="width:100%;margin-top:16px">Export tracking CSV</button></div><a class="history-link" href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2">OPEN FULL HISTORY ↗</a></section>
+<section id="analytics" class="view"><h1>Analytics</h1><p class="muted">Compare saved performance across all publications.</p><div class="panel"><div class="kpis"><div class="metric"><strong id="a-views">0</strong><span>Total views</span></div><div class="metric"><strong id="a-likes">0</strong><span>Total likes</span></div><div class="metric"><strong id="a-comments">0</strong><span>Comments</span></div><div class="metric"><strong id="a-shares">0</strong><span>Shares</span></div><div class="metric"><strong id="a-saves">0</strong><span>Favorites</span></div></div><div class="section-head"><h2>Top publications</h2><small>By views</small></div><div id="top-posts"></div><button id="export-csv" class="action action-primary" type="button" style="width:100%;margin-top:16px">Export tracking CSV</button></div><a class="history-link" href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2">OPEN FULL HISTORY ↗</a></section>
 </main>
 <nav class="nav"><div class="nav-inner"><a class="active" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><span class="nav-icon">⌂</span>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><span class="nav-icon">▦</span>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><span class="nav-icon">▤</span>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><span class="nav-icon">▥</span>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><span class="nav-icon">↗</span>History</a></div></nav>
 <script>
@@ -431,7 +432,7 @@ function renderCalendar(){
 document.getElementById('month-prev').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()-1);renderCalendar();});
 document.getElementById('month-next').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()+1);renderCalendar();});
 function updateDashboard(){
- const totals={views:0,likes:0,comments:0,shares:0};
+ const totals={views:0,likes:0,comments:0,shares:0,saves:0};
  records().forEach(r=>Object.keys(totals).forEach(k=>totals[k]+=Number(r[k]||0)));
  Object.entries(totals).forEach(([k,v])=>{['total-'+k,'a-'+k].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(v);});});
  renderCalendar();
@@ -462,7 +463,7 @@ document.querySelectorAll('.copy,.copy-post').forEach(btn=>btn.addEventListener(
  }catch(e){const status=document.getElementById('status');if(status)status.textContent='Copy was blocked by the browser. Please try again.';}
 }));
 document.getElementById('export-csv').addEventListener('click',()=>{
- const cols=['date','video','status','url','views','likes','comments','shares','updatedAt'];
+ const cols=['date','video','status','url','views','likes','comments','shares','saves','updatedAt'];
  const rows=[cols.join(','),...records().map(r=>cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))];
  const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='quiet-place-publication-tracker.csv';a.click();URL.revokeObjectURL(url);
@@ -532,6 +533,7 @@ a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 <label>Likes<input id="old-likes" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
 <label>Comments<input id="old-comments" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
 <label>Shares<input id="old-shares" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
+<label>Favorites / saves<input id="old-saves" type="number" min="0" value="0" style="width:100%;padding:10px;background:#101010;color:#f3f3ef;border:1px solid #494949;border-radius:9px"></label>
 </div>
 <button id="add-old" type="button" style="width:100%;padding:13px;background:#ff9a52;color:#1a1009;border:0;border-radius:10px;font-weight:700">Add to publication history</button>
 <p id="add-message" class="muted" aria-live="polite"></p></section>
@@ -553,7 +555,7 @@ document.getElementById('add-old').addEventListener('click',()=>{
  const id='archive-'+Date.now();
  data[id]={date,video:'Archive',title:document.getElementById('old-title').value.trim()||'Older TikTok publication',url,
  views:document.getElementById('old-views').value||0,likes:document.getElementById('old-likes').value||0,
- comments:document.getElementById('old-comments').value||0,shares:document.getElementById('old-shares').value||0,
+ comments:document.getElementById('old-comments').value||0,shares:document.getElementById('old-shares').value||0,saves:document.getElementById('old-saves').value||0,
  status:'published',updatedAt:new Date().toLocaleString()};
  try{localStorage.setItem(key,JSON.stringify(data));document.getElementById('add-message').textContent='Publication added to history.';location.reload();}
  catch(e){document.getElementById('add-message').textContent='Could not save. Browser storage may be full or unavailable.';}
@@ -575,7 +577,7 @@ function render(){
  return '<article class="entry" data-record-id="'+esc(r._id)+'"><div class="meta">'+esc(r.date||'Date not set')+' · Video '+esc(r.video||'?')+'</div><h3>'+esc(r.title||'Quiet Place publication')+'</h3><span class="pill">'+esc(statusLabel)+'</span>'+link+
  '<div class="stats"><div><b>'+fmt(r.views)+'</b>Views</div><div><b>'+fmt(r.likes)+'</b>Likes</div><div><b>'+fmt(r.comments)+'</b>Comments</div><div><b>'+fmt(r.shares)+'</b>Shares</div><div><b>'+fmt(r.saves)+'</b>Favorites</div></div><div class="meta">Last saved: '+esc(r.updatedAt||'—')+'</div>'+
  '<div class="record-actions"><button type="button" class="edit-record">Edit</button><button type="button" class="delete-record">Delete</button></div>'+
- '<form class="edit-form"><label>Publication date<input name="date" type="date" value="'+esc(r.date||'')+'" required></label><label>Title / scene<input name="title" type="text" value="'+esc(r.title||'Quiet Place publication')+'"></label><label>TikTok URL<input name="url" type="url" value="'+esc(r.url||'')+'"></label><label>Status<select name="status"><option value="planned" '+((r.status||'planned')==='planned'?'selected':'')+'>Planned</option><option value="created" '+(r.status==='created'?'selected':'')+'>Created</option><option value="checked" '+(r.status==='checked'?'selected':'')+'>Quality checked</option><option value="published" '+(r.status==='published'?'selected':'')+'>Published</option></select></label><div class="grid"><label>Views<input name="views" type="number" min="0" value="'+esc(r.views||0)+'"></label><label>Likes<input name="likes" type="number" min="0" value="'+esc(r.likes||0)+'"></label><label>Comments<input name="comments" type="number" min="0" value="'+esc(r.comments||0)+'"></label><label>Shares<input name="shares" type="number" min="0" value="'+esc(r.shares||0)+'"></label></div><div class="edit-actions"><button type="submit">Save changes</button><button type="button" class="cancel-edit">Cancel</button></div></form></article>';
+ '<form class="edit-form"><label>Publication date<input name="date" type="date" value="'+esc(r.date||'')+'" required></label><label>Title / scene<input name="title" type="text" value="'+esc(r.title||'Quiet Place publication')+'"></label><label>TikTok URL<input name="url" type="url" value="'+esc(r.url||'')+'"></label><label>Status<select name="status"><option value="planned" '+((r.status||'planned')==='planned'?'selected':'')+'>Planned</option><option value="created" '+(r.status==='created'?'selected':'')+'>Created</option><option value="checked" '+(r.status==='checked'?'selected':'')+'>Quality checked</option><option value="published" '+(r.status==='published'?'selected':'')+'>Published</option></select></label><div class="grid"><label>Views<input name="views" type="number" min="0" value="'+esc(r.views||0)+'"></label><label>Likes<input name="likes" type="number" min="0" value="'+esc(r.likes||0)+'"></label><label>Comments<input name="comments" type="number" min="0" value="'+esc(r.comments||0)+'"></label><label>Shares<input name="shares" type="number" min="0" value="'+esc(r.shares||0)+'"></label><label>Favorites / saves<input name="saves" type="number" min="0" value="'+esc(r.saves||0)+'"></label></div><div class="edit-actions"><button type="submit">Save changes</button><button type="button" class="cancel-edit">Cancel</button></div></form></article>';
  }).join('');
  root.querySelectorAll('.entry').forEach(card=>{
   const id=card.dataset.recordId,form=card.querySelector('.edit-form');
@@ -583,7 +585,7 @@ function render(){
   card.querySelector('.cancel-edit').addEventListener('click',()=>form.classList.remove('open'));
   form.addEventListener('submit',e=>{
    e.preventDefault();const fd=new FormData(form),old=data[id]||{};
-   const updated={...old,date:fd.get('date'),title:fd.get('title').trim(),url:fd.get('url').trim(),status:fd.get('status'),views:fd.get('views')||0,likes:fd.get('likes')||0,comments:fd.get('comments')||0,shares:fd.get('shares')||0,updatedAt:new Date().toLocaleString()};
+   const updated={...old,date:fd.get('date'),title:fd.get('title').trim(),url:fd.get('url').trim(),status:fd.get('status'),views:fd.get('views')||0,likes:fd.get('likes')||0,comments:fd.get('comments')||0,shares:fd.get('shares')||0,saves:fd.get('saves')||0,updatedAt:new Date().toLocaleString()};
    if(updated.url){try{new URL(updated.url);}catch(err){alert('Enter a valid publication URL or leave it empty.');return;}}
    data[id]=updated;
    try{localStorage.setItem(key,JSON.stringify(data));refreshSummary();render();}
