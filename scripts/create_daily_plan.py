@@ -294,13 +294,14 @@ PLAN_FILE.write_text("\n".join(lines), encoding="utf-8")
 # Mobile dashboard: copy a prompt, then open the Meta AI website.
 cards = []
 for item in video_packages:
+    prompt_options_json = json.dumps([build_prompt(item["scene"], note) for note in camera_approaches], ensure_ascii=False).replace("</", "<\\/")
     prompt_json = json.dumps(item["prompt"], ensure_ascii=False).replace("</", "<\\/")
     post_json = json.dumps(item["caption"] + "\n\n" + item["hashtags"], ensure_ascii=False)
     cards.append(
         f"""
         <article class="card">
-          <div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div>
-          <h2>{escape(item["scene"])}</h2>
+          <div class="card-head"><div><div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div><h2>{escape(item["scene"])}</h2></div><button class="force-refresh" type="button" data-prompt-options='{escape(prompt_options_json, quote=True)}'>↻</button></div>
+          <div class="prompt-meta"><span class="refresh-star"></span><span class="prompt-time">Prompt updated: {escape(generated_at_label)} Warsaw time</span></div>
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
