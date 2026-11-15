@@ -294,7 +294,17 @@ PLAN_FILE.write_text("\n".join(lines), encoding="utf-8")
 # Mobile dashboard: copy a prompt, then open the Meta AI website.
 cards = []
 for item in video_packages:
-    prompt_options_json = json.dumps([build_prompt(item["scene"], note) for note in camera_approaches], ensure_ascii=False).replace("</", "<\\/")
+    scene_options = []
+    for candidate in categories[item["category"]]:
+        if candidate == item["scene"]:
+            continue
+        scene_options.append({
+            "scene": candidate,
+            "prompt": build_prompt(candidate, camera_approaches[item["index"] - 1]),
+            "caption": build_caption(item["category"], candidate),
+            "hashtags": build_hashtags(item["category"], candidate),
+        })
+    prompt_options_json = json.dumps(scene_options, ensure_ascii=False).replace("</", "<\\/")
     prompt_json = json.dumps(item["prompt"], ensure_ascii=False).replace("</", "<\\/")
     post_json = json.dumps(item["caption"] + "\n\n" + item["hashtags"], ensure_ascii=False)
     cards.append(
@@ -371,7 +381,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .open-content-cta{display:block;width:100%;margin:16px 0 22px;padding:16px;background:#ff7a24;color:#1a1009;border:0;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.04em;text-align:center;text-decoration:none}
 .note{font-size:11px;margin:14px 0}
 @media(min-width:600px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:22px}.card{padding:20px}}
-.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.card-head h2{margin:5px 0 0}.force-refresh{flex:0 0 42px;width:42px;height:42px;padding:0;background:#24170f;color:#ffad72;border:1px solid #69411f;border-radius:11px;font-size:22px}.prompt-meta{display:flex;gap:7px;align-items:center;margin:10px 0 2px;color:#aaa;font-size:11px}.refresh-star.active:before{content:'🌟'}.confirm-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#000b;align-items:center;justify-content:center;padding:20px}.confirm-backdrop.open{display:flex}.confirm-box{width:min(100%,420px);background:#202020;border:1px solid #5a3b25;border-radius:16px;padding:20px}.confirm-box p{color:#bbb;font-size:13px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.confirm-actions button{background:#333;color:#fff}.confirm-actions [data-action=yes]{background:#ff9a52;color:#1a1009}.confirm-actions [data-action=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}</style></head><body><main>
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.card-head h2{margin:5px 0 0}.force-refresh{flex:0 0 34px;width:34px;height:34px;padding:0!important;margin:0!important;background:transparent!important;color:#ffad72;border:0!important;border-radius:0!important;box-shadow:none!important;font-size:25px;line-height:1;opacity:.9}.prompt-meta{display:flex;gap:7px;align-items:center;margin:10px 0 2px;color:#aaa;font-size:11px}.refresh-star.active:before{content:'🌟'}.confirm-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#000b;align-items:center;justify-content:center;padding:20px}.confirm-backdrop.open{display:flex}.confirm-box{width:min(100%,420px);background:#202020;border:1px solid #5a3b25;border-radius:16px;padding:20px}.confirm-box p{color:#bbb;font-size:13px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.confirm-actions button{background:#333;color:#fff}.confirm-actions [data-action=yes]{background:#ff9a52;color:#1a1009}.confirm-actions [data-action=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}</style></head><body><main>
 <div class="topline"><div class="logo"><span class="logo-mark"></span> QUIET PLACE</div><span class="muted">LEAVE THE NOISE BEHIND</span></div>
 <section id="overview" class="view active">
 <h1>Overview</h1><p class="muted">DATE_PLACEHOLDER · Created PROMPTS_CREATED_PLACEHOLDER · 3 new videos ready</p>
@@ -407,8 +417,8 @@ function setupPromptRefresh(){
  const stateKey='quiet-place-prompt-refresh-v1';let states={};try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){}
  document.querySelectorAll('.force-refresh').forEach(btn=>{
   const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker'),meta=card.querySelector('.prompt-meta'),star=meta.querySelector('.refresh-star'),time=meta.querySelector('.prompt-time');
-  const key=tracker.dataset.date+'-video-'+tracker.dataset.video,options=JSON.parse(btn.dataset.promptOptions||'[]'),saved=states[key];
-  if(saved){copy.dataset.prompt=JSON.stringify(saved.prompt);star.classList.add('active');time.textContent='Prompt updated: '+saved.updatedAt+' · Warsaw time';}
+  const key=tracker.dataset.date+'-video-'+tracker.dataset.video,options=JSON.parse(btn.dataset.promptOptions||'[]'),saved=states[key],title=card.querySelector('h2'),caption=card.querySelector('.caption'),tags=card.querySelector('.tags'),post=card.querySelector('.copy-post');
+  if(saved){copy.dataset.prompt=JSON.stringify(saved.prompt);if(saved.scene)title.textContent=saved.scene;if(saved.caption)caption.textContent=saved.caption;if(saved.hashtags)tags.textContent=saved.hashtags;if(saved.caption&&saved.hashtags)post.dataset.post=JSON.stringify(saved.caption+'\\n\\n'+saved.hashtags);star.classList.add('active');time.textContent='Prompt updated: '+saved.updatedAt+' · Warsaw time';}
   btn.addEventListener('click',()=>{const dialog=document.getElementById('prompt-confirm');dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');const close=()=>{dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');};
    dialog.querySelector('[data-action=yes]').onclick=()=>{const current=JSON.parse(copy.dataset.prompt||'\"\"'),next=options.find(p=>p!==current)||options[0];if(!next){close();return;}const updatedAt=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});copy.dataset.prompt=JSON.stringify(next);states[key]={prompt:next,updatedAt};try{localStorage.setItem(stateKey,JSON.stringify(states));star.classList.add('active');time.textContent='Prompt updated: '+updatedAt+' · Warsaw time';const status=document.getElementById('status');if(status)status.textContent='🌟 Промт обновлён. Скопируй новую версию.';}catch(e){alert('Не удалось сохранить обновлённый промт.');}close();};
    dialog.querySelector('[data-action=no]').onclick=close;dialog.querySelector('[data-action=cancel]').onclick=close;dialog.onclick=e=>{if(e.target===dialog)close();};
