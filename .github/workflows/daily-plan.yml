@@ -1,8 +1,6 @@
 name: Quiet Place - Daily Content Studio
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
   schedule:
     # GitHub cron is UTC. Check both DST offsets; the gate runs only at 05:00 Warsaw time.
@@ -10,12 +8,10 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  group: quiet-place-content-generation
+  cancel-in-progress: false
 
 jobs:
   create-plan:
@@ -61,14 +57,3 @@ jobs:
           name: quiet-place-daily-content
           path: output/
           retention-days: 7
-
-      - name: Upload site to GitHub Pages
-        if: steps.timecheck.outputs.run == 'true'
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: output/
-
-      - name: Deploy to GitHub Pages
-        if: steps.timecheck.outputs.run == 'true'
-        id: deployment
-        uses: actions/deploy-pages@v4
