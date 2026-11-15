@@ -371,7 +371,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .open-content-cta{display:block;width:100%;margin:16px 0 22px;padding:16px;background:#ff7a24;color:#1a1009;border:0;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.04em;text-align:center;text-decoration:none}
 .note{font-size:11px;margin:14px 0}
 @media(min-width:600px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:22px}.card{padding:20px}}
-</style></head><body><main>
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.card-head h2{margin:5px 0 0}.force-refresh{flex:0 0 42px;width:42px;height:42px;padding:0;background:#24170f;color:#ffad72;border:1px solid #69411f;border-radius:11px;font-size:22px}.prompt-meta{display:flex;gap:7px;align-items:center;margin:10px 0 2px;color:#aaa;font-size:11px}.refresh-star.active:before{content:'🌟'}.confirm-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#000b;align-items:center;justify-content:center;padding:20px}.confirm-backdrop.open{display:flex}.confirm-box{width:min(100%,420px);background:#202020;border:1px solid #5a3b25;border-radius:16px;padding:20px}.confirm-box p{color:#bbb;font-size:13px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.confirm-actions button{background:#333;color:#fff}.confirm-actions [data-action=yes]{background:#ff9a52;color:#1a1009}.confirm-actions [data-action=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}</style></head><body><main>
 <div class="topline"><div class="logo"><span class="logo-mark"></span> QUIET PLACE</div><span class="muted">LEAVE THE NOISE BEHIND</span></div>
 <section id="overview" class="view active">
 <h1>Overview</h1><p class="muted">DATE_PLACEHOLDER · Created PROMPTS_CREATED_PLACEHOLDER · 3 new videos ready</p>
@@ -392,6 +392,8 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <h1>Content Studio</h1><p class="muted">Your three seasonal prompts, captions and publishing trackers.</p>
 <div id="status" class="status" aria-live="polite">Copy a prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
 """ + "\n".join(cards) + """
+<div class="confirm-backdrop" id="prompt-confirm" aria-hidden="true"><div class="confirm-box" role="dialog" aria-modal="true"><h2>Обновить промт?</h2><p>Текущий промт будет заменён новой версией. Время обновления сохранится.</p><div class="confirm-actions"><button data-action="yes" type="button">Да, обновить</button><button data-action="no" type="button">Нет</button><button data-action="cancel" type="button">Отмена</button></div></div></div>
+""" + """
 <p class="note">Generate and save videos in Meta AI, then upload them manually in TikTok. Check TikTok's AI disclosure setting for realistic generated scenes.</p>
 </section>
 <section id="calendar" class="view"><h1>Publication Calendar</h1><p class="muted">Choose a date to see videos published or tracked on that day.</p>
@@ -401,6 +403,18 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 </main>
 <nav class="nav"><div class="nav-inner"><a class="active" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><span class="nav-icon">⌂</span>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><span class="nav-icon">▦</span>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><span class="nav-icon">▤</span>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><span class="nav-icon">▥</span>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><span class="nav-icon">↗</span>History</a></div></nav>
 <script>
+function setupPromptRefresh(){
+ const stateKey='quiet-place-prompt-refresh-v1';let states={};try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){}
+ document.querySelectorAll('.force-refresh').forEach(btn=>{
+  const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker'),meta=card.querySelector('.prompt-meta'),star=meta.querySelector('.refresh-star'),time=meta.querySelector('.prompt-time');
+  const key=tracker.dataset.date+'-video-'+tracker.dataset.video,options=JSON.parse(btn.dataset.promptOptions||'[]'),saved=states[key];
+  if(saved){copy.dataset.prompt=JSON.stringify(saved.prompt);star.classList.add('active');time.textContent='Prompt updated: '+saved.updatedAt+' · Warsaw time';}
+  btn.addEventListener('click',()=>{const dialog=document.getElementById('prompt-confirm');dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');const close=()=>{dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');};
+   dialog.querySelector('[data-action=yes]').onclick=()=>{const current=JSON.parse(copy.dataset.prompt||'\"\"'),next=options.find(p=>p!==current)||options[0];if(!next){close();return;}const updatedAt=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});copy.dataset.prompt=JSON.stringify(next);states[key]={prompt:next,updatedAt};try{localStorage.setItem(stateKey,JSON.stringify(states));star.classList.add('active');time.textContent='Prompt updated: '+updatedAt+' · Warsaw time';const status=document.getElementById('status');if(status)status.textContent='🌟 Промт обновлён. Скопируй новую версию.';}catch(e){alert('Не удалось сохранить обновлённый промт.');}close();};
+   dialog.querySelector('[data-action=no]').onclick=close;dialog.querySelector('[data-action=cancel]').onclick=close;dialog.onclick=e=>{if(e.target===dialog)close();};
+  });
+ });
+}
 const trackerKey='quiet-place-publication-tracker-v1';let trackerData={};
 try{trackerData=JSON.parse(localStorage.getItem(trackerKey)||'{}')||{};}catch(e){trackerData={};}
 if(!trackerData['archive-20261108-coastal-sunset']){trackerData['archive-20261108-coastal-sunset']={date:'2026-11-08',time:'01:57',video:'Archive',title:'Coastal sunset',url:'https://vm.tiktok.com/ZN85xQcuy/',views:788,likes:43,comments:3,shares:1,saves:2,status:'published',updatedAt:'Imported from user-provided TikTok Studio screenshot'};localStorage.setItem(trackerKey,JSON.stringify(trackerData));}
@@ -457,6 +471,7 @@ cards.forEach(card=>{
   catch(e){card.querySelector('.saved-note').textContent='Could not save on this browser';}
  });
 });
+setupPromptRefresh();
 document.querySelectorAll('.copy,.copy-post').forEach(btn=>btn.addEventListener('click',async()=>{
  const value=JSON.parse(btn.dataset.prompt||btn.dataset.post),label=btn.textContent;
  try{
@@ -492,12 +507,27 @@ button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:700;font-
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#151515;display:grid;grid-template-columns:repeat(5,1fr);padding:10px 4px;z-index:20}.bottom-nav a{text-align:center;color:#999;text-decoration:none;font-size:11px;padding:6px 1px}.bottom-nav b{display:block;font-size:18px}.bottom-nav .active{color:#ff7a24}</style></head><body><main><div class="top"><span>🟠 QUIET PLACE</span><span>LEAVE THE NOISE BEHIND</span></div>
 <a class="back" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2">← Back to Overview</a><h1>Content Studio</h1><p class="muted">Three daily prompts · Meta AI video prompts · TikTok captions and tracking</p><p class="prompt-updated">PROMPTS UPDATED · PROMPT_UPDATED_AT_PLACEHOLDER WARSAW TIME</p><div id="status" class="status">Copy a prompt, create your video, then save publication details.</div>
 """ + "\n".join(cards) + """
+<div class="confirm-backdrop" id="prompt-confirm" aria-hidden="true"><div class="confirm-box" role="dialog" aria-modal="true"><h2>Обновить промт?</h2><p>Текущий промт будет заменён новой версией. Время обновления сохранится.</p><div class="confirm-actions"><button data-action="yes" type="button">Да, обновить</button><button data-action="no" type="button">Нет</button><button data-action="cancel" type="button">Отмена</button></div></div></div>
+""" + """
 </main><nav class="bottom-nav"><a href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><b>⌂</b>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><b>▦</b>Calendar</a><a class="active" href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><b>▤</b>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><b>▥</b>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><b>↗</b>History</a></nav><script>
+function setupPromptRefresh(){
+ const stateKey='quiet-place-prompt-refresh-v1';let states={};try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){}
+ document.querySelectorAll('.force-refresh').forEach(btn=>{
+  const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker'),meta=card.querySelector('.prompt-meta'),star=meta.querySelector('.refresh-star'),time=meta.querySelector('.prompt-time');
+  const key=tracker.dataset.date+'-video-'+tracker.dataset.video,options=JSON.parse(btn.dataset.promptOptions||'[]'),saved=states[key];
+  if(saved){copy.dataset.prompt=JSON.stringify(saved.prompt);star.classList.add('active');time.textContent='Prompt updated: '+saved.updatedAt+' · Warsaw time';}
+  btn.addEventListener('click',()=>{const dialog=document.getElementById('prompt-confirm');dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');const close=()=>{dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');};
+   dialog.querySelector('[data-action=yes]').onclick=()=>{const current=JSON.parse(copy.dataset.prompt||'\"\"'),next=options.find(p=>p!==current)||options[0];if(!next){close();return;}const updatedAt=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});copy.dataset.prompt=JSON.stringify(next);states[key]={prompt:next,updatedAt};try{localStorage.setItem(stateKey,JSON.stringify(states));star.classList.add('active');time.textContent='Prompt updated: '+updatedAt+' · Warsaw time';const status=document.getElementById('status');if(status)status.textContent='🌟 Промт обновлён. Скопируй новую версию.';}catch(e){alert('Не удалось сохранить обновлённый промт.');}close();};
+   dialog.querySelector('[data-action=no]').onclick=close;dialog.querySelector('[data-action=cancel]').onclick=close;dialog.onclick=e=>{if(e.target===dialog)close();};
+  });
+ });
+}
 const key='quiet-place-publication-tracker-v1';let data={};try{data=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}
 if(!data['archive-20261108-canyon-0802']){data['archive-20261108-canyon-0802']={date:'2026-11-08',time:'08:02',video:'Archive',title:'Canyon',url:'https://vm.tiktok.com/ZN85xmtQD/',views:766,likes:25,comments:2,shares:1,saves:0,watchTime:'00:34:04',averageWatchTime:'2.6 s',fullWatchPercent:'3.14%',newFollowers:0,status:'published',updatedAt:'Imported from user-provided TikTok Studio screenshot'};localStorage.setItem(key,JSON.stringify(data));}if(!data['archive-20261108-coastal-sunset']){data['archive-20261108-coastal-sunset']={date:'2026-11-08',time:'01:57',video:'Archive',title:'Coastal sunset',url:'https://vm.tiktok.com/ZN85xQcuy/',views:788,likes:43,comments:3,shares:1,saves:2,status:'published',updatedAt:'Imported from user-provided TikTok Studio screenshot'};localStorage.setItem(key,JSON.stringify(data));}
 if(!data['archive-20261108-waterfall-0215']){data['archive-20261108-waterfall-0215']={date:'2026-11-08',time:'02:15',video:'Archive',title:'Forest waterfall',url:'https://vm.tiktok.com/ZN85xqVAV/',views:761,likes:32,comments:3,shares:1,saves:1,watchTime:'00:36:35',averageWatchTime:'2.8 s',fullWatchPercent:'5.16%',newFollowers:2,status:'published',updatedAt:'Imported from user-provided TikTok Studio screenshot'};localStorage.setItem(key,JSON.stringify(data));}
 if(!data['archive-20261110-green-hills-1718']){data['archive-20261110-green-hills-1718']={date:'2026-11-10',time:'17:18',video:'Archive',title:'Green hills',url:'https://vm.tiktok.com/ZN85xHMxN/',views:773,likes:52,comments:3,shares:1,saves:2,watchTime:'00:34:41',averageWatchTime:'2.6 s',fullWatchPercent:'4.2%',newFollowers:1,status:'published',updatedAt:'Imported from user-provided TikTok Studio screenshot'};localStorage.setItem(key,JSON.stringify(data));}
 if(!data['archive-20261108-canyon-0802']){data['archive-20261108-canyon-0802']={date:'2026-11-08',time:'08:02',video:'Archive',title:'Canyon',url:'https://vm.tiktok.com/ZN85xmtQD/',views:766,likes:25,comments:2,shares:1,saves:0,watchTime:'00:34:04',averageWatchTime:'2.6 s',fullWatchPercent:'3.14%',newFollowers:0,status:'published',image:'',updatedAt:'Imported from user-provided TikTok Studio screenshot'};localStorage.setItem(key,JSON.stringify(data));}
+setupPromptRefresh();
 document.querySelectorAll('.copy,.copy-post').forEach(b=>b.addEventListener('click',async()=>{const value=JSON.parse(b.dataset.prompt||b.dataset.post);try{if(navigator.clipboard&&isSecureContext)await navigator.clipboard.writeText(value);else{const t=document.createElement('textarea');t.value=value;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error();t.remove();}document.getElementById('status').textContent='Copied ✓';}catch(e){document.getElementById('status').textContent='Copy blocked by browser. Try again.';}}));
 document.querySelectorAll('.tracker').forEach(card=>{const id=card.dataset.date+'-video-'+card.dataset.video,old=data[id]||{};card.querySelectorAll('[data-field]').forEach(f=>{if(old[f.dataset.field]!==undefined)f.value=old[f.dataset.field];});if(old.updatedAt)card.querySelector('.saved-note').textContent='Saved '+old.updatedAt;card.querySelector('.save-record').addEventListener('click',()=>{const r={date:card.dataset.date,video:card.dataset.video};card.querySelectorAll('[data-field]').forEach(f=>r[f.dataset.field]=f.value);r.updatedAt=new Date().toLocaleString();data[id]=r;try{localStorage.setItem(key,JSON.stringify(data));card.querySelector('.saved-note').textContent='Saved '+r.updatedAt;}catch(e){card.querySelector('.saved-note').textContent='Could not save';}});});
 </script></body></html>"""
