@@ -84,11 +84,46 @@ camera_approaches = [
     "Choose a simple, natural composition and hold it mostly steady. Allow only very subtle slow camera movement; never use a drone, sweeping move, fast pan, tilt, zoom or shaky handheld motion."
 ]
 
-captions = {
-    "Nature & Water": "Take a moment. Let nature slow you down. 🌿",
-    "Forest & Weather": "A quiet moment away from the noise. 🍃",
-    "Cozy Quiet Places": "Some places make you breathe a little easier. 🤍"
-}
+# Captions are written from the selected scene, not just its broad category.
+# Each video gets a distinct description that names the actual subject and its movement/atmosphere.
+def build_caption(category, scene):
+    text = scene.lower()
+    rules = [
+        (("lake", "shoreline", "shore", "reed-lined"), "A quiet shoreline, soft autumn air and water that barely moves. Stay here for a moment. 🌊"),
+        (("waves", "pebble beach", "tide", "wet sand"), "Waves arrive, retreat, and leave the world a little quieter. 🌊"),
+        (("rain drops", "ripples", "pond"), "Tiny raindrops, endless ripples. Sometimes the smallest moments are the most peaceful. 🍂"),
+        (("stone footbridge", "river", "drifting on the water"), "An old stone bridge, a slow-moving river and leaves carried downstream. 🍁"),
+        (("water flowing", "rock ledge", "waterfall"), "Just the sound of water finding its way through the autumn forest. 💧"),
+        (("driftwood", "grey-blue water"), "Driftwood by the water. A simple view with nowhere else to be. 🌫️"),
+        (("wooden pier", "misty"), "A quiet pier disappearing into the mist. Would you sit here for a while? 🤍"),
+        (("waterfall", "forest"), "A small forest waterfall and the steady rhythm of flowing water. Take a breath. 🌿"),
+        (("narrow muddy path", "pine and birch"), "A rain-soaked path through pine and birch. No rush, no destination. 🌲"),
+        (("bare birch branches", "breeze"), "Bare birch branches moving gently in the cold autumn breeze. 🍃"),
+        (("drops of rain", "last brown leaves"), "Rain falling from the last autumn leaves. Listen closely. 🍂"),
+        (("woodland trail", "wet amber"), "A woodland trail covered in wet amber leaves. The kind of walk that clears your head. 🍁"),
+        (("grey november morning", "bare trees"), "A quiet November morning among bare trees. Nothing to chase, nowhere to be. 🌫️"),
+        (("mist", "tree trunks"), "Soft mist drifting between the trees after the rain. Let the noise fade. 🌫️"),
+        (("birch grove", "golden leaves"), "A few golden leaves still holding on in the birch grove. Autumn, at its quietest. 🍂"),
+        (("wooden bench", "empty autumn park"), "An empty park bench beneath bare trees. Imagine having this whole afternoon to yourself. 🤍"),
+        (("clouds passing", "hillside"), "Clouds moving slowly above the autumn hillside. A little space to breathe. ☁️"),
+        (("rain falling", "fallen leaves"), "Rain tapping against fallen leaves beside the forest path. Just nature, nothing more. 🌧️"),
+        (("rain running down the window", "cottage"), "Rain on a cottage window and a slow autumn afternoon. This is your sign to pause. 🌧️"),
+        (("european street", "wet paving stones"), "An empty old street after the rain, with reflections on every stone. 🚶"),
+        (("courtyard", "old stone flooring"), "A quiet stone courtyard after the shower. Even familiar places can feel like a retreat. 🍂"),
+        (("village lane", "modest houses"), "A quiet village lane beneath the November sky. Would you take the long way home? 🏡"),
+        (("wooden veranda", "garden"), "A sheltered veranda, a rain-washed garden and a moment to do absolutely nothing. 🤍"),
+        (("outdoor table", "cottage window"), "A little table outside a cottage on a misty morning. Coffee would make this perfect. ☕"),
+        (("garden path", "late-season plants"), "A garden path softened by rain and fallen leaves. Slow steps, quiet thoughts. 🍃"),
+        (("cabin porch", "woodland"), "A cabin porch looking out over the quiet woods. Could you spend a whole day here? 🌲"),
+        (("park shelter", "autumn rain"), "Watching the cold autumn rain from a quiet park shelter. No need to hurry. 🌧️"),
+        (("empty bench", "cobblestone lane"), "An empty bench on a rain-darkened cobblestone lane. A small pocket of calm. 🤍"),
+    ]
+    for keywords, caption in rules:
+        if all(word in text for word in keywords):
+            return caption
+    # Specific fallback uses the actual scene description so it never falls back to a category-only caption.
+    clean = scene.strip().rstrip(".")
+    return f"{clean[0].upper() + clean[1:]}. A quiet moment to leave the noise behind. 🤍"
 
 # Keep a small brand core, then match the remaining tags to the actual scene.
 brand_hashtags = ["#QuietPlace", "#SlowLiving"]
@@ -160,7 +195,7 @@ lines = [
 for index, (category, scene) in enumerate(selected, start=1):
     camera_note = camera_approaches[index - 1]
     prompt = build_prompt(scene, camera_note)
-    caption = captions[category]
+    caption = build_caption(category, scene)
     video_hashtags = build_hashtags(category, scene)
     video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "hashtags": video_hashtags})
     video_dir = OUTPUT_DIR / f"video-{index:02d}"
