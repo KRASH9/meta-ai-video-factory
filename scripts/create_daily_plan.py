@@ -28,54 +28,30 @@ today = generated_at.date()
 generated_at_label = generated_at.strftime("%Y-%m-%d %H:%M:%S %Z")
 date_seed = today.strftime("%Y-%m-%d")
 
-# Seasonal direction follows the current calendar season in Warsaw / Central Europe.
+# Warsaw determines the reference season; scene locations may be worldwide but must match their real local season.
 month = today.month
-if month in (9, 10, 11):
-    season_name = "autumn"
-    seasonal_direction = (
-        "Set the scene unmistakably in autumn in Central Europe, appropriate to the current part of the season. "
-        "Use believable autumn details such as fallen yellow, amber and brown leaves, damp paths, bare or partly bare branches, "
-        "cool overcast light, gentle rain, low natural mist, quiet grey-blue water and muted earthy colors. "
-        "In late autumn, show mostly fallen leaves and increasingly bare trees. "
-        "Do not show lush summer greenery, tropical vegetation, blossoms, sakura, summer sunshine or snow unless it is naturally present."
-    )
-elif month in (12, 1, 2):
-    season_name = "winter"
-    seasonal_direction = (
-        "Set the scene in winter in Central Europe: bare trees, cold muted light, frost, occasional realistic snow, "
-        "winter rain, still water or subdued evergreen forest. Do not show lush summer foliage, autumn foliage or spring blossoms."
-    )
-elif month in (3, 4, 5):
-    season_name = "spring"
-    seasonal_direction = (
-        "Set the scene in spring in Central Europe: fresh new leaves, delicate blossoms where seasonally plausible, "
-        "soft rain, brighter but gentle daylight and renewed greenery. Do not show peak summer heat or autumn foliage."
-    )
-else:
-    season_name = "summer"
-    seasonal_direction = (
-        "Set the scene in summer in Central Europe: full green foliage, warm but natural daylight, rivers, lakes, "
-        "meadows and gentle summer weather. Do not show autumn leaves, winter frost or snow."
-    )
+season_name = ("winter" if month in (12, 1, 2) else "spring" if month in (3, 4, 5)
+               else "summer" if month in (6, 7, 8) else "autumn")
+seasonal_direction_by_name = {
+    "spring": "Reference season: SPRING in Warsaw, Poland. Choose a real location genuinely experiencing comparable spring conditions. Use locally plausible fresh growth, new leaves, seasonal blossoms, soft rain and mild daylight. Never force flowers outside their actual local blooming period.",
+    "summer": "Reference season: SUMMER in Warsaw, Poland. Choose a real location genuinely experiencing comparable summer conditions. Use plausible full foliage, warm natural daylight, long evenings, meadows, clear water or summer city atmosphere. No winter snow, autumn leaf fall or spring-only blossoms.",
+    "autumn": "Reference season: AUTUMN in Warsaw, Poland. Prefer real locations experiencing comparable autumn conditions, usually in the Northern Hemisphere. Use locally plausible changing foliage, fallen leaves, harvest landscapes, autumn rain, mist, cool daylight and earthy colors. In late autumn show mostly fallen leaves and increasingly bare trees where appropriate. No lush summer greenery, spring blossoms or implausible snow.",
+    "winter": "Reference season: WINTER in Warsaw, Poland. Choose a real location genuinely experiencing comparable winter conditions. Use locally plausible bare trees, frost, occasional snow, winter rain, subdued evergreens, cold daylight or real-world winter architecture. No summer foliage, autumn leaf fall or spring blossoms."
+}
+seasonal_direction = seasonal_direction_by_name[season_name]
 
 config = json.loads(CONFIG.read_text(encoding="utf-8"))
 categories = config.get("categories", {})
 
-required_categories = [
-    "Nature & Water",
-    "Forest & Weather",
-    "Cozy Quiet Places"
-]
-
-missing = [name for name in required_categories if not categories.get(name)]
-if missing:
-    raise ValueError(f"Missing or empty topic categories: {', '.join(missing)}")
+required_categories = [name for name, scenes in categories.items() if isinstance(scenes, list) and scenes]
+if len(required_categories) < 3:
+    raise ValueError("At least three non-empty real-world categories are required.")
 
 rng = random.Random(date_seed)
 selected = []
 used_scenes = set()
 
-for category in required_categories:
+for category in rng.sample(required_categories, k=3):
     options = categories[category]
     available = [scene for scene in options if scene not in used_scenes]
     if not available:
@@ -207,10 +183,11 @@ def build_hashtags(category, scene):
 
 def build_prompt(scene, camera_note):
     return (
-        f"Create a beautiful, immersive nature video for TikTok and Instagram in vertical 9:16 format, showing {scene}. "
-        "The setting must feel authentic to the current season in Warsaw and Central Europe. "
+        f"Create a beautiful, immersive, photorealistic REAL-WORLD cinematic video for TikTok and Instagram in vertical 9:16 format, showing {scene}. "
+        "The scene may be anywhere in the world, but its actual local climate, vegetation, weather and daylight must genuinely match the current reference season in Warsaw, Poland. "
+        "Show only real places, real materials, real plants, real animals and physically possible events. No fantasy, fictional worlds, surrealism or impossible architecture. "
         f"{seasonal_direction} "
-        "Keep the Quiet Place identity: peaceful and restorative, but visually captivating enough to make someone pause while scrolling. "
+        "Keep the Quiet Place identity: peaceful and restorative, but visually captivating. Explore nature, water, wildlife, architecture, real towns, urban atmosphere, coasts, travel landscapes, gardens, weather and macro details. "
         "Give the scene one clear visual focal point and a pleasing sense of depth, with foreground, middle distance and background where natural. "
         "Use a richer, more expressive version of the real seasonal palette: warm amber, copper, golden yellow and deep earthy tones for autumn; "
         "natural contrast and gentle color separation without oversaturation, artificial filters or a fake cinematic look. "
@@ -220,7 +197,7 @@ def build_prompt(scene, camera_note):
         "Keep the camera smooth and stable, with only subtle slow movement. The scene itself should have gently noticeable, continuous natural motion: "
         "leaves drifting or swaying, water rippling, rain falling, branches moving softly or reflections changing. "
         "Make the motion soothing but visible; avoid a lifeless frozen frame and avoid gusty, chaotic movement. "
-        "No people, crowds, speech, talking or music with lyrics. Use only soft, authentic ambient sound from this place. "
+        "No fantasy, surrealism, fictional locations, impossible structures, magical effects or supernatural elements. No crowds, speech, talking or lyrical music. Prefer quiet, uncrowded scenes. Use only authentic ambient sound from this place. "
         "Aim for a seamless natural loop where suitable: the ending should flow smoothly into the beginning, with matching framing and no visible cut. "
         "Use cyclical, physically believable movement. No drone shots, sweeping camera moves, fast cuts, transitions or slow motion. "
         "No artificial bokeh, visual effects, text, subtitles, logos or watermarks. "
@@ -240,7 +217,7 @@ lines = [
     f"Seasonal direction: {season_name.title()} in Central Europe.",
     "",
     "Three ready-to-produce videos. Individual copy-ready files are included in this package.",
-    f"The goal is a believable quiet moment, not a cinematic travel scene. Seasonal setting: {season_name.title()} in Central Europe.",
+    f"The goal is an immersive, believable real-world cinematic moment from anywhere on Earth. Seasonal reference: {season_name.title()} in Warsaw, Poland.",
     ""
 ]
 
@@ -334,7 +311,7 @@ lines.extend([
     "- Use natural ambient sound only; no background music.",
     "- The three videos must use different scenes and camera approaches.",
     "- Scene selection comes from config/topics.json.",
-    "- This planner does not yet keep a persistent history of previously published scenes.",
+    "- Scene selection rotates across real-world categories; persistent cross-day duplicate prevention still depends on publication history being available to the workflow.",
     "- Never publish a defective or unsuitable video.",
     ""
 ])
@@ -385,8 +362,8 @@ for item in video_packages:
     variant_rng = random.Random(f"{date_seed}:{item['category']}:{item['index']}:refresh-pool")
     seen = {item["scene"]}
     for base in categories[item["category"]]:
-        for framing in framing_by_category[item["category"]]:
-            for detail in detail_by_category[item["category"]]:
+        for framing in framing_by_category.get(item["category"], ["from a natural human-height viewpoint", "with clear foreground and layered depth", "framed by authentic local details", "with the main subject slightly off-centre", "from a distinctive but plausible camera position"]):
+            for detail in detail_by_category.get(item["category"], ["subtle natural movement", "authentic textures and small imperfections", "soft reflections and realistic atmospheric depth", "one distinctive real-world foreground detail", "gentle movement that makes the scene feel alive"]):
                 candidate = f"{base}, {framing}, with {detail}"
                 if candidate in seen:
                     continue
