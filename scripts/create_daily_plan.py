@@ -483,8 +483,9 @@ function setupPromptRefresh(){
   try{options=JSON.parse(source.getAttribute('data-prompt-options')||'[]');}catch(e){options=[];}
   const panel=document.createElement('section');
   panel.className='card-refresh-confirm visible';
+  panel.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;transform:none!important;position:relative!important;width:100%!important;box-sizing:border-box!important;margin:12px 0!important;padding:14px!important;';
   panel.innerHTML='<strong>Обновить промт?</strong><p>Будут заменены сцена, промт, описание и хештеги только в этой карточке.</p><div class="card-refresh-actions"><button type="button" data-choice="yes" style="display:block!important;width:100%!important;min-height:48px!important;padding:14px!important;background:#ff9a52!important;color:#1a1009!important;border:0!important;border-radius:11px!important;font-size:15px!important;font-weight:800!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important">Да, обновить</button></div>';
-  card.appendChild(panel);
+  meta.insertAdjacentElement('afterend',panel);
   const apply=item=>{
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
