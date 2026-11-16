@@ -472,33 +472,42 @@ function setupPromptRefresh(){
   const key=tracker.dataset.date+'-video-'+tracker.dataset.video;
   let options=[];try{options=JSON.parse(btn.dataset.promptOptions||'[]');}catch(e){options=[];}
   const title=card.querySelector('h2'),caption=card.querySelector('.caption'),tags=card.querySelector('.tags'),post=card.querySelector('.copy-post');
-  function apply(item,updatedAt){
+  function snapshot(){return {scene:title.textContent.trim(),prompt:JSON.parse(copy.dataset.prompt),caption:caption.textContent,tags:tags.textContent,updatedAt:time.textContent.replace(/^🌟 Prompt updated: /,'').replace(/ · Warsaw time$/,'')};}
+  function apply(item,updatedAt,isUndo=false){
    copy.dataset.prompt=JSON.stringify(item.prompt);title.textContent=item.scene;
    caption.textContent=item.caption;tags.textContent=item.hashtags;
    post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+item.hashtags);
-   star.classList.add('active');time.textContent='🌟 Prompt updated: '+updatedAt+' · Warsaw time';
+   star.classList.toggle('active',!isUndo);
+   time.textContent=(isUndo?'Prompt restored: ':'🌟 Prompt updated: ')+updatedAt+' · Warsaw time';
   }
-  if(states[key])apply(states[key],states[key].updatedAt);
+  if(states[key]?.current)apply(states[key].current,states[key].current.updatedAt);
+  else if(states[key]?.scene)apply(states[key],states[key].updatedAt);
   const panel=document.createElement('div');panel.className='card-refresh-confirm';
   panel.innerHTML='<strong>Обновить промт?</strong><p>Будут заменены сцена, промт, описание и хештеги только в этой карточке.</p><div class="card-refresh-actions"><button type="button" data-choice="yes">Да, обновить</button><button type="button" data-choice="no">Нет</button><button type="button" data-choice="cancel">Отмена</button></div>';
   card.appendChild(panel);
   const hide=()=>{panel.classList.remove('visible');btn.setAttribute('aria-expanded','false');};
+  const show=()=>{panel.classList.remove('closing','success');panel.classList.add('visible');btn.setAttribute('aria-expanded','true');};
   btn.setAttribute('aria-expanded','false');
-  btn.addEventListener('click',()=>{panel.classList.add('visible');btn.setAttribute('aria-expanded','true');panel.scrollIntoView({behavior:'smooth',block:'nearest'});});
+  btn.addEventListener('click',()=>{
+   if(states[key]?.previous){const previous=states[key].previous;const current=snapshot();apply(previous,previous.updatedAt,true);states[key]={current:previous,previous:null};try{localStorage.setItem(stateKey,JSON.stringify(states));}catch(e){apply(current,current.updatedAt);return;}btn.textContent='↻';btn.title='Generate a new prompt for this card';btn.setAttribute('aria-label','Generate a new prompt for this card');const note=document.getElementById('status');if(note)note.textContent='↶ Previous prompt restored for this card.';return;}
+   show();panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
   panel.querySelector('[data-choice="no"]').addEventListener('click',hide);
   panel.querySelector('[data-choice="cancel"]').addEventListener('click',hide);
   panel.querySelector('[data-choice="yes"]').addEventListener('click',()=>{
    const available=options.filter(o=>o.scene!==title.textContent.trim());
    if(!available.length){panel.querySelector('p').textContent='Других сцен в этой категории нет.';return;}
-   const next=available[Math.floor(Math.random()*available.length)];
+   const previous=snapshot(),next=available[Math.floor(Math.random()*available.length)];
    const updatedAt=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
-   apply(next,updatedAt);states[key]={...next,updatedAt};
+   const current={...next,updatedAt};
+   states[key]={current,previous};
    try{localStorage.setItem(stateKey,JSON.stringify(states));}
-   catch(e){panel.querySelector('p').textContent='Не удалось сохранить обновление в браузере.';return;}
-   const note=document.getElementById('status');if(note)note.textContent='🌟 Промт этой карточки обновлён. Новая сцена, описание и хештеги готовы.';
+   catch(e){panel.querySelector('p').textContent='Не удалось сохранить обновление в браузере.';delete states[key];return;}
+   apply(current,updatedAt);
+   const note=document.getElementById('status');if(note)note.textContent='🌟 Промт этой карточки обновлён. Предыдущую версию можно вернуть кнопкой ↶.';
    btn.classList.add('is-refreshing');btn.disabled=true;
-   panel.classList.add('success');panel.querySelector('p').textContent='Готово! Промт и описание обновлены.';
-   setTimeout(()=>{btn.classList.remove('is-refreshing');btn.disabled=false;panel.classList.add('closing');setTimeout(()=>{hide();panel.classList.remove('success','closing');},260);},900);
+   panel.classList.add('success');panel.querySelector('p').textContent='Готово! Промт обновлён. Предыдущая версия сохранена.';
+   setTimeout(()=>{btn.classList.remove('is-refreshing');btn.disabled=false;panel.classList.add('closing');setTimeout(()=>{panel.classList.remove('visible','success','closing');btn.setAttribute('aria-expanded','false');btn.textContent='↶';btn.title='Restore previous prompt';btn.setAttribute('aria-label','Restore previous prompt');},260);},650);
   });
  });
 }
