@@ -596,31 +596,42 @@ button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:700;font-
 """ + """
 </main><nav class="bottom-nav"><a href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><b>⌂</b>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><b>▦</b>Calendar</a><a class="active" href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><b>▤</b>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><b>▥</b>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><b>↗</b>History</a></nav><script>
 function setupPromptRefresh(){
- const stateKey='quiet-place-prompt-refresh-v2';let states={};try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
+ const stateKey='quiet-place-prompt-refresh-v3';
+ let states={};try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
  document.querySelectorAll('.force-refresh').forEach(btn=>{
-  const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker'),meta=card.querySelector('.prompt-meta'),star=meta.querySelector('.refresh-star'),time=meta.querySelector('.prompt-time');
-  const key=tracker.dataset.date+'-video-'+tracker.dataset.video;let options=[];try{options=JSON.parse(btn.dataset.promptOptions||'[]');}catch(e){}
-  const title=card.querySelector('h2'),caption=card.querySelector('.caption'),tags=card.querySelector('.tags'),post=card.querySelector('.copy-post');
-  const panel=document.createElement('div');panel.style.cssText='display:none;background:#21170f;border:1px solid #70451f;border-radius:12px;padding:14px;margin:12px 0;color:#fff;opacity:0;transition:opacity .25s ease,transform .25s ease;transform:translateY(-7px)';
-  panel.innerHTML='<strong>Обновить промт?</strong><p style="color:#c7b9ad;font-size:13px">Сцена, промт, описание и хештеги этой карточки будут заменены.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button type="button" data-choice="yes" style="background:#ff9a52;color:#1a1009">Да, обновить</button><button type="button" data-choice="no" style="background:#333;color:#fff">Нет</button><button type="button" data-choice="cancel" style="grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb">Отмена</button></div>';
+  const card=btn.closest('.card');
+  const copy=card?.querySelector('.copy'),tracker=card?.querySelector('.tracker');
+  const meta=card?.querySelector('.prompt-meta'),star=meta?.querySelector('.refresh-star'),time=meta?.querySelector('.prompt-time');
+  const title=card?.querySelector('h2'),caption=card?.querySelector('.caption'),tags=card?.querySelector('.tags'),post=card?.querySelector('.copy-post');
+  if(!card||!copy||!tracker||!meta||!star||!time||!title||!caption||!tags||!post){btn.disabled=true;return;}
+  const key=tracker.dataset.date+'-video-'+tracker.dataset.video;
+  let options=[];try{options=JSON.parse(btn.getAttribute('data-prompt-options')||'[]');}catch(e){options=[];}
+  const panel=document.createElement('section');panel.className='card-refresh-confirm';
+  panel.innerHTML='<strong>Обновить промт?</strong><p>Будут заменены сцена, промт, описание и хештеги только в этой карточке.</p><div class="card-refresh-actions"><button type="button" data-choice="yes">Да, обновить</button><button type="button" data-choice="no">Нет</button><button type="button" data-choice="cancel">Отмена</button></div>';
   card.appendChild(panel);
-  function hide(){panel.style.opacity='0';panel.style.transform='translateY(-7px)';setTimeout(()=>{panel.style.display='none';},250);}
-  function apply(item,stamp){copy.dataset.prompt=JSON.stringify(item.prompt);title.textContent=item.scene;caption.textContent=item.caption;tags.textContent=item.hashtags;post.dataset.post=JSON.stringify(item.caption+'\n\n'+item.hashtags);star.classList.add('active');time.textContent='🌟 Prompt updated: '+stamp+' · Warsaw time';}
+  function hide(){panel.classList.remove('visible');btn.setAttribute('aria-expanded','false');}
+  function apply(item,stamp){copy.dataset.prompt=JSON.stringify(item.prompt);title.textContent=item.scene;caption.textContent=item.caption;tags.textContent=item.hashtags;post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+item.hashtags);star.textContent='🌟';star.classList.add('active');time.textContent='Prompt updated: '+stamp+' Warsaw time';}
   if(states[key])apply(states[key],states[key].updatedAt);
-  btn.addEventListener('click',()=>{panel.style.display='block';requestAnimationFrame(()=>{panel.style.opacity='1';panel.style.transform='translateY(0)';});panel.scrollIntoView({behavior:'smooth',block:'nearest'});});
-  panel.querySelector('[data-choice="no"]').onclick=hide;panel.querySelector('[data-choice="cancel"]').onclick=hide;
-  panel.querySelector('[data-choice="yes"]').onclick=()=>{
+  btn.type='button';btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();panel.classList.add('visible');btn.setAttribute('aria-expanded','true');});
+  panel.querySelector('[data-choice="no"]').addEventListener('click',hide);
+  panel.querySelector('[data-choice="cancel"]').addEventListener('click',hide);
+  panel.querySelector('[data-choice="yes"]').addEventListener('click',()=>{
    const previous=states[key]||{},used=new Set(previous.usedScenes||[]);used.add(title.textContent.trim());
-   const available=options.filter(x=>!used.has(x.scene));if(!available.length){panel.querySelector('p').textContent='Варианты этой карточки закончились. Завтра появится новый набор.';return;}
-   const next=available[Math.floor(Math.random()*available.length)],stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
-   used.add(next.scene);apply(next,stamp);states[key]={...next,usedScenes:[...used],updatedAt:stamp};
-   try{localStorage.setItem(stateKey,JSON.stringify(states));}catch(e){panel.querySelector('p').textContent='Не удалось сохранить обновление в браузере.';return;}
-   const status=document.getElementById('status');if(status)status.textContent='🌟 Промт обновлён. Новая сцена, промт и подпись готовы.';
-   panel.querySelector('p').textContent='Готово! Промт обновлён.';btn.disabled=true;
-   setTimeout(()=>{hide();btn.disabled=false;},950);
-  };
+   const available=options.filter(item=>item&&item.scene&&!used.has(item.scene));
+   if(!available.length){panel.querySelector('p').textContent='Нет доступных вариантов. Обнови страницу завтра.';return;}
+   const next=available[Math.floor(Math.random()*available.length)];
+   const stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
+   apply(next,stamp);used.add(next.scene);states[key]={...next,usedScenes:[...used],updatedAt:stamp};
+   try{localStorage.setItem(stateKey,JSON.stringify(states));}
+   catch(error){panel.querySelector('p').textContent='Браузер не разрешил сохранить новый промт.';return;}
+   const status=document.getElementById('status');if(status)status.textContent='🌟 Новый уникальный промт создан для этой карточки.';
+   panel.classList.add('success');panel.querySelector('p').textContent='Готово! Промт этой карточки заменён.';
+   btn.classList.add('is-refreshing');setTimeout(()=>{btn.classList.remove('is-refreshing');hide();panel.classList.remove('success');},1100);
+  });
  });
-}setupPromptRefresh();
+}
+setupPromptRefresh();
 document.querySelectorAll('.copy,.copy-post').forEach(b=>b.addEventListener('click',async()=>{const value=JSON.parse(b.dataset.prompt||b.dataset.post);try{if(navigator.clipboard&&isSecureContext)await navigator.clipboard.writeText(value);else{const t=document.createElement('textarea');t.value=value;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error();t.remove();}document.getElementById('status').textContent='Copied ✓';}catch(e){document.getElementById('status').textContent='Copy blocked by browser. Try again.';}}));
 document.querySelectorAll('.tracker').forEach(card=>{const id=card.dataset.date+'-video-'+card.dataset.video,old=data[id]||{};card.querySelectorAll('[data-field]').forEach(f=>{if(old[f.dataset.field]!==undefined)f.value=old[f.dataset.field];});if(old.updatedAt)card.querySelector('.saved-note').textContent='Saved '+old.updatedAt;card.querySelector('.save-record').addEventListener('click',()=>{const r={date:card.dataset.date,video:card.dataset.video};card.querySelectorAll('[data-field]').forEach(f=>r[f.dataset.field]=f.value);r.updatedAt=new Date().toLocaleString();data[id]=r;try{localStorage.setItem(key,JSON.stringify(data));card.querySelector('.saved-note').textContent='Saved '+r.updatedAt;}catch(e){card.querySelector('.saved-note').textContent='Could not save';}});});
 </script></body></html>"""
