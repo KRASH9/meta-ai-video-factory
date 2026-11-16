@@ -70,7 +70,8 @@ jobs:
               Path(f"/tmp/{name}.js").write_text("\n".join(scripts), encoding="utf-8")
               print(f"Validated {name}; scripts: {len(scripts)}")
           content = (out / "content.html").read_text(encoding="utf-8")
-          assert content.count('class="force-refresh"') == 3, "Expected one refresh button per card"
+          assert content.count('class="prompt-options"') == 3, "Expected prompt options data for all three cards"
+          assert 'class="force-refresh"' not in content, "Refresh icon must be removed"
           assert content.count('class="card"') == 3, "Expected exactly three content cards"
           assert "setupPromptRefresh();" in content, "Refresh handler is not initialized"
           print("Content card and refresh-control checks passed")
