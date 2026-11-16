@@ -511,7 +511,7 @@ function setupPromptRefresh(){
    caption.textContent=item.caption;
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
-   post.dataset.post=JSON.stringify(item.caption+'\n\n'+hashtags);
+   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+hashtags);
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
   };
   const saved=states[key];
