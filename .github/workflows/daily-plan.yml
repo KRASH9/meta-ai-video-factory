@@ -75,7 +75,7 @@ jobs:
           assert "setupPromptRefresh();" in content, "Refresh handler is not initialized"
           print("Content card and refresh-control checks passed")
           PY
-          for f in /tmp/*.html.js; do node --check "$f"; done
+          for f in /tmp/*.html.js; do echo "Checking JavaScript: $f"; node --check "$f"; done
 
       - name: Include legal pages in website
         run: |
