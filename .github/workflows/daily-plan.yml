@@ -5,13 +5,11 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Run at both UTC hours; the script proceeds only when Warsaw local time is 05:xx.
-    - cron: "0 3,4 * * *"
+    # 03:00 UTC is 05:00 in Warsaw during summer; winter waits one hour in the job.
+    - cron: "0 3 * * *"
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: quiet-place-content-generation
@@ -21,7 +19,7 @@ jobs:
   create-plan:
     name: Generate daily content plan
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 90
 
     steps:
       - name: Checkout repository
@@ -32,6 +30,23 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Wait until 05:00 Warsaw time (scheduled runs only)
+        if: github.event_name == 'schedule'
+        run: |
+          python - <<'PY'
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          import time
+          tz = ZoneInfo("Europe/Warsaw")
+          now = datetime.now(tz)
+          target = now.replace(hour=5, minute=0, second=0, microsecond=0)
+          if now < target:
+              seconds = (target - now).total_seconds()
+              print(f"Waiting {seconds:.0f}s until 05:00 Warsaw time")
+              time.sleep(seconds)
+          print("Warsaw local time:", datetime.now(tz).isoformat())
+          PY
+
       - name: Generate Quiet Place content
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then
@@ -39,6 +54,28 @@ jobs:
           else
             python scripts/create_daily_plan.py
           fi
+
+      - name: Validate generated pages and JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          out = Path("output")
+          pages = ["index.html", "content.html", "history.html", "calendar.html", "analytics.html"]
+          for name in pages:
+              html = (out / name).read_text(encoding="utf-8")
+              scripts = re.findall(r"<script>([\\s\\S]*?)</script>", html)
+              if not scripts:
+                  raise SystemExit(f"No inline script found in {name}")
+              Path(f"/tmp/{name}.js").write_text("\\n".join(scripts), encoding="utf-8")
+              print(f"Validated {name}; scripts: {len(scripts)}")
+          content = (out / "content.html").read_text(encoding="utf-8")
+          assert content.count('class="force-refresh"') == 3, "Expected one refresh button per card"
+          assert content.count('class="card"') == 3, "Expected exactly three content cards"
+          assert "setupPromptRefresh();" in content, "Refresh handler is not initialized"
+          print("Content card and refresh-control checks passed")
+          PY
+          for f in /tmp/*.html.js; do node --check "$f"; done
 
       - name: Include legal pages in website
         run: |
@@ -52,12 +89,3 @@ jobs:
           name: quiet-place-daily-content
           path: output/
           retention-days: 7
-
-      - name: Upload site to GitHub Pages
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: output/
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
