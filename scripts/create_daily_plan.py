@@ -501,7 +501,7 @@ function setupPromptRefresh(){
    title.textContent=item.scene;
    caption.textContent=item.caption;
    tags.textContent=item.tags||item.hashtags||'';
-   post.dataset.post=JSON.stringify(item.caption+'\n\n'+(item.tags||item.hashtags||''));
+   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+(item.tags||item.hashtags||''));
    star.classList.toggle('active',!restored);
    star.textContent=restored?'':'🌟';
    time.textContent=(restored?'Prompt restored: ':'🌟 Prompt updated: ')+(item.updatedAt||'')+' Warsaw time';
