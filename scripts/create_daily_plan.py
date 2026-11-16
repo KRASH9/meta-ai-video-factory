@@ -362,6 +362,7 @@ for item in video_packages:
           <span class="prompt-options" hidden data-prompt-options='{escape(prompt_options_json, quote=True)}'></span>
           <div class="card-head"><div><div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div><h2>{escape(item["scene"])}</h2></div></div>
           <div class="prompt-meta"><span class="prompt-time">Prompt updated: {escape(generated_at_label)} Warsaw time</span></div>
+          <button class="prompt-refresh" type="button" style="display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;min-height:48px!important;margin:10px 0!important;padding:14px!important;background:#ff9a52!important;color:#1a1009!important;border:0!important;border-radius:11px!important;font-size:15px!important;font-weight:800!important;cursor:pointer!important">Да, обновить</button>
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
@@ -464,11 +465,12 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <nav class="nav"><div class="nav-inner"><a class="active" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><span class="nav-icon">⌂</span>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><span class="nav-icon">▦</span>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><span class="nav-icon">▤</span>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><span class="nav-icon">▥</span>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><span class="nav-icon">↗</span>History</a></div></nav>
 <script>
 function setupPromptRefresh(){
- const stateKey='quiet-place-prompt-refresh-v6';
+ const stateKey='quiet-place-prompt-refresh-v7';
  let states={};
  try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
- document.querySelectorAll('.prompt-options').forEach(source=>{
-  const card=source.closest('.card');
+ document.querySelectorAll('.prompt-refresh').forEach(button=>{
+  const card=button.closest('.card');
+  const source=card&&card.querySelector('.prompt-options');
   const copy=card&&card.querySelector('.copy');
   const tracker=card&&card.querySelector('.tracker');
   const meta=card&&card.querySelector('.prompt-meta');
@@ -477,40 +479,35 @@ function setupPromptRefresh(){
   const caption=card&&card.querySelector('.caption');
   const tags=card&&card.querySelector('.tags');
   const post=card&&card.querySelector('.copy-post');
-  if(!card||!copy||!tracker||!meta||!time||!title||!caption||!tags||!post)return;
+  if(!card||!source||!copy||!tracker||!meta||!time||!title||!caption||!tags||!post){button.disabled=true;return;}
   const key=tracker.dataset.date+'-video-'+tracker.dataset.video;
   let options=[];
   try{options=JSON.parse(source.getAttribute('data-prompt-options')||'[]');}catch(e){options=[];}
-  const panel=document.createElement('section');
-  panel.className='card-refresh-confirm visible';
-  panel.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;transform:none!important;position:relative!important;width:100%!important;box-sizing:border-box!important;margin:12px 0!important;padding:14px!important;';
-  panel.innerHTML='<strong>Обновить промт?</strong><p>Будут заменены сцена, промт, описание и хештеги только в этой карточке.</p><div class="card-refresh-actions"><button type="button" data-choice="yes" style="display:block!important;width:100%!important;min-height:48px!important;padding:14px!important;background:#ff9a52!important;color:#1a1009!important;border:0!important;border-radius:11px!important;font-size:15px!important;font-weight:800!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important">Да, обновить</button></div>';
-  meta.insertAdjacentElement('afterend',panel);
-  const apply=item=>{
-   copy.dataset.prompt=JSON.stringify(item.prompt);
-   title.textContent=item.scene;
-   caption.textContent=item.caption;
-   tags.textContent=item.tags||item.hashtags||'';
-   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+(item.tags||item.hashtags||''));
-   time.textContent='Prompt updated: '+(item.updatedAt||'')+' Warsaw time';
-  };
-  const saved=states[key];
-  if(saved&&saved.current)apply(saved.current);
-  panel.querySelector('[data-choice="yes"]').addEventListener('click',()=>{
+  const status=document.createElement('p');
+  status.className='prompt-refresh-status';
+  status.style.cssText='margin:7px 0 12px;font-size:12px;color:#aaa';
+  button.insertAdjacentElement('afterend',status);
+  button.addEventListener('click',()=>{
+   if(button.disabled)return;
    const used=new Set((states[key]&&states[key].usedScenes)||[]);
    used.add(title.textContent.trim());
    const available=options.filter(item=>item&&item.scene&&!used.has(item.scene));
-   if(!available.length){panel.querySelector('p').textContent='Нет других сцен в этой категории. Попробуй завтра.';return;}
+   if(!available.length){status.textContent='Нет других сцен в этой категории. Попробуй завтра.';return;}
    const next=available[Math.floor(Math.random()*available.length)];
    const stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
    const updated={...next,updatedAt:stamp};
    const nextStates={...states,[key]:{current:updated,usedScenes:[...used,next.scene]}};
    try{localStorage.setItem(stateKey,JSON.stringify(nextStates));}
-   catch(error){panel.querySelector('p').textContent='Не удалось сохранить обновление. Текущий промт не изменён.';return;}
+   catch(error){status.textContent='Не удалось сохранить обновление. Текущий промт не изменён.';return;}
    states=nextStates;
-   apply(updated);
-   panel.classList.add('success');
-   panel.querySelector('p').textContent='Готово! Новый промт сохранён.';
+   copy.dataset.prompt=JSON.stringify(updated.prompt);
+   title.textContent=updated.scene;
+   caption.textContent=updated.caption;
+   tags.textContent=updated.tags||updated.hashtags||'';
+   post.dataset.post=JSON.stringify(updated.caption+'\n\n'+(updated.tags||updated.hashtags||''));
+   time.textContent='Prompt updated: '+stamp+' Warsaw time';
+   status.textContent='🌟 Промт обновлён.';
+   button.textContent='Обновить ещё раз';
   });
  });
 }
