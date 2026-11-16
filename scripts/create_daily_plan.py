@@ -504,7 +504,7 @@ function setupPromptRefresh(){
    title.textContent=updated.scene;
    caption.textContent=updated.caption;
    tags.textContent=updated.tags||updated.hashtags||'';
-   post.dataset.post=JSON.stringify(updated.caption+'\n\n'+(updated.tags||updated.hashtags||''));
+   post.dataset.post=JSON.stringify(updated.caption+'\\n\\n'+(updated.tags||updated.hashtags||''));
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
    status.textContent='🌟 Промт обновлён.';
    button.textContent='Обновить ещё раз';
