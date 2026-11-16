@@ -64,10 +64,10 @@ jobs:
           pages = ["index.html", "content.html", "history.html", "calendar.html", "analytics.html"]
           for name in pages:
               html = (out / name).read_text(encoding="utf-8")
-              scripts = re.findall(r"<script>([\\s\\S]*?)</script>", html)
+              scripts = re.findall(r"<script>([\s\S]*?)</script>", html)
               if not scripts:
                   raise SystemExit(f"No inline script found in {name}")
-              Path(f"/tmp/{name}.js").write_text("\\n".join(scripts), encoding="utf-8")
+              Path(f"/tmp/{name}.js").write_text("\n".join(scripts), encoding="utf-8")
               print(f"Validated {name}; scripts: {len(scripts)}")
           content = (out / "content.html").read_text(encoding="utf-8")
           assert content.count('class="force-refresh"') == 3, "Expected one refresh button per card"
