@@ -475,7 +475,7 @@ function setupPromptRefresh(){
   function apply(item,updatedAt){
    copy.dataset.prompt=JSON.stringify(item.prompt);title.textContent=item.scene;
    caption.textContent=item.caption;tags.textContent=item.hashtags;
-   post.dataset.post=JSON.stringify(item.caption+'\n\n'+item.hashtags);
+   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+item.hashtags);
    star.classList.add('active');time.textContent='🌟 Prompt updated: '+updatedAt+' · Warsaw time';
   }
   if(states[key])apply(states[key],states[key].updatedAt);
