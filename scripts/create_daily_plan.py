@@ -19,9 +19,11 @@ META_AI_CHAT_URL = "https://www.meta.ai/share/c/1PlNrwtGII?utm_source=android_me
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 generated_at = datetime.now(WARSAW)
-if "--scheduled" in sys.argv and generated_at.hour != 5:
-    print(f"Scheduled run skipped: Warsaw local time is {generated_at:%H:%M}; generation is reserved for 05:00.")
-    raise SystemExit(0)
+if "--scheduled" in sys.argv and generated_at.hour < 5:
+    print(f"Scheduled run started early at {generated_at:%H:%M}; refusing to generate before 05:00 Warsaw time.")
+    raise SystemExit(1)
+if "--scheduled" in sys.argv and generated_at.hour > 5:
+    print(f"GitHub scheduled job started late at {generated_at:%H:%M}; generating now rather than silently skipping the day.")
 today = generated_at.date()
 generated_at_label = generated_at.strftime("%Y-%m-%d %H:%M:%S %Z")
 date_seed = today.strftime("%Y-%m-%d")
