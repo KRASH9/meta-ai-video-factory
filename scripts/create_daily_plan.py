@@ -847,7 +847,7 @@ a{color:#ffb17b}.back{display:inline-block;margin:8px 0 18px;text-decoration:non
 <button id="add-old" type="button" style="width:100%;padding:13px;background:#ff9a52;color:#1a1009;border:0;border-radius:10px;font-weight:700">Add to publication history</button>
 <p id="add-message" class="muted" aria-live="polite"></p></section>
 <section class="panel"><h2>Browse records</h2><div class="controls">
-<select id="sort"><option value="newest">Newest first</option><option value="views">Most views</option><option value="likes">Most likes</option></select>
+<select id="sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="views">Most views</option><option value="likes">Most likes</option></select>
 <select id="status"><option value="all">All statuses</option><option value="published">Published</option><option value="created">Created</option><option value="checked">Quality checked</option><option value="planned">Planned</option></select>
 </div><div id="records"></div></section>
 <p class="muted">Data is read from the same browser storage as Daily Content Studio. It stays on this device and browser; clearing site data or switching devices can remove or hide it. Export CSV from the studio regularly as a backup.</p>
@@ -877,6 +877,13 @@ const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 function render(){
  const sort=document.getElementById('sort').value,status=document.getElementById('status').value;
  let list=getRecords().filter(r=>status==='all'||(r.status||'planned')===status);
+ const publicationOrder=(a,b)=>{
+  const aStamp=String(a.date||'')+' '+String(a.time||'00:00');
+  const bStamp=String(b.date||'')+' '+String(b.time||'00:00');
+  return aStamp.localeCompare(bStamp)||String(a.video||'').localeCompare(String(b.video||''));
+ };
+ if(sort==='newest')list.sort((a,b)=>publicationOrder(b,a));
+ if(sort==='oldest')list.sort(publicationOrder);
  if(sort==='views')list.sort((a,b)=>Number(b.views||0)-Number(a.views||0));
  if(sort==='likes')list.sort((a,b)=>Number(b.likes||0)-Number(a.likes||0));
  const root=document.getElementById('records');
