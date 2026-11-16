@@ -3,6 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import json
 import random
+import sys
 from html import escape
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +19,9 @@ META_AI_CHAT_URL = "https://www.meta.ai/share/c/1PlNrwtGII?utm_source=android_me
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 generated_at = datetime.now(WARSAW)
+if "--scheduled" in sys.argv and generated_at.hour != 5:
+    print(f"Scheduled run skipped: Warsaw local time is {generated_at:%H:%M}; generation is reserved for 05:00.")
+    raise SystemExit(0)
 today = generated_at.date()
 generated_at_label = generated_at.strftime("%Y-%m-%d %H:%M:%S %Z")
 date_seed = today.strftime("%Y-%m-%d")
@@ -295,15 +299,58 @@ PLAN_FILE.write_text("\n".join(lines), encoding="utf-8")
 cards = []
 for item in video_packages:
     scene_options = []
-    for candidate in categories[item["category"]]:
-        if candidate == item["scene"]:
-            continue
-        scene_options.append({
-            "scene": candidate,
-            "prompt": build_prompt(candidate, camera_approaches[item["index"] - 1]),
-            "caption": build_caption(item["category"], candidate),
-            "hashtags": build_hashtags(item["category"], candidate),
-        })
+    # Build a large pool of fresh, season-aware combinations for the per-card refresh control.
+    framing_by_category = {
+        "Nature & Water": [
+            "seen from close to the water's edge", "framed through softly blurred foreground reeds",
+            "with a broad natural view and layered depth", "from beside a weathered shoreline",
+            "with the main water feature slightly off-centre"
+        ],
+        "Forest & Weather": [
+            "seen from a quiet path-level viewpoint", "framed between natural tree trunks",
+            "with a clear foreground of damp leaves", "looking gently into the woodland depth",
+            "from beside a mossy tree and the forest floor"
+        ],
+        "Cozy Quiet Places": [
+            "seen from a sheltered, human-height viewpoint", "framed by a simple doorway or window",
+            "with a quiet foreground detail and soft depth", "from the edge of a peaceful garden",
+            "with the architecture naturally balanced in the frame"
+        ],
+    }
+    detail_by_category = {
+        "Nature & Water": [
+            "subtle reflections moving across the surface", "small leaves gathering near the edge",
+            "gentle ripples catching the available light", "weathered stones and natural textures",
+            "soft movement in nearby grasses"
+        ],
+        "Forest & Weather": [
+            "tiny droplets clinging to branches", "fallen leaves scattered across the ground",
+            "soft movement in thin branches", "moss and bark textures in the foreground",
+            "a few leaves drifting naturally in the breeze"
+        ],
+        "Cozy Quiet Places": [
+            "wet stone textures and a few fallen leaves", "soft reflections in a nearby window",
+            "a small natural detail moving gently in the breeze", "warm wood grain and quiet garden textures",
+            "subtle rain marks and natural imperfections"
+        ],
+    }
+    variant_rng = random.Random(f"{date_seed}:{item['category']}:{item['index']}:refresh-pool")
+    seen = {item["scene"]}
+    for base in categories[item["category"]]:
+        for framing in framing_by_category[item["category"]]:
+            for detail in detail_by_category[item["category"]]:
+                candidate = f"{base}, {framing}, with {detail}"
+                if candidate in seen:
+                    continue
+                seen.add(candidate)
+                scene_options.append({
+                    "scene": candidate,
+                    "prompt": build_prompt(candidate, camera_approaches[item["index"] - 1]),
+                    "caption": build_caption(item["category"], candidate),
+                    "hashtags": build_hashtags(item["category"], candidate),
+                })
+    variant_rng.shuffle(scene_options)
+    scene_options = scene_options[:160]
     prompt_options_json = json.dumps(scene_options, ensure_ascii=False).replace("</", "<\\/")
     prompt_json = json.dumps(item["prompt"], ensure_ascii=False).replace("</", "<\\/")
     post_json = json.dumps(item["caption"] + "\n\n" + item["hashtags"], ensure_ascii=False)
@@ -415,7 +462,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <nav class="nav"><div class="nav-inner"><a class="active" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><span class="nav-icon">⌂</span>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><span class="nav-icon">▦</span>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><span class="nav-icon">▤</span>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><span class="nav-icon">▥</span>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><span class="nav-icon">↗</span>History</a></div></nav>
 <script>
 function setupPromptRefresh(){
- const stateKey='quiet-place-prompt-refresh-v2';let states={};
+ const stateKey='quiet-place-prompt-refresh-v3';let states={};
  try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
  document.querySelectorAll('.force-refresh').forEach(btn=>{
   const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker');
@@ -563,9 +610,10 @@ function setupPromptRefresh(){
   btn.addEventListener('click',()=>{panel.style.display='block';requestAnimationFrame(()=>{panel.style.opacity='1';panel.style.transform='translateY(0)';});panel.scrollIntoView({behavior:'smooth',block:'nearest'});});
   panel.querySelector('[data-choice="no"]').onclick=hide;panel.querySelector('[data-choice="cancel"]').onclick=hide;
   panel.querySelector('[data-choice="yes"]').onclick=()=>{
-   const available=options.filter(x=>x.scene!==title.textContent.trim());if(!available.length){panel.querySelector('p').textContent='Других сцен в этой категории нет.';return;}
+   const previous=states[key]||{},used=new Set(previous.usedScenes||[]);used.add(title.textContent.trim());
+   const available=options.filter(x=>!used.has(x.scene));if(!available.length){panel.querySelector('p').textContent='Варианты этой карточки закончились. Завтра появится новый набор.';return;}
    const next=available[Math.floor(Math.random()*available.length)],stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
-   apply(next,stamp);states[key]={...next,updatedAt:stamp};
+   used.add(next.scene);apply(next,stamp);states[key]={...next,usedScenes:[...used],updatedAt:stamp};
    try{localStorage.setItem(stateKey,JSON.stringify(states));}catch(e){panel.querySelector('p').textContent='Не удалось сохранить обновление в браузере.';return;}
    const status=document.getElementById('status');if(status)status.textContent='🌟 Промт обновлён. Новая сцена, промт и подпись готовы.';
    panel.querySelector('p').textContent='Готово! Промт обновлён.';btn.disabled=true;
