@@ -571,7 +571,7 @@ document.querySelectorAll('.copy,.copy-post').forEach(btn=>btn.addEventListener(
 document.getElementById('export-csv').addEventListener('click',()=>{
  const cols=['date','video','status','url','views','likes','comments','shares','saves','updatedAt'];
  const rows=[cols.join(','),...records().map(r=>cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))];
- const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ const blob=new Blob([rows.join('\\n')],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='quiet-place-publication-tracker.csv';a.click();URL.revokeObjectURL(url);
 });
 updateDashboard();
