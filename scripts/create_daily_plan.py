@@ -465,8 +465,18 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <script>
 function setupPromptRefresh(){
  const stateKey='quiet-place-prompt-refresh-v5';
+ const legacyStateKey='quiet-place-prompt-refresh-v4';
  let states={};
- try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
+ try{
+  states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};
+  if(!Object.keys(states).length){
+   const legacy=JSON.parse(localStorage.getItem(legacyStateKey)||'{}')||{};
+   if(Object.keys(legacy).length){
+    states=legacy;
+    localStorage.setItem(stateKey,JSON.stringify(states));
+   }
+  }
+ }catch(e){states={};}
  document.querySelectorAll('.force-refresh').forEach(btn=>{
   const card=btn.closest('.card');
   const copy=card&&card.querySelector('.copy');
