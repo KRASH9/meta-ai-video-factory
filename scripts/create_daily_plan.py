@@ -93,43 +93,89 @@ camera_approaches = [
 # Captions are written from the selected scene, not just its broad category.
 # Each video gets a distinct description that names the actual subject and its movement/atmosphere.
 def build_caption(category, scene):
+    """Write a short, image-rich micro-story grounded in the actual scene."""
     text = scene.lower()
-    rules = [
-        (("lake", "shoreline", "shore", "reed-lined"), "A quiet shoreline, soft autumn air and water that barely moves. Stay here for a moment. 🌊"),
-        (("waves", "pebble beach", "tide", "wet sand"), "Waves arrive, retreat, and leave the world a little quieter. 🌊"),
-        (("rain drops", "ripples", "pond"), "Tiny raindrops, endless ripples. Sometimes the smallest moments are the most peaceful. 🍂"),
-        (("stone footbridge", "river", "drifting on the water"), "An old stone bridge, a slow-moving river and leaves carried downstream. 🍁"),
-        (("water flowing", "rock ledge", "waterfall"), "Just the sound of water finding its way through the autumn forest. 💧"),
-        (("driftwood", "grey-blue water"), "Driftwood by the water. A simple view with nowhere else to be. 🌫️"),
-        (("wooden pier", "misty"), "A quiet pier disappearing into the mist. Would you sit here for a while? 🤍"),
-        (("waterfall", "forest"), "A small forest waterfall and the steady rhythm of flowing water. Take a breath. 🌿"),
-        (("narrow muddy path", "pine and birch"), "A rain-soaked path through pine and birch. No rush, no destination. 🌲"),
-        (("bare birch branches", "breeze"), "Bare birch branches moving gently in the cold autumn breeze. 🍃"),
-        (("drops of rain", "last brown leaves"), "Rain falling from the last autumn leaves. Listen closely. 🍂"),
-        (("woodland trail", "wet amber"), "A woodland trail covered in wet amber leaves. The kind of walk that clears your head. 🍁"),
-        (("grey november morning", "bare trees"), "A quiet November morning among bare trees. Nothing to chase, nowhere to be. 🌫️"),
-        (("mist", "tree trunks"), "Soft mist drifting between the trees after the rain. Let the noise fade. 🌫️"),
-        (("birch grove", "golden leaves"), "A few golden leaves still holding on in the birch grove. Autumn, at its quietest. 🍂"),
-        (("wooden bench", "empty autumn park"), "An empty park bench beneath bare trees. Imagine having this whole afternoon to yourself. 🤍"),
-        (("clouds passing", "hillside"), "Clouds moving slowly above the autumn hillside. A little space to breathe. ☁️"),
-        (("rain falling", "fallen leaves"), "Rain tapping against fallen leaves beside the forest path. Just nature, nothing more. 🌧️"),
-        (("rain running down the window", "cottage"), "Rain on a cottage window and a slow autumn afternoon. This is your sign to pause. 🌧️"),
-        (("european street", "wet paving stones"), "An empty old street after the rain, with reflections on every stone. 🚶"),
-        (("courtyard", "old stone flooring"), "A quiet stone courtyard after the shower. Even familiar places can feel like a retreat. 🍂"),
-        (("village lane", "modest houses"), "A quiet village lane beneath the November sky. Would you take the long way home? 🏡"),
-        (("wooden veranda", "garden"), "A sheltered veranda, a rain-washed garden and a moment to do absolutely nothing. 🤍"),
-        (("outdoor table", "cottage window"), "A little table outside a cottage on a misty morning. Coffee would make this perfect. ☕"),
-        (("garden path", "late-season plants"), "A garden path softened by rain and fallen leaves. Slow steps, quiet thoughts. 🍃"),
-        (("cabin porch", "woodland"), "A cabin porch looking out over the quiet woods. Could you spend a whole day here? 🌲"),
-        (("park shelter", "autumn rain"), "Watching the cold autumn rain from a quiet park shelter. No need to hurry. 🌧️"),
-        (("empty bench", "cobblestone lane"), "An empty bench on a rain-darkened cobblestone lane. A small pocket of calm. 🤍"),
-    ]
-    for keywords, caption in rules:
-        if all(word in text for word in keywords):
-            return caption
-    # Specific fallback uses the actual scene description so it never falls back to a category-only caption.
+    seed = sum(ord(char) for char in scene)
+    
+    if "stone footbridge" in text and "river" in text:
+        return (
+            "The old stone bridge has watched every summer turn into autumn. "
+            "But the river remembers nothing; it simply carries the fallen leaves onward, "
+            "slowly, without hurry. Perhaps that is its quiet wisdom: knowing when to let things go. 🍂"
+        )
+    if any(word in text for word in ("lake", "shoreline", "reed-lined", "pebble beach", "tide", "driftwood", "wooden pier")):
+        stories = [
+            "The water keeps the colour of the November sky, while the shore gathers the leaves the wind has left behind. "
+            "A small wave arrives, then slips away as if it has nowhere urgent to be. "
+            "For a moment, the whole world seems content to move at this pace. 🌊",
+            "There is a kind of quiet that only exists beside water. The breeze changes its surface, "
+            "the reeds lean closer, and the distant shore slowly disappears into the grey. "
+            "Nothing asks to be hurried here. 🍃",
+            "The shoreline has no need to look perfect. A little driftwood, a restless tide and the soft November light are enough. "
+            "The water comes and goes, leaving the day a little quieter than it found it. 🌫️"
+        ]
+        return stories[seed % len(stories)]
+    if any(word in text for word in ("waterfall", "rock ledge", "water flowing", "river")):
+        stories = [
+            "The water has travelled farther than we can imagine, yet it never seems in a hurry. "
+            "It slips over the old stones and disappears among the trees, carrying the forest's quiet with it. "
+            "Some journeys are beautiful simply because they keep going. 💧",
+            "Between the bare branches, the water finds its own gentle rhythm. "
+            "It tumbles over the rocks, catches a little light, and carries on without looking back. "
+            "The forest lets the moment pass in silence. 🍂"
+        ]
+        return stories[seed % len(stories)]
+    if any(word in text for word in ("rain", "drops", "shower", "wet")) and any(word in text for word in ("leaf", "path", "pond", "window", "bench")):
+        stories = [
+            "The rain finds every leaf, every stone and every quiet corner of the path. "
+            "Tiny drops gather, fall, and disappear into the earth as the afternoon slowly fades. "
+            "Even an ordinary rainy day can hold a little wonder. 🌧️",
+            "The last leaves are letting go, one raindrop at a time. "
+            "The path darkens beneath them, while the forest listens to the soft rhythm overhead. "
+            "There is nowhere else this moment needs to be. 🍂"
+        ]
+        return stories[seed % len(stories)]
+    if any(word in text for word in ("forest", "woodland", "birch", "pine", "tree", "trees", "trail", "path")):
+        stories = [
+            "The trees have shed most of their colours, but the forest is far from empty. "
+            "A branch moves in the breeze, a leaf crosses the path, and the quiet keeps unfolding. "
+            "Autumn has its own way of making room for stillness. 🍁",
+            "Every step along this path leaves the noise a little farther behind. "
+            "Bare branches sway above the damp earth, while the last golden leaves hold on for another moment. "
+            "The forest never asks us to hurry. 🌲",
+            "The wind moves gently through the trees, stirring the few leaves still holding on. "
+            "The path disappears around the bend, inviting no particular destination. "
+            "Sometimes the loveliest part of a walk is simply being there. 🍃"
+        ]
+        return stories[seed % len(stories)]
+    if any(word in text for word in ("cottage", "veranda", "cabin", "shelter", "outdoor table", "courtyard")):
+        stories = [
+            "Beyond the window, the autumn rain turns the garden into a soft blur of colour. "
+            "Inside, the world feels distant and the afternoon seems to have nowhere else to go. "
+            "Some places make doing nothing feel like enough. 🤍",
+            "The little shelter stands quietly while the weather passes through. "
+            "Rain touches the old stones, leaves gather by the doorway, and the day carries on at its own pace. "
+            "It feels good to have nowhere to rush. 🍂"
+        ]
+        return stories[seed % len(stories)]
+    if any(word in text for word in ("street", "village", "lane", "cobblestone", "bench", "park")):
+        stories = [
+            "The street is almost empty, its wet stones holding the last light of the day. "
+            "A few leaves travel along the pavement, following a route no one planned. "
+            "Even familiar places can feel like somewhere new when the world grows quiet. 🍁",
+            "The old lane settles beneath the November sky. Bare branches frame the rooftops, "
+            "and the rain leaves small reflections where footsteps have passed. "
+            "For once, there is no reason to take the shortest way home. 🏡"
+        ]
+        return stories[seed % len(stories)]
+    
     clean = scene.strip().rstrip(".")
-    return f"{clean[0].upper() + clean[1:]}. A quiet moment to leave the noise behind. 🤍"
+    opening = clean[0].upper() + clean[1:] if clean else "The quiet moment"
+    return (
+        f"{opening}. The smallest details seem to move a little slower here, "
+        "as if the day has made room for one more breath. "
+        "Nothing needs to happen for this moment to matter. 🤍"
+    )
 
 # Keep a small brand core, then match the remaining tags to the actual scene.
 brand_hashtags = ["#QuietPlace", "#SlowLiving"]
