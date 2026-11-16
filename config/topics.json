@@ -1,40 +1,84 @@
 {
   "categories": {
     "Nature & Water": [
-      "a quiet lake beneath grey November skies, with brown reeds and fallen leaves along the damp shore",
-      "gentle waves reaching a dark pebble beach on a cool overcast autumn day",
-      "rain drops making small ripples in a still woodland pond surrounded by fallen leaves",
-      "a narrow river passing under an old stone footbridge, with wet autumn leaves drifting on the water",
-      "water flowing over a low natural rock ledge in a late-autumn woodland with mostly bare trees",
-      "a quiet shoreline with driftwood, muted grey-blue water and a cloudy autumn sky",
-      "a simple wooden pier beside calm water on a misty late-autumn morning",
-      "a small waterfall in a damp Central European forest with copper leaves on the ground",
-      "the tide slowly moving across wet sand under a cool cloudy November sky",
-      "a reed-lined lake edge on a still, chilly autumn morning"
+      "a quiet alpine lake reflecting real mountain peaks",
+      "waves rolling onto a rugged Atlantic coastline",
+      "a waterfall flowing over layered natural rock in a national park",
+      "a calm lake viewed from a weathered wooden pier",
+      "a mountain stream passing over smooth stones",
+      "a real fjord with steep mountains and calm water"
     ],
-    "Forest & Weather": [
-      "a narrow muddy path through a quiet pine and birch forest after autumn rain",
-      "bare birch branches moving gently in a cool late-autumn breeze",
-      "small drops of rain falling from the last brown leaves onto a forest path",
-      "a quiet woodland trail covered with wet amber and brown leaves",
-      "an ordinary grey November morning among mostly bare trees in a Central European forest",
-      "low natural mist drifting between bare tree trunks after overnight rain",
-      "a quiet birch grove with a few remaining golden leaves moving in the wind",
-      "a wet wooden bench beneath nearly bare trees in an empty autumn park",
-      "clouds passing behind a forested hillside, with subdued late-autumn colors",
-      "close view of rain falling onto fallen leaves beside a forest path"
+    "Forests & Wildlife": [
+      "a temperate forest trail with native trees and seasonal ground cover",
+      "a birch woodland with natural light between the trunks",
+      "wild deer at the edge of a real forest clearing, filmed from a distance",
+      "wild horses grazing in a natural meadow",
+      "birds moving across a quiet wetland",
+      "a moss-covered forest floor with ferns and roots"
     ],
-    "Cozy Quiet Places": [
-      "rain running down the window of a quiet countryside cottage on a grey autumn afternoon",
-      "an empty narrow European street after a light November shower, with wet paving stones and fallen leaves",
-      "a small courtyard with wet old stone flooring and a few fallen autumn leaves",
-      "a quiet village lane with modest houses, bare trees and an overcast late-autumn sky",
-      "a wooden veranda looking out onto a garden with mostly bare trees after rain",
-      "a small outdoor table beside a cottage window on a misty autumn morning",
-      "a peaceful garden path covered with damp leaves and bordered by late-season plants",
-      "a simple cabin porch overlooking a quiet, leaf-covered woodland",
-      "a quiet park shelter while cold autumn rain falls outside",
-      "an empty bench beside a wet cobblestone lane lined with bare trees"
+    "Architecture & Interiors": [
+      "a quiet stone courtyard in a historic European town",
+      "a minimalist seaside villa built from natural stone and timber",
+      "a traditional Japanese wooden house beside a real garden",
+      "a quiet old library with tall windows and natural daylight",
+      "a modern glass building reflecting real clouds and trees",
+      "a historic stone bridge crossing a village river"
+    ],
+    "Cities & Streets": [
+      "an empty cobblestone street in a historic European town after rain",
+      "a quiet canal-side street with real brick buildings",
+      "a peaceful city park path with seasonally appropriate trees",
+      "a narrow old-town lane at blue hour with warm window light",
+      "a real harbor promenade with boats moving gently",
+      "a quiet residential street lined with mature trees"
+    ],
+    "Coasts & Islands": [
+      "a Mediterranean fishing village beside a natural harbor",
+      "a real island beach with native palms and gentle ocean waves",
+      "a rugged North Atlantic coastline beneath moving clouds",
+      "a coastal footpath above real cliffs and distant sea",
+      "a quiet sandy beach with natural dunes and beach grass",
+      "a sheltered cove with clear water and weathered rocks"
+    ],
+    "Weather & Atmosphere": [
+      "natural morning mist drifting through a real valley",
+      "rain falling on a quiet stone street",
+      "fresh snowfall settling on a real forest path",
+      "low clouds moving across a mountain ridge",
+      "sunlight appearing after rain over a green meadow",
+      "wind moving through tall grass in open countryside"
+    ],
+    "Travel Landscapes": [
+      "a winding mountain road through a real alpine landscape",
+      "a vineyard landscape in a real wine-growing region",
+      "a remote countryside village surrounded by native vegetation",
+      "a broad desert landscape with natural dunes and distant mountains",
+      "a green terraced hillside in a real rural region",
+      "a quiet lakeside path in a national park"
+    ],
+    "Gardens & Botanical Details": [
+      "a botanical garden with plants appropriate to the current season",
+      "raindrops resting on a living green leaf",
+      "a natural flower meadow with locally seasonal species",
+      "a Japanese garden with real seasonal foliage and a still pond",
+      "a greenhouse filled with real tropical plants and natural condensation",
+      "moss and small plants growing on a real stone surface"
+    ],
+    "Water & Underwater": [
+      "a real underwater reef with fish and sunlight filtering through water",
+      "gentle ocean waves seen from just above the water surface",
+      "a real sea cave with daylight reflecting on the water",
+      "fish moving naturally through a kelp forest",
+      "water flowing over a real rocky riverbed",
+      "a quiet waterfall pool surrounded by real rock and vegetation"
+    ],
+    "Macro & Natural Textures": [
+      "raindrops sliding along a real window pane",
+      "detailed tree bark with natural moss",
+      "a single real leaf moving gently in a light breeze",
+      "small water ripples spreading across a shallow puddle",
+      "frost crystals on a real plant",
+      "sand grains and tiny waves on a natural beach"
     ]
   }
 }
