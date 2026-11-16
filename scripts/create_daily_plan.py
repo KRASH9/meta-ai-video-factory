@@ -464,53 +464,76 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <nav class="nav"><div class="nav-inner"><a class="active" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><span class="nav-icon">⌂</span>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><span class="nav-icon">▦</span>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><span class="nav-icon">▤</span>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><span class="nav-icon">▥</span>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><span class="nav-icon">↗</span>History</a></div></nav>
 <script>
 function setupPromptRefresh(){
- const stateKey='quiet-place-prompt-refresh-v3';let states={};
- try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
+ const stateKey='quiet-place-prompt-refresh-v4';
+ let states={};try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
  document.querySelectorAll('.force-refresh').forEach(btn=>{
-  const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker');
-  const meta=card.querySelector('.prompt-meta'),star=meta.querySelector('.refresh-star'),time=meta.querySelector('.prompt-time');
+  const card=btn.closest('.card');
+  const copy=card?.querySelector('.copy'),tracker=card?.querySelector('.tracker');
+  const meta=card?.querySelector('.prompt-meta'),star=meta?.querySelector('.refresh-star'),time=meta?.querySelector('.prompt-time');
+  const title=card?.querySelector('h2'),caption=card?.querySelector('.caption'),tags=card?.querySelector('.tags'),post=card?.querySelector('.copy-post');
+  if(!card||!copy||!tracker||!meta||!star||!time||!title||!caption||!tags||!post){btn.disabled=true;return;}
   const key=tracker.dataset.date+'-video-'+tracker.dataset.video;
-  let options=[];try{options=JSON.parse(btn.dataset.promptOptions||'[]');}catch(e){options=[];}
-  const title=card.querySelector('h2'),caption=card.querySelector('.caption'),tags=card.querySelector('.tags'),post=card.querySelector('.copy-post');
-  function snapshot(){return {scene:title.textContent.trim(),prompt:JSON.parse(copy.dataset.prompt),caption:caption.textContent,tags:tags.textContent,updatedAt:time.textContent.replace(/^🌟 Prompt updated: /,'').replace(/ · Warsaw time$/,'')};}
-  function apply(item,updatedAt,isUndo=false){
-   copy.dataset.prompt=JSON.stringify(item.prompt);title.textContent=item.scene;
-   caption.textContent=item.caption;tags.textContent=item.hashtags;
-   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+item.hashtags);
-   star.classList.toggle('active',!isUndo);
-   time.textContent=(isUndo?'Prompt restored: ':'🌟 Prompt updated: ')+updatedAt+' · Warsaw time';
-  }
-  if(states[key]?.current)apply(states[key].current,states[key].current.updatedAt);
-  else if(states[key]?.scene)apply(states[key],states[key].updatedAt);
-  const panel=document.createElement('div');panel.className='card-refresh-confirm';
+  let options=[];try{options=JSON.parse(btn.getAttribute('data-prompt-options')||'[]');}catch(e){options=[];}
+  const panel=document.createElement('section');panel.className='card-refresh-confirm';
   panel.innerHTML='<strong>Обновить промт?</strong><p>Будут заменены сцена, промт, описание и хештеги только в этой карточке.</p><div class="card-refresh-actions"><button type="button" data-choice="yes">Да, обновить</button><button type="button" data-choice="no">Нет</button><button type="button" data-choice="cancel">Отмена</button></div>';
   card.appendChild(panel);
+  const snapshot=()=>({scene:title.textContent.trim(),prompt:JSON.parse(copy.dataset.prompt||'null'),caption:caption.textContent,tags:tags.textContent,updatedAt:time.textContent.replace(/^🌟?\s*Prompt (?:updated|restored): /,'').replace(/\s*Warsaw time$/,'')});
+  const apply=(item,restored=false)=>{
+   copy.dataset.prompt=JSON.stringify(item.prompt);title.textContent=item.scene;caption.textContent=item.caption;tags.textContent=item.tags||item.hashtags||'';
+   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+(item.tags||item.hashtags||''));
+   star.classList.toggle('active',!restored);star.textContent=restored?'':'🌟';
+   time.textContent=(restored?'Prompt restored: ':'🌟 Prompt updated: ')+(item.updatedAt||'')+' Warsaw time';
+  };
+  const setButton=(undo)=>{
+   btn.textContent=undo?'↶':'↻';
+   btn.title=undo?'Отменить обновление и вернуть предыдущий промт':'Создать новый промт для этой карточки';
+   btn.setAttribute('aria-label',btn.title);
+   btn.classList.toggle('undo-available',undo);
+  };
   const hide=()=>{panel.classList.remove('visible');btn.setAttribute('aria-expanded','false');};
-  const show=()=>{panel.classList.remove('closing','success');panel.classList.add('visible');btn.setAttribute('aria-expanded','true');};
-  btn.setAttribute('aria-expanded','false');
-  btn.addEventListener('click',()=>{
-   if(states[key]?.previous){const previous=states[key].previous;const current=snapshot();apply(previous,previous.updatedAt,true);states[key]={current:previous,previous:null};try{localStorage.setItem(stateKey,JSON.stringify(states));}catch(e){apply(current,current.updatedAt);return;}btn.textContent='↻';btn.title='Generate a new prompt for this card';btn.setAttribute('aria-label','Generate a new prompt for this card');const note=document.getElementById('status');if(note)note.textContent='↶ Previous prompt restored for this card.';return;}
-   show();panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  const show=()=>{panel.classList.remove('closing','success');panel.classList.add('visible');btn.setAttribute('aria-expanded','true');panel.scrollIntoView({behavior:'smooth',block:'nearest'});};
+  const saved=states[key];
+  if(saved?.current){apply(saved.current);setButton(!!saved.previous);}
+  else setButton(false);
+  btn.type='button';btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click',event=>{
+   event.preventDefault();event.stopPropagation();
+   const state=states[key];
+   if(state?.previous){
+    const restored=state.previous;
+    states[key]={current:restored,previous:null,usedScenes:state.usedScenes||[]};
+    try{localStorage.setItem(stateKey,JSON.stringify(states));}
+    catch(e){states[key]=state;return;}
+    apply(restored,true);setButton(false);
+    const note=document.getElementById('status');if(note)note.textContent='↶ Предыдущий промт восстановлен. Изменение отменено.';
+    return;
+   }
+   show();
   });
   panel.querySelector('[data-choice="no"]').addEventListener('click',hide);
   panel.querySelector('[data-choice="cancel"]').addEventListener('click',hide);
   panel.querySelector('[data-choice="yes"]').addEventListener('click',()=>{
-   const available=options.filter(o=>o.scene!==title.textContent.trim());
-   if(!available.length){panel.querySelector('p').textContent='Других сцен в этой категории нет.';return;}
-   const previous=snapshot(),next=available[Math.floor(Math.random()*available.length)];
-   const updatedAt=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
-   const current={...next,updatedAt};
-   states[key]={current,previous};
+   const current=snapshot();
+   const used=new Set(states[key]?.usedScenes||[]);used.add(current.scene);
+   const available=options.filter(item=>item&&item.scene&&!used.has(item.scene));
+   if(!available.length){panel.querySelector('p').textContent='Нет других сцен в этой категории. Попробуй завтра.';return;}
+   const next=available[Math.floor(Math.random()*available.length)];
+   const stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
+   const previous={...current,hashtags:current.tags};
+   const updated={...next,updatedAt:stamp};
+   const nextState={current:updated,previous,usedScenes:[...used,next.scene]};
+   states[key]=nextState;
    try{localStorage.setItem(stateKey,JSON.stringify(states));}
-   catch(e){panel.querySelector('p').textContent='Не удалось сохранить обновление в браузере.';delete states[key];return;}
-   apply(current,updatedAt);
-   const note=document.getElementById('status');if(note)note.textContent='🌟 Промт этой карточки обновлён. Предыдущую версию можно вернуть кнопкой ↶.';
+   catch(error){states[key]=states[key]?.previous?states[key]:{};panel.querySelector('p').textContent='Не удалось сохранить обновление в браузере.';return;}
+   apply(updated);setButton(true);
+   const note=document.getElementById('status');if(note)note.textContent='🌟 Новый промт создан. Нажми ↶ в углу карточки, чтобы вернуть предыдущую версию.';
    btn.classList.add('is-refreshing');btn.disabled=true;
-   panel.classList.add('success');panel.querySelector('p').textContent='Готово! Промт обновлён. Предыдущая версия сохранена.';
-   setTimeout(()=>{btn.classList.remove('is-refreshing');btn.disabled=false;panel.classList.add('closing');setTimeout(()=>{panel.classList.remove('visible','success','closing');btn.setAttribute('aria-expanded','false');btn.textContent='↶';btn.title='Restore previous prompt';btn.setAttribute('aria-label','Restore previous prompt');},260);},650);
+   panel.classList.add('success');panel.querySelector('p').textContent='Готово! Новый промт сохранён. Это окно сейчас закроется.';
+   setTimeout(()=>{btn.classList.remove('is-refreshing');btn.disabled=false;panel.classList.add('closing');setTimeout(()=>{hide();panel.classList.remove('success','closing');},260);},650);
   });
  });
 }
+setupPromptRefresh();
 const trackerKey='quiet-place-publication-tracker-v1';let trackerData={};
 try{trackerData=JSON.parse(localStorage.getItem(trackerKey)||'{}')||{};}catch(e){trackerData={};}
 if(!trackerData['archive-20261108-coastal-sunset']){trackerData['archive-20261108-coastal-sunset']={date:'2026-11-08',time:'01:57',video:'Archive',title:'Coastal sunset',url:'https://vm.tiktok.com/ZN85xQcuy/',views:788,likes:43,comments:3,shares:1,saves:2,status:'published',updatedAt:'Imported from user-provided TikTok Studio screenshot'};localStorage.setItem(trackerKey,JSON.stringify(trackerData));}
