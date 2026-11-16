@@ -382,7 +382,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .open-content-cta{display:block;width:100%;margin:16px 0 22px;padding:16px;background:#ff7a24;color:#1a1009;border:0;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.04em;text-align:center;text-decoration:none}
 .note{font-size:11px;margin:14px 0}
 @media(min-width:600px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:22px}.card{padding:20px}}
-.card{position:relative}.card-head{display:block;padding-right:42px;min-height:34px}.card-head h2{margin:5px 0 0}.force-refresh{position:absolute!important;top:14px!important;right:14px!important;z-index:3!important;flex:0 0 34px;width:34px;height:34px;padding:0!important;margin:0!important;background:transparent!important;color:#ffad72;border:0!important;border-radius:0!important;box-shadow:none!important;font-size:25px;line-height:1;opacity:.9}.prompt-meta{display:flex;gap:7px;align-items:center;margin:10px 0 2px;color:#aaa;font-size:11px}.refresh-star.active:before{content:'🌟'}.confirm-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#000b;align-items:center;justify-content:center;padding:20px}.confirm-backdrop.open{display:flex}.confirm-box{width:min(100%,420px);background:#202020;border:1px solid #5a3b25;border-radius:16px;padding:20px}.confirm-box p{color:#bbb;font-size:13px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.confirm-actions button{background:#333;color:#fff}.confirm-actions [data-action=yes]{background:#ff9a52;color:#1a1009}.confirm-actions [data-action=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}</style></head><body><main>
+.card-refresh-confirm{display:none;opacity:0;transform:translateY(-8px);background:#21170f;border:1px solid #70451f;border-radius:12px;padding:13px;margin:12px 0 4px;transition:opacity .24s ease,transform .24s ease}.card-refresh-confirm.visible{display:block;animation:refreshIn .24s ease forwards}.card-refresh-confirm.closing{opacity:0;transform:translateY(-8px)}.card-refresh-confirm.success{border-color:#b56a32}.card-refresh-confirm p{font-size:12px;color:#c7b9ad;margin:6px 0 10px}.card-refresh-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.card-refresh-actions button{background:#333;color:#fff;padding:10px}.card-refresh-actions button[data-choice=yes]{background:#ff9a52;color:#1a1009}.card-refresh-actions button[data-choice=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}.force-refresh.is-refreshing{animation:refreshSpin .65s ease}.force-refresh:focus-visible{outline:2px solid #ffad72;outline-offset:3px}@keyframes refreshIn{to{opacity:1;transform:translateY(0)}}@keyframes refreshSpin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.card-refresh-confirm,.force-refresh{animation:none!important;transition:none!important}}.card{position:relative}.card-head{display:block;padding-right:42px;min-height:34px}.card-head h2{margin:5px 0 0}.force-refresh{position:absolute!important;top:14px!important;right:14px!important;z-index:3!important;flex:0 0 34px;width:34px;height:34px;padding:0!important;margin:0!important;background:transparent!important;color:#ffad72;border:0!important;border-radius:0!important;box-shadow:none!important;font-size:25px;line-height:1;opacity:.9}.prompt-meta{display:flex;gap:7px;align-items:center;margin:10px 0 2px;color:#aaa;font-size:11px}.refresh-star.active:before{content:'🌟'}.confirm-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#000b;align-items:center;justify-content:center;padding:20px}.confirm-backdrop.open{display:flex}.confirm-box{width:min(100%,420px);background:#202020;border:1px solid #5a3b25;border-radius:16px;padding:20px}.confirm-box p{color:#bbb;font-size:13px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.confirm-actions button{background:#333;color:#fff}.confirm-actions [data-action=yes]{background:#ff9a52;color:#1a1009}.confirm-actions [data-action=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}</style></head><body><main>
 <div class="topline"><div class="logo"><span class="logo-mark"></span> QUIET PLACE</div><span class="muted">LEAVE THE NOISE BEHIND</span></div>
 <section id="overview" class="view active">
 <h1>Overview</h1><p class="muted">DATE_PLACEHOLDER · Created PROMPTS_CREATED_PLACEHOLDER · 3 new videos ready</p>
@@ -403,7 +403,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <h1>Content Studio</h1><p class="muted">Your three seasonal prompts, captions and publishing trackers.</p>
 <div id="status" class="status" aria-live="polite">Copy a prompt for Meta AI, then copy its caption and hashtags for TikTok.</div>
 """ + "\n".join(cards) + """
-<div class="confirm-backdrop" id="prompt-confirm" aria-hidden="true"><div class="confirm-box" role="dialog" aria-modal="true"><h2>Обновить промт?</h2><p>Текущий промт будет заменён новой версией. Время обновления сохранится.</p><div class="confirm-actions"><button data-action="yes" type="button">Да, обновить</button><button data-action="no" type="button">Нет</button><button data-action="cancel" type="button">Отмена</button></div></div></div>
+
 """ + """
 <p class="note">Generate and save videos in Meta AI, then upload them manually in TikTok. Check TikTok's AI disclosure setting for realistic generated scenes.</p>
 </section>
@@ -415,14 +415,41 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <nav class="nav"><div class="nav-inner"><a class="active" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><span class="nav-icon">⌂</span>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><span class="nav-icon">▦</span>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><span class="nav-icon">▤</span>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><span class="nav-icon">▥</span>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><span class="nav-icon">↗</span>History</a></div></nav>
 <script>
 function setupPromptRefresh(){
- const stateKey='quiet-place-prompt-refresh-v1';let states={};try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){}
+ const stateKey='quiet-place-prompt-refresh-v2';let states={};
+ try{states=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};}catch(e){states={};}
  document.querySelectorAll('.force-refresh').forEach(btn=>{
-  const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker'),meta=card.querySelector('.prompt-meta'),star=meta.querySelector('.refresh-star'),time=meta.querySelector('.prompt-time');
-  const key=tracker.dataset.date+'-video-'+tracker.dataset.video,options=JSON.parse(btn.dataset.promptOptions||'[]'),saved=states[key],title=card.querySelector('h2'),caption=card.querySelector('.caption'),tags=card.querySelector('.tags'),post=card.querySelector('.copy-post');
-  if(saved){copy.dataset.prompt=JSON.stringify(saved.prompt);if(saved.scene)title.textContent=saved.scene;if(saved.caption)caption.textContent=saved.caption;if(saved.hashtags)tags.textContent=saved.hashtags;if(saved.caption&&saved.hashtags)post.dataset.post=JSON.stringify(saved.caption+'\\n\\n'+saved.hashtags);star.classList.add('active');time.textContent='Prompt updated: '+saved.updatedAt+' · Warsaw time';}
-  btn.addEventListener('click',()=>{const dialog=document.getElementById('prompt-confirm');dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');const close=()=>{dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');};
-   dialog.querySelector('[data-action=yes]').onclick=()=>{const currentScene=title.textContent,next=options.find(option=>option.scene!==currentScene)||options[0];if(!next){close();return;}const updatedAt=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});copy.dataset.prompt=JSON.stringify(next.prompt);title.textContent=next.scene;caption.textContent=next.caption;tags.textContent=next.hashtags;post.dataset.post=JSON.stringify(next.caption+'\\n\\n'+next.hashtags);states[key]={...next,updatedAt};try{localStorage.setItem(stateKey,JSON.stringify(states));star.classList.add('active');time.textContent='Prompt updated: '+updatedAt+' · Warsaw time';const status=document.getElementById('status');if(status)status.textContent='🌟 Промт обновлён. Скопируй новую версию.';}catch(e){alert('Не удалось сохранить обновлённый промт.');}close();};
-   dialog.querySelector('[data-action=no]').onclick=close;dialog.querySelector('[data-action=cancel]').onclick=close;dialog.onclick=e=>{if(e.target===dialog)close();};
+  const card=btn.closest('.card'),copy=card.querySelector('.copy'),tracker=card.querySelector('.tracker');
+  const meta=card.querySelector('.prompt-meta'),star=meta.querySelector('.refresh-star'),time=meta.querySelector('.prompt-time');
+  const key=tracker.dataset.date+'-video-'+tracker.dataset.video;
+  let options=[];try{options=JSON.parse(btn.dataset.promptOptions||'[]');}catch(e){options=[];}
+  const title=card.querySelector('h2'),caption=card.querySelector('.caption'),tags=card.querySelector('.tags'),post=card.querySelector('.copy-post');
+  function apply(item,updatedAt){
+   copy.dataset.prompt=JSON.stringify(item.prompt);title.textContent=item.scene;
+   caption.textContent=item.caption;tags.textContent=item.hashtags;
+   post.dataset.post=JSON.stringify(item.caption+'\n\n'+item.hashtags);
+   star.classList.add('active');time.textContent='🌟 Prompt updated: '+updatedAt+' · Warsaw time';
+  }
+  if(states[key])apply(states[key],states[key].updatedAt);
+  const panel=document.createElement('div');panel.className='card-refresh-confirm';
+  panel.innerHTML='<strong>Обновить промт?</strong><p>Будут заменены сцена, промт, описание и хештеги только в этой карточке.</p><div class="card-refresh-actions"><button type="button" data-choice="yes">Да, обновить</button><button type="button" data-choice="no">Нет</button><button type="button" data-choice="cancel">Отмена</button></div>';
+  card.appendChild(panel);
+  const hide=()=>{panel.classList.remove('visible');btn.setAttribute('aria-expanded','false');};
+  btn.setAttribute('aria-expanded','false');
+  btn.addEventListener('click',()=>{panel.classList.add('visible');btn.setAttribute('aria-expanded','true');panel.scrollIntoView({behavior:'smooth',block:'nearest'});});
+  panel.querySelector('[data-choice="no"]').addEventListener('click',hide);
+  panel.querySelector('[data-choice="cancel"]').addEventListener('click',hide);
+  panel.querySelector('[data-choice="yes"]').addEventListener('click',()=>{
+   const available=options.filter(o=>o.scene!==title.textContent.trim());
+   if(!available.length){panel.querySelector('p').textContent='Других сцен в этой категории нет.';return;}
+   const next=available[Math.floor(Math.random()*available.length)];
+   const updatedAt=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
+   apply(next,updatedAt);states[key]={...next,updatedAt};
+   try{localStorage.setItem(stateKey,JSON.stringify(states));}
+   catch(e){panel.querySelector('p').textContent='Не удалось сохранить обновление в браузере.';return;}
+   const note=document.getElementById('status');if(note)note.textContent='🌟 Промт этой карточки обновлён. Новая сцена, описание и хештеги готовы.';
+   btn.classList.add('is-refreshing');btn.disabled=true;
+   panel.classList.add('success');panel.querySelector('p').textContent='Готово! Промт и описание обновлены.';
+   setTimeout(()=>{btn.classList.remove('is-refreshing');btn.disabled=false;panel.classList.add('closing');setTimeout(()=>{hide();panel.classList.remove('success','closing');},260);},900);
   });
  });
 }
