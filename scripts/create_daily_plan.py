@@ -362,7 +362,6 @@ for item in video_packages:
           <span class="prompt-options" hidden data-prompt-options='{escape(prompt_options_json, quote=True)}'></span>
           <div class="card-head"><div><div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div><h2>{escape(item["scene"])}</h2></div></div>
           <div class="prompt-meta"><span class="prompt-time">Prompt updated: {escape(generated_at_label)} Warsaw time</span></div>
-          <button class="prompt-refresh" type="button" style="display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;min-height:48px!important;margin:10px 0!important;padding:14px!important;background:#ff9a52!important;color:#1a1009!important;border:0!important;border-radius:11px!important;font-size:15px!important;font-weight:800!important;cursor:pointer!important">Да, обновить</button>
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
@@ -387,6 +386,7 @@ for item in video_packages:
             <button class="save-record" type="button">Save tracking data</button>
             <small class="saved-note" aria-live="polite">Not saved yet</small>
           </div>
+          <button class="prompt-refresh" type="button" style="display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;min-height:48px!important;margin:16px 0 0!important;padding:14px!important;background:#ff9a52!important;color:#1a1009!important;border:0!important;border-radius:11px!important;font-size:15px!important;font-weight:900!important;letter-spacing:.08em!important;cursor:pointer!important">UPDATE</button>
         </article>
         """
     )
@@ -465,8 +465,8 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 <nav class="nav"><div class="nav-inner"><a class="active" href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><span class="nav-icon">⌂</span>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><span class="nav-icon">▦</span>Calendar</a><a href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><span class="nav-icon">▤</span>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><span class="nav-icon">▥</span>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><span class="nav-icon">↗</span>History</a></div></nav>
 <script>
 function setupPromptRefresh(){
- const stateKey='quiet-place-prompt-refresh-v8';
- const legacyKeys=['quiet-place-prompt-refresh-v1','quiet-place-prompt-refresh-v2','quiet-place-prompt-refresh-v3','quiet-place-prompt-refresh-v4','quiet-place-prompt-refresh-v5','quiet-place-prompt-refresh-v6','quiet-place-prompt-refresh-v7'];
+ const stateKey='quiet-place-prompt-refresh-v9';
+ const legacyKeys=['quiet-place-prompt-refresh-v1','quiet-place-prompt-refresh-v2','quiet-place-prompt-refresh-v3','quiet-place-prompt-refresh-v4','quiet-place-prompt-refresh-v5','quiet-place-prompt-refresh-v6','quiet-place-prompt-refresh-v7','quiet-place-prompt-refresh-v8'];
  let states={};
  const readStore=key=>{try{return JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){return {};}};
  states=readStore(stateKey);
@@ -494,37 +494,52 @@ function setupPromptRefresh(){
   const post=card&&card.querySelector('.copy-post');
   if(!card||!source||!copy||!tracker||!meta||!time||!title||!caption||!tags||!post){
    button.disabled=true;
-   button.textContent='Обновление недоступно';
+   button.textContent='UNAVAILABLE';
    return;
   }
   const key=tracker.dataset.date+'-video-'+tracker.dataset.video;
   let options=[];
   try{options=JSON.parse(source.getAttribute('data-prompt-options')||'[]');}catch(e){options=[];}
+  const panel=document.createElement('section');
+  panel.className='prompt-refresh-confirm';
+  panel.style.cssText='display:none;margin:12px 0 0;padding:14px;background:#21170f;border:1px solid #70451f;border-radius:12px';
+  panel.innerHTML='<strong>Update this prompt?</strong><p style="margin:6px 0 12px;color:#c7b9ad;font-size:13px">The current scene, Meta AI prompt, caption and hashtags will be replaced. This cannot be undone from this card.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button type="button" data-confirm-update style="margin:0;background:#ff9a52;color:#1a1009">CONFIRM UPDATE</button><button type="button" data-cancel-update style="margin:0;background:#333;color:#fff">CANCEL</button></div>';
+  button.insertAdjacentElement('afterend',panel);
   const status=document.createElement('p');
-  status.className='prompt-refresh-status';
   status.setAttribute('aria-live','polite');
-  status.style.cssText='margin:2px 0 12px;font-size:12px;color:#aaa;min-height:18px';
-  button.insertAdjacentElement('afterend',status);
+  status.style.cssText='margin:10px 0 0;font-size:12px;color:#aaa;min-height:18px';
+  panel.appendChild(status);
   const apply=(item,stamp)=>{
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
    caption.textContent=item.caption;
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
-   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+hashtags);
+   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+hashtags);
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
   };
   const saved=states[key];
   if(saved&&saved.current&&saved.current.prompt)apply(saved.current,saved.current.updatedAt||'Previously updated');
   button.type='button';
+  button.setAttribute('aria-expanded','false');
   button.addEventListener('click',()=>{
    if(button.disabled)return;
+   panel.style.display=panel.style.display==='none'?'block':'none';
+   button.setAttribute('aria-expanded',panel.style.display==='block'?'true':'false');
+   if(panel.style.display==='block')status.textContent='Confirm only if you want to replace this card.';
+  });
+  panel.querySelector('[data-cancel-update]').addEventListener('click',()=>{
+   panel.style.display='none';
+   button.setAttribute('aria-expanded','false');
+   status.textContent='Update cancelled. The current prompt is unchanged.';
+  });
+  panel.querySelector('[data-confirm-update]').addEventListener('click',()=>{
    const old=states[key]||{};
    const used=new Set(Array.isArray(old.usedScenes)?old.usedScenes:[]);
    used.add(title.textContent.trim());
    const available=options.filter(item=>item&&item.scene&&item.prompt&&!used.has(item.scene));
    if(!available.length){
-    status.textContent='Нет других сцен в этой категории. Попробуй завтра.';
+    status.textContent='No unused scenes remain in this category.';
     return;
    }
    const next=available[Math.floor(Math.random()*available.length)];
@@ -534,13 +549,14 @@ function setupPromptRefresh(){
    const nextStates={...states,[key]:{current:updated,usedScenes:[...used]}};
    try{localStorage.setItem(stateKey,JSON.stringify(nextStates));}
    catch(error){
-    status.textContent='Не удалось сохранить обновление. Текущий промт не изменён.';
+    status.textContent='Could not save. The current prompt has not been changed.';
     return;
    }
    states=nextStates;
    apply(updated,stamp);
-   status.textContent='🌟 Промт обновлён. Новая сцена, Meta AI prompt и TikTok caption готовы.';
-   button.textContent='Да, обновить';
+   status.textContent='🌟 Prompt updated. New scene, Meta AI prompt and TikTok caption are ready.';
+   panel.style.display='none';
+   button.setAttribute('aria-expanded','false');
   });
  });
 }
@@ -641,8 +657,8 @@ button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:700;font-
 """ + """
 </main><nav class="bottom-nav"><a href="https://krash9.github.io/meta-ai-video-factory/index.html?v=navfix2"><b>⌂</b>Overview</a><a href="https://krash9.github.io/meta-ai-video-factory/calendar.html?v=navfix2"><b>▦</b>Calendar</a><a class="active" href="https://krash9.github.io/meta-ai-video-factory/content.html?v=navfix2"><b>▤</b>Content</a><a href="https://krash9.github.io/meta-ai-video-factory/analytics.html?v=navfix2"><b>▥</b>Analytics</a><a href="https://krash9.github.io/meta-ai-video-factory/history.html?v=navfix2"><b>↗</b>History</a></nav><script>
 function setupPromptRefresh(){
- const stateKey='quiet-place-prompt-refresh-v8';
- const legacyKeys=['quiet-place-prompt-refresh-v1','quiet-place-prompt-refresh-v2','quiet-place-prompt-refresh-v3','quiet-place-prompt-refresh-v4','quiet-place-prompt-refresh-v5','quiet-place-prompt-refresh-v6','quiet-place-prompt-refresh-v7'];
+ const stateKey='quiet-place-prompt-refresh-v9';
+ const legacyKeys=['quiet-place-prompt-refresh-v1','quiet-place-prompt-refresh-v2','quiet-place-prompt-refresh-v3','quiet-place-prompt-refresh-v4','quiet-place-prompt-refresh-v5','quiet-place-prompt-refresh-v6','quiet-place-prompt-refresh-v7','quiet-place-prompt-refresh-v8'];
  let states={};
  const readStore=key=>{try{return JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){return {};}};
  states=readStore(stateKey);
@@ -670,37 +686,52 @@ function setupPromptRefresh(){
   const post=card&&card.querySelector('.copy-post');
   if(!card||!source||!copy||!tracker||!meta||!time||!title||!caption||!tags||!post){
    button.disabled=true;
-   button.textContent='Обновление недоступно';
+   button.textContent='UNAVAILABLE';
    return;
   }
   const key=tracker.dataset.date+'-video-'+tracker.dataset.video;
   let options=[];
   try{options=JSON.parse(source.getAttribute('data-prompt-options')||'[]');}catch(e){options=[];}
+  const panel=document.createElement('section');
+  panel.className='prompt-refresh-confirm';
+  panel.style.cssText='display:none;margin:12px 0 0;padding:14px;background:#21170f;border:1px solid #70451f;border-radius:12px';
+  panel.innerHTML='<strong>Update this prompt?</strong><p style="margin:6px 0 12px;color:#c7b9ad;font-size:13px">The current scene, Meta AI prompt, caption and hashtags will be replaced. This cannot be undone from this card.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button type="button" data-confirm-update style="margin:0;background:#ff9a52;color:#1a1009">CONFIRM UPDATE</button><button type="button" data-cancel-update style="margin:0;background:#333;color:#fff">CANCEL</button></div>';
+  button.insertAdjacentElement('afterend',panel);
   const status=document.createElement('p');
-  status.className='prompt-refresh-status';
   status.setAttribute('aria-live','polite');
-  status.style.cssText='margin:2px 0 12px;font-size:12px;color:#aaa;min-height:18px';
-  button.insertAdjacentElement('afterend',status);
+  status.style.cssText='margin:10px 0 0;font-size:12px;color:#aaa;min-height:18px';
+  panel.appendChild(status);
   const apply=(item,stamp)=>{
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
    caption.textContent=item.caption;
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
-   post.dataset.post=JSON.stringify(item.caption+'\\n\\n'+hashtags);
+   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+hashtags);
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
   };
   const saved=states[key];
   if(saved&&saved.current&&saved.current.prompt)apply(saved.current,saved.current.updatedAt||'Previously updated');
   button.type='button';
+  button.setAttribute('aria-expanded','false');
   button.addEventListener('click',()=>{
    if(button.disabled)return;
+   panel.style.display=panel.style.display==='none'?'block':'none';
+   button.setAttribute('aria-expanded',panel.style.display==='block'?'true':'false');
+   if(panel.style.display==='block')status.textContent='Confirm only if you want to replace this card.';
+  });
+  panel.querySelector('[data-cancel-update]').addEventListener('click',()=>{
+   panel.style.display='none';
+   button.setAttribute('aria-expanded','false');
+   status.textContent='Update cancelled. The current prompt is unchanged.';
+  });
+  panel.querySelector('[data-confirm-update]').addEventListener('click',()=>{
    const old=states[key]||{};
    const used=new Set(Array.isArray(old.usedScenes)?old.usedScenes:[]);
    used.add(title.textContent.trim());
    const available=options.filter(item=>item&&item.scene&&item.prompt&&!used.has(item.scene));
    if(!available.length){
-    status.textContent='Нет других сцен в этой категории. Попробуй завтра.';
+    status.textContent='No unused scenes remain in this category.';
     return;
    }
    const next=available[Math.floor(Math.random()*available.length)];
@@ -710,13 +741,14 @@ function setupPromptRefresh(){
    const nextStates={...states,[key]:{current:updated,usedScenes:[...used]}};
    try{localStorage.setItem(stateKey,JSON.stringify(nextStates));}
    catch(error){
-    status.textContent='Не удалось сохранить обновление. Текущий промт не изменён.';
+    status.textContent='Could not save. The current prompt has not been changed.';
     return;
    }
    states=nextStates;
    apply(updated,stamp);
-   status.textContent='🌟 Промт обновлён. Новая сцена, Meta AI prompt и TikTok caption готовы.';
-   button.textContent='Да, обновить';
+   status.textContent='🌟 Prompt updated. New scene, Meta AI prompt and TikTok caption are ready.';
+   panel.style.display='none';
+   button.setAttribute('aria-expanded','false');
   });
  });
 }
