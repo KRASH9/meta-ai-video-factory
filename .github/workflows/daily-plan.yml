@@ -75,6 +75,23 @@ jobs:
           assert 'class="force-refresh"' not in content, "Refresh icon must be removed"
           assert content.count('class="card"') == 3, "Expected exactly three content cards"
           assert "setupPromptRefresh();" in content, "Refresh handler is not initialized"
+          history = (out / "history.html").read_text(encoding="utf-8")
+          calendar = (out / "calendar.html").read_text(encoding="utf-8")
+          analytics = (out / "analytics.html").read_text(encoding="utf-8")
+          archive_ids = [
+              "archive-20261108-coastal-sunset",
+              "archive-20261108-waterfall-0215",
+              "archive-20261110-green-hills-1718",
+              "archive-20261115-autumn-birch-1748",
+              "archive-20261115-autumn-birch-1851",
+          ]
+          assert "Oldest first" in history and "if(sort==='oldest')" in history, "History date sorting is missing"
+          assert all(record_id in history for record_id in archive_ids), "History archive bootstrap is incomplete"
+          assert all(record_id in calendar for record_id in archive_ids), "Calendar archive bootstrap is incomplete"
+          assert all(record_id in analytics for record_id in archive_ids), "Analytics archive bootstrap is incomplete"
+          assert "const key='quiet-place-publication-tracker-v1';let data={};" in content, "Content Studio tracker store is not initialized"
+          assert "title:(card.querySelector('h2')?.textContent" in content, "Content Studio must save the scene title with tracking data"
+          print("Archive sync, History sorting and Content Studio tracker checks passed")
           print("Content card and refresh-control checks passed")
           PY
           for f in /tmp/*.html.js; do echo "Checking JavaScript: $f"; node --check "$f"; done
