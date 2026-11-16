@@ -5,11 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Winter schedule: 04:00 UTC = 05:00 in Warsaw. Change to 03:00 UTC during summer time.
-    - cron: "0 4 * * *"
+    # Run at both UTC hours; the script proceeds only when Warsaw local time is 05:xx.
+    - cron: "0 3,4 * * *"
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: quiet-place-content-generation
@@ -31,7 +33,12 @@ jobs:
           python-version: "3.11"
 
       - name: Generate Quiet Place content
-        run: python scripts/create_daily_plan.py
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python scripts/create_daily_plan.py --scheduled
+          else
+            python scripts/create_daily_plan.py
+          fi
 
       - name: Include legal pages in website
         run: |
@@ -45,3 +52,12 @@ jobs:
           name: quiet-place-daily-content
           path: output/
           retention-days: 7
+
+      - name: Upload site to GitHub Pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: output/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
