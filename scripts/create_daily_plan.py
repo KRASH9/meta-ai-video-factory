@@ -28,15 +28,15 @@ today = generated_at.date()
 generated_at_label = generated_at.strftime("%Y-%m-%d %H:%M:%S %Z")
 date_seed = today.strftime("%Y-%m-%d")
 
-# Warsaw determines the reference season; scene locations may be worldwide but must match their real local season.
+# The current Central European calendar season is the reference; scene locations may be worldwide but must match their real local season.
 month = today.month
 season_name = ("winter" if month in (12, 1, 2) else "spring" if month in (3, 4, 5)
                else "summer" if month in (6, 7, 8) else "autumn")
 seasonal_direction_by_name = {
-    "spring": "Reference season: SPRING in Warsaw, Poland. Choose a real location genuinely experiencing comparable spring conditions. Use locally plausible fresh growth, new leaves, seasonal blossoms, soft rain and mild daylight. Never force flowers outside their actual local blooming period.",
-    "summer": "Reference season: SUMMER in Warsaw, Poland. Choose a real location genuinely experiencing comparable summer conditions. Use plausible full foliage, warm natural daylight, long evenings, meadows, clear water or summer city atmosphere. No winter snow, autumn leaf fall or spring-only blossoms.",
-    "autumn": "Reference season: AUTUMN in Warsaw, Poland. Prefer real locations experiencing comparable autumn conditions, usually in the Northern Hemisphere. Use locally plausible changing foliage, fallen leaves, harvest landscapes, autumn rain, mist, cool daylight and earthy colors. In late autumn show mostly fallen leaves and increasingly bare trees where appropriate. No lush summer greenery, spring blossoms or implausible snow.",
-    "winter": "Reference season: WINTER in Warsaw, Poland. Choose a real location genuinely experiencing comparable winter conditions. Use locally plausible bare trees, frost, occasional snow, winter rain, subdued evergreens, cold daylight or real-world winter architecture. No summer foliage, autumn leaf fall or spring blossoms."
+    "spring": "Reference season: SPRING in Central Europe. Choose a real location genuinely experiencing comparable spring conditions. Use locally plausible fresh growth, new leaves, seasonal blossoms, soft rain and mild daylight. Never force flowers outside their actual local blooming period.",
+    "summer": "Reference season: SUMMER in Central Europe. Choose a real location genuinely experiencing comparable summer conditions. Use plausible full foliage, warm natural daylight, long evenings, meadows, clear water or summer city atmosphere. No winter snow, autumn leaf fall or spring-only blossoms.",
+    "autumn": "Reference season: AUTUMN in Central Europe. Prefer real locations experiencing comparable autumn conditions, usually in the Northern Hemisphere. Use locally plausible changing foliage, fallen leaves, harvest landscapes, autumn rain, mist, cool daylight and earthy colors. In late autumn show mostly fallen leaves and increasingly bare trees where appropriate. No lush summer greenery, spring blossoms or implausible snow.",
+    "winter": "Reference season: WINTER in Central Europe. Choose a real location genuinely experiencing comparable winter conditions. Use locally plausible bare trees, frost, occasional snow, winter rain, subdued evergreens, cold daylight or real-world winter architecture. No summer foliage, autumn leaf fall or spring blossoms."
 }
 seasonal_direction = seasonal_direction_by_name[season_name]
 
@@ -184,7 +184,7 @@ def build_hashtags(category, scene):
 def build_prompt(scene, camera_note):
     return (
         f"Create a beautiful, immersive, photorealistic REAL-WORLD cinematic video for TikTok and Instagram in vertical 9:16 format, showing {scene}. "
-        "The scene may be anywhere in the world, but its actual local climate, vegetation, weather and daylight must genuinely match the current reference season in Warsaw, Poland. "
+        "The scene may be anywhere in the world, but its actual local climate, vegetation, weather and daylight must genuinely match the current reference season in Central Europe. "
         "Show only real places, real materials, real plants, real animals and physically possible events. No fantasy, fictional worlds, surrealism or impossible architecture. "
         f"{seasonal_direction} "
         "Keep the Quiet Place identity: peaceful and restorative, but visually captivating. Explore nature, water, wildlife, architecture, real towns, urban atmosphere, coasts, travel landscapes, gardens, weather and macro details. "
@@ -217,7 +217,7 @@ lines = [
     f"Seasonal direction: {season_name.title()} in Central Europe.",
     "",
     "Three ready-to-produce videos. Individual copy-ready files are included in this package.",
-    f"The goal is an immersive, believable real-world cinematic moment from anywhere on Earth. Seasonal reference: {season_name.title()} in Warsaw, Poland.",
+    f"The goal is an immersive, believable real-world cinematic moment from anywhere on Earth. Seasonal reference: {season_name.title()} in Central Europe.",
     ""
 ]
 
