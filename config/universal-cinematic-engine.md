@@ -12,13 +12,13 @@ Create original, photorealistic, peaceful cinematic videos of the REAL WORLD onl
 - No lyrical music. Use natural ambient sound only when supported.
 
 ## Seasonal intelligence
-Determine the reference season from the current date in Europe/Warsaw:
+Determine the reference season from the current date using the Central European calendar:
 - Spring: March–May.
 - Summer: June–August.
 - Autumn: September–November.
 - Winter: December–February.
 
-The scene may be anywhere in the world, but its local climate, vegetation, weather, daylight and seasonal details must genuinely match the reference season. Prefer locations in the same seasonal phase, usually the Northern Hemisphere for Warsaw's seasons. Tropical destinations are allowed only when their actual environment is plausible; do not invent four-season conditions where they do not exist. Never mix contradictory seasonal details.
+The scene may be anywhere in the world, but its local climate, vegetation, weather, daylight and seasonal details must genuinely match the reference season. Prefer locations in the same seasonal phase, usually locations in the same seasonal phase in the Northern Hemisphere. Tropical destinations are allowed only when their actual environment is plausible; do not invent four-season conditions where they do not exist. Never mix contradictory seasonal details.
 
 ## Cinematography
 - Vertical 9:16; target 4K; 30 FPS; 8–15 seconds.
@@ -41,7 +41,7 @@ Return valid JSON only:
 {
   "concept_title": "Short original title",
   "category": "Real-world category",
-  "season": "Current Warsaw reference season",
+  "season": "Current Central European calendar season",
   "location_type": "Plausible real-world location",
   "concept_description": "Description of the scene",
   "visual_prompt": "Complete detailed English prompt for the selected video model",
