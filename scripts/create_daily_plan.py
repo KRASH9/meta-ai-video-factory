@@ -290,7 +290,8 @@ for index, (category, scene) in enumerate(selected, start=1):
     prompt = build_prompt(scene, camera_note)
     caption = build_caption(category, scene)
     video_hashtags = build_hashtags(category, scene)
-    question_en, question_ru = build_engagement_question(scene)\n    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "caption_ru": build_caption_ru(caption, scene), "question_en": question_en, "question_ru": question_ru, "hashtags": video_hashtags})
+    question_en, question_ru = build_engagement_question(scene)
+    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "caption_ru": build_caption_ru(caption, scene), "question_en": question_en, "question_ru": question_ru, "hashtags": video_hashtags})
     video_dir = OUTPUT_DIR / f"video-{index:02d}"
     video_dir.mkdir(parents=True, exist_ok=True)
 
@@ -436,7 +437,9 @@ for item in video_packages:
                     "scene": candidate,
                     "prompt": build_prompt(candidate, camera_approaches[item["index"] - 1]),
                     "caption": build_caption(item["category"], candidate),
-                    "caption_ru": build_caption_ru(build_caption(item["category"], candidate), candidate),\n                    "question_en": build_engagement_question(candidate)[0],\n                    "question_ru": build_engagement_question(candidate)[1],
+                    "caption_ru": build_caption_ru(build_caption(item["category"], candidate), candidate),
+                    "question_en": build_engagement_question(candidate)[0],
+                    "question_ru": build_engagement_question(candidate)[1],
                     "hashtags": build_hashtags(item["category"], candidate),
                 })
     variant_rng.shuffle(scene_options)
@@ -453,7 +456,8 @@ for item in video_packages:
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
-          <p class="caption-translation"><strong>Перевод:</strong> {escape(item["caption_ru"])}</p>\n          <p class="engagement-question"><strong>Question:</strong> {escape(item["question_en"])}<br><span><strong>Перевод:</strong> {escape(item["question_ru"])}</span></p>
+          <p class="caption-translation"><strong>Перевод:</strong> {escape(item["caption_ru"])}</p>
+          <p class="engagement-question"><strong>Question:</strong> {escape(item["question_en"])}<br><span><strong>Перевод:</strong> {escape(item["question_ru"])}</span></p>
           <p class="tags">{escape(item["hashtags"])}</p>
           <div class="tracker" data-video="{item["index"]}" data-date="DATE_PLACEHOLDER">
             <label>Status
@@ -602,7 +606,8 @@ function setupPromptRefresh(){
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
    caption.textContent=item.caption;
-   const translation=card.querySelector(".caption-translation");if(translation)translation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");\n   const question=card.querySelector(".engagement-question");if(question)question.innerHTML="<strong>Question:</strong> "+(item.question_en||"")+"<br><span><strong>Перевод:</strong> "+(item.question_ru||"")+"</span>";
+   const translation=card.querySelector(".caption-translation");if(translation)translation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");
+   const question=card.querySelector(".engagement-question");if(question)question.innerHTML="<strong>Question:</strong> "+(item.question_en||"")+"<br><span><strong>Перевод:</strong> "+(item.question_ru||"")+"</span>";
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
    post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+(item.question_en||"")+String.fromCharCode(10,10)+hashtags);
