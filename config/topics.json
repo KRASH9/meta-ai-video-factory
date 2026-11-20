@@ -79,6 +79,138 @@
       "small water ripples spreading across a shallow puddle",
       "frost crystals on a real plant",
       "sand grains and tiny waves on a natural beach"
+    ],
+    "Seasonal Moments": [
+      "the first light snowfall settling on a quiet village garden",
+      "late autumn leaves falling across an empty woodland path",
+      "early spring buds opening after a gentle rain shower",
+      "summer wildflowers swaying in a warm evening breeze",
+      "fresh frost forming along the edge of a quiet pond",
+      "the last golden leaves drifting across a still lake",
+      "a real meadow changing colour at the end of summer",
+      "soft winter sunlight appearing between bare tree branches",
+      "spring rain running in tiny streams along a garden path",
+      "the first autumn mist rising above a rural field"
+    ],
+    "Sky & Changing Light": [
+      "the first orange light of sunrise spreading across a mountain ridge",
+      "soft pink clouds passing above a calm coastal horizon",
+      "a real sunset fading behind distant hills",
+      "sunbeams breaking through layered clouds after a rainstorm",
+      "the blue hour settling over a quiet lakeside village",
+      "stars gradually appearing above a remote mountain lake",
+      "moonlight reflecting on gentle ocean waves",
+      "a moving cloud shadow crossing a wide green valley",
+      "golden hour light travelling slowly across an old stone wall",
+      "a pale winter sunrise reflected in a frozen pond"
+    ],
+    "Rural Life & Countryside": [
+      "an empty country lane passing between old stone farm buildings",
+      "a wooden farm gate opening onto a dew-covered meadow, with no people",
+      "a quiet vineyard after a light morning rain",
+      "hay bales resting in a wide summer field",
+      "an old red barn surrounded by autumn trees",
+      "a narrow path through rolling green farmland",
+      "a peaceful orchard with ripe fruit and fallen leaves",
+      "a small countryside pond beside an old farmhouse",
+      "mist drifting over distant grazing fields with no people visible",
+      "a quiet windmill standing above a rural landscape"
+    ],
+    "Harbors & Boats": [
+      "small fishing boats rocking gently in a quiet harbor at dawn",
+      "an empty wooden pier with moored boats and soft water ripples",
+      "a lighthouse standing above a misty rocky coastline",
+      "sailboats resting on calm water beneath overcast skies",
+      "a narrow canal with reflections of old waterfront buildings",
+      "a harbor rope and weathered timber moving slightly in the breeze",
+      "a quiet marina after rainfall with lights reflecting on the water",
+      "a distant ferry crossing a calm fjord beneath low clouds",
+      "an old boat resting on a pebbled shore",
+      "seabirds gliding above a quiet fishing harbor"
+    ],
+    "Seasonal Gardens": [
+      "autumn chrysanthemums blooming beside a quiet stone walkway",
+      "spring magnolia blossoms moving gently in a light breeze",
+      "summer lavender rows stretching across a real countryside garden",
+      "winter hellebores blooming beside a frost-covered path",
+      "fallen maple leaves floating on a Japanese garden pond",
+      "raindrops gathering on late-season garden flowers",
+      "a quiet greenhouse with condensation on its glass roof",
+      "morning dew shining on a neatly grown herb garden",
+      "an old garden fountain surrounded by seasonal plants",
+      "ornamental grasses bending in the autumn wind"
+    ],
+    "Quiet Architecture & Details": [
+      "rain tracing patterns down the tall windows of an old stone building",
+      "warm light glowing through the windows of a quiet countryside cottage",
+      "an empty covered arcade with wet stone flooring after rain",
+      "an old wooden doorway framed by climbing autumn vines",
+      "a quiet monastery courtyard with a still stone fountain",
+      "a glass conservatory reflecting bare winter branches",
+      "an old staircase with soft daylight falling across worn stone steps",
+      "a secluded pavilion beside a still garden pond",
+      "an empty wooden veranda overlooking a misty valley",
+      "a historic clock tower rising above rooftops at blue hour"
+    ],
+    "Natural Events & Movement": [
+      "a gentle rain shower passing across a wide open meadow",
+      "wind sending small waves across a mountain lake",
+      "a thin waterfall changing shape as water flows over uneven rock",
+      "autumn leaves swirling briefly in a natural gust of wind",
+      "sea foam drawing delicate patterns across wet sand",
+      "mist lifting slowly from a forest lake after sunrise",
+      "snow falling softly through the light of a woodland clearing",
+      "a small stream overflowing its banks after steady rainfall",
+      "sunlight flickering through moving leaves above a forest floor",
+      "ripples spreading after a single raindrop lands on a quiet pond"
+    ],
+    "Mountain & Remote Places": [
+      "a remote mountain hut beneath a dramatic but realistic cloudy sky",
+      "a narrow alpine footpath beside a clear glacial stream",
+      "a high mountain lake surrounded by real rugged peaks",
+      "a winding road disappearing into a misty mountain pass",
+      "a distant waterfall visible across a wide mountain valley",
+      "a quiet wooden bridge above a fast-moving mountain stream",
+      "snow-covered peaks reflected in a sheltered alpine lake",
+      "a rocky plateau with low clouds moving across the horizon",
+      "a remote mountain meadow with seasonal wild grasses",
+      "a small stone shelter standing beside a highland trail"
+    ],
+    "Tropical & Warm Climates": [
+      "rain falling through dense tropical leaves beside a quiet stream",
+      "a palm-lined beach just after a short tropical rain shower",
+      "a calm lagoon with mangrove roots reflected in clear water",
+      "a lush jungle waterfall surrounded by real tropical vegetation",
+      "a quiet rice terrace with water reflecting the cloudy sky",
+      "a tropical garden with large leaves moving in a gentle breeze",
+      "soft sunrise light over a real island coastline",
+      "a narrow path through a humid botanical garden after rain",
+      "a quiet volcanic lake surrounded by dense green vegetation",
+      "ocean waves passing over a shallow tropical reef"
+    ],
+    "Winter Quiet Scenes": [
+      "snow resting on the branches of a quiet village lane",
+      "frost-covered reeds beside a still winter lake",
+      "a frozen pond reflecting pale morning light",
+      "light snow falling around an empty wooden forest cabin",
+      "winter rain running down an old stone bridge",
+      "bare trees reflected in a dark winter canal",
+      "a snow-covered footpath disappearing into a pine forest",
+      "icicles forming along a natural rocky overhang",
+      "a quiet harbor on a cold misty morning",
+      "soft sunlight touching snow-covered rooftops"
+    ],
+    "Spring & Summer Quiet Scenes": [
+      "fresh green leaves unfolding along a woodland path",
+      "a spring stream running through a meadow of new grass",
+      "wild daisies moving gently in a summer field",
+      "a quiet lake surrounded by lush summer trees",
+      "morning dew shining across a green countryside meadow",
+      "a shaded garden path after a brief spring shower",
+      "a calm river bordered by fresh seasonal foliage",
+      "summer rain passing over a distant green hillside",
+      "a quiet orchard in full blossom during its natural local season",
+      "golden evening light falling across a field of tall grass"
     ]
   }
 }
