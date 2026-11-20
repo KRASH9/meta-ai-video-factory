@@ -443,7 +443,7 @@ for item in video_packages:
     scene_options = scene_options[:160]
     prompt_options_json = json.dumps(scene_options, ensure_ascii=False).replace("</", "<\\/")
     prompt_json = json.dumps(item["prompt"], ensure_ascii=False).replace("</", "<\\/")
-    post_json = json.dumps(item["caption"] + "\n\n" + item["hashtags"], ensure_ascii=False)
+    post_json = json.dumps(item["caption"] + "\n\n" + item["question_en"] + "\n\n" + item["hashtags"], ensure_ascii=False)
     cards.append(
         f"""
         <article class="card" style="position:relative">
@@ -605,7 +605,7 @@ function setupPromptRefresh(){
    const translation=card.querySelector(".caption-translation");if(translation)translation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");\n   const question=card.querySelector(".engagement-question");if(question)question.innerHTML="<strong>Question:</strong> "+(item.question_en||"")+"<br><span><strong>Перевод:</strong> "+(item.question_ru||"")+"</span>";
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
-   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+(item.question_en||"")+(item.question_ru?String.fromCharCode(10)+"("+item.question_ru+")":"")+String.fromCharCode(10,10)+hashtags);
+   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+(item.question_en||"")+String.fromCharCode(10,10)+hashtags);
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
   };
   const rollback=panel.querySelector('[data-rollback-update]');
@@ -760,7 +760,7 @@ a{color:#ff9a52}.top{display:flex;justify-content:space-between;font-size:12px;l
 h1{font-size:28px;margin:10px 0 4px}.muted{color:var(--muted);font-size:13px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;margin:15px 0}
 .eyebrow{font-size:11px;letter-spacing:.14em;color:#ccc;font-weight:700}h2{font-size:18px;line-height:1.4}
 button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:700;font-size:14px;margin:6px 0;cursor:pointer}
-.copy{background:#efefea;color:#171717}.copy-post{background:#303030;color:white}.caption{margin:13px 0 4px}.caption-translation{margin:5px 0 10px;color:#c7c7c7;font-size:13px;line-height:1.5}.caption-translation strong{color:#ffad72}.tags{font-size:12px;color:#aaa;overflow-wrap:anywhere}
+.copy{background:#efefea;color:#171717}.copy-post{background:#303030;color:white}.caption{margin:13px 0 4px}.caption-translation{margin:5px 0 10px;color:#c7c7c7;font-size:13px;line-height:1.5}.caption-translation strong{color:#ffad72}.engagement-question{margin:8px 0 10px;padding:10px 12px;border-left:2px solid #ffad72;background:#24211e;color:#f0e6dc;font-size:13px;line-height:1.5}.engagement-question strong{color:#ffad72}.engagement-question span{color:#bdb5ae}.tags{font-size:12px;color:#aaa;overflow-wrap:anywhere}
 .tracker{border-top:1px solid var(--line);margin-top:15px;padding-top:13px;display:grid;gap:10px}.tracker label{display:grid;gap:5px;font-size:12px;color:#bbb}
 .tracker input,.tracker select{width:100%;background:#101010;color:white;border:1px solid #414141;border-radius:9px;padding:11px;font:inherit}
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record{background:var(--orange);color:#1a1009}.saved-note{font-size:11px;color:#999}.status{color:#ffad72;font-size:12px}.prompt-updated{display:inline-block;margin:8px 0 12px;padding:8px 11px;border:1px solid #57351e;border-radius:8px;background:#21150f;color:#ffad72;font-size:11px;font-weight:800;letter-spacing:.08em}
@@ -821,7 +821,8 @@ function setupPromptRefresh(){
    caption.textContent=item.caption;
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
-   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+hashtags);
+   const question=card.querySelector(".engagement-question");if(question)question.innerHTML="<strong>Question:</strong> "+(item.question_en||"")+"<br><span><strong>Перевод:</strong> "+(item.question_ru||"")+"</span>";
+   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+(item.question_en||"")+String.fromCharCode(10,10)+hashtags);
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
   };
   const saved=states[key];
