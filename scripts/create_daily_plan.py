@@ -180,6 +180,75 @@ def build_caption_ru(caption, scene):
     return f"{clean}. Здесь даже самые маленькие детали словно движутся медленнее, позволяя сделать ещё один спокойный вдох. Чтобы это мгновение стало важным, совсем необязательно что-то должно происходить. 🤍"
 
 
+
+def build_scene_ru(scene):
+    translations = {
+        "a quiet alpine lake": "Тихое альпийское озеро",
+        "waves rolling onto": "Волны, накатывающие на",
+        "a waterfall flowing": "Водопад, стекающий",
+        "a calm lake": "Спокойное озеро",
+        "a mountain stream": "Горный ручей",
+        "a real fjord": "Настоящий фьорд",
+        "a temperate forest trail": "Лесная тропа",
+        "a birch woodland": "Берёзовая роща",
+        "wild deer": "Дикие олени",
+        "wild horses": "Дикие лошади",
+        "birds moving": "Птицы, движущиеся",
+        "a moss-covered forest floor": "Покрытая мхом лесная земля",
+        "a quiet stone courtyard": "Тихий каменный дворик",
+        "a minimalist seaside villa": "Минималистичная вилла у моря",
+        "a traditional Japanese wooden house": "Традиционный японский деревянный дом",
+        "a quiet old library": "Тихая старая библиотека",
+        "a modern glass building": "Современное стеклянное здание",
+        "a historic stone bridge": "Старинный каменный мост",
+        "an empty cobblestone street": "Пустая мощёная улица",
+        "a quiet canal-side street": "Тихая улица у канала",
+        "a peaceful city park path": "Тихая дорожка в городском парке",
+        "a narrow old-town lane": "Узкая улочка старого города",
+        "a real harbor promenade": "Набережная гавани",
+        "a quiet residential street": "Тихая жилая улица",
+        "a Mediterranean fishing village": "Средиземноморская рыбацкая деревня",
+        "a real island beach": "Настоящий островной пляж",
+        "a rugged North Atlantic coastline": "Скалистое побережье Северной Атлантики",
+        "a coastal footpath": "Прибрежная тропа",
+        "a quiet sandy beach": "Тихий песчаный пляж",
+        "a sheltered cove": "Уединённая бухта",
+        "natural morning mist": "Утренняя дымка",
+        "rain falling": "Дождь над",
+        "fresh snowfall": "Свежий снегопад",
+        "low clouds": "Низкие облака",
+        "sunlight appearing": "Солнечный свет после дождя",
+        "wind moving": "Ветер, колышущий",
+        "a winding mountain road": "Извилистая горная дорога",
+        "a vineyard landscape": "Пейзаж с виноградниками",
+        "a remote countryside village": "Уединённая деревня",
+        "a broad desert landscape": "Просторный пустынный пейзаж",
+        "a green terraced hillside": "Зелёный террасный склон",
+        "a quiet lakeside path": "Тихая тропа вдоль озера",
+        "a botanical garden": "Ботанический сад",
+        "raindrops resting": "Капли дождя на",
+        "a natural flower meadow": "Природный цветочный луг",
+        "a Japanese garden": "Японский сад",
+        "a greenhouse": "Оранжерея",
+        "moss and small plants": "Мох и маленькие растения",
+        "a real underwater reef": "Настоящий подводный риф",
+        "gentle ocean waves": "Мягкие океанские волны",
+        "a real sea cave": "Настоящая морская пещера",
+        "fish moving": "Рыбы, движущиеся",
+        "water flowing": "Текущая вода",
+        "a quiet waterfall pool": "Тихая заводь у водопада",
+        "raindrops sliding": "Капли дождя, скользящие",
+        "detailed tree bark": "Фактурная кора дерева",
+        "a single real leaf": "Один настоящий лист",
+        "small water ripples": "Мелкая водная рябь",
+        "frost crystals": "Кристаллы инея",
+        "sand grains": "Песчинки"
+    }
+    for english, russian in sorted(translations.items(), key=lambda item: len(item[0]), reverse=True):
+        if scene.startswith(english):
+            return russian
+    return "Тихий природный пейзаж"
+
 def build_engagement_question(scene):
     """Add a short, natural English comment prompt and its Russian translation."""
     text = scene.lower()
@@ -291,7 +360,7 @@ for index, (category, scene) in enumerate(selected, start=1):
     caption = build_caption(category, scene)
     video_hashtags = build_hashtags(category, scene)
     question_en, question_ru = build_engagement_question(scene)
-    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "caption_ru": build_caption_ru(caption, scene), "question_en": question_en, "question_ru": question_ru, "hashtags": video_hashtags})
+    video_packages.append({"index": index, "category": category, "scene": scene, "scene_ru": build_scene_ru(scene), "prompt": prompt, "caption": caption, "caption_ru": build_caption_ru(caption, scene), "question_en": question_en, "question_ru": question_ru, "hashtags": video_hashtags})
     video_dir = OUTPUT_DIR / f"video-{index:02d}"
     video_dir.mkdir(parents=True, exist_ok=True)
 
@@ -435,6 +504,7 @@ for item in video_packages:
                 seen.add(candidate)
                 scene_options.append({
                     "scene": candidate,
+                    "scene_ru": build_scene_ru(candidate),
                     "prompt": build_prompt(candidate, camera_approaches[item["index"] - 1]),
                     "caption": build_caption(item["category"], candidate),
                     "caption_ru": build_caption_ru(build_caption(item["category"], candidate), candidate),
@@ -451,7 +521,7 @@ for item in video_packages:
         f"""
         <article class="card" style="position:relative">
           <span class="prompt-options" hidden data-prompt-options='{escape(prompt_options_json, quote=True)}'></span>
-          <div class="card-head"><div><div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div><h2>{escape(item["scene"])}</h2></div></div>
+          <div class="card-head"><div><div class="eyebrow">VIDEO {item["index"]} · {escape(item["category"])}</div><h2>{escape(item["scene"])}</h2><p class="scene-translation">{escape(item["scene_ru"])}</p></div></div>
           <div class="prompt-meta"><span class="prompt-time">Prompt updated: {escape(generated_at_label)} Warsaw time</span></div>
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
@@ -525,7 +595,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .open-content-cta{display:block;width:100%;margin:16px 0 22px;padding:16px;background:#ff7a24;color:#1a1009;border:0;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.04em;text-align:center;text-decoration:none}
 .note{font-size:11px;margin:14px 0}
 @media(min-width:600px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:22px}.card{padding:20px}}
-.card-refresh-confirm{display:block;opacity:0;transform:translateY(-8px);background:#21170f;border:1px solid #70451f;border-radius:12px;padding:13px;margin:12px 0 4px;transition:opacity .24s ease,transform .24s ease}.card-refresh-confirm.visible{display:block;animation:refreshIn .24s ease forwards}.card-refresh-confirm.closing{opacity:0;transform:translateY(-8px)}.card-refresh-confirm.success{border-color:#b56a32}.card-refresh-confirm p{font-size:12px;color:#c7b9ad;margin:6px 0 10px}.card-refresh-actions{display:grid;grid-template-columns:1fr;gap:7px}.card-refresh-actions button{background:#333;color:#fff;padding:10px}.card-refresh-actions button[data-choice=yes]{display:block!important;width:100%!important;min-height:48px!important;background:#ff9a52!important;color:#1a1009!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;cursor:pointer!important}.card-refresh-actions button[data-choice=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}@keyframes refreshIn{to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.card-refresh-confirm{animation:none!important;transition:none!important}}.card{position:relative}.card-head{display:block;padding-right:0;min-height:34px}.card-head h2{margin:5px 0 0}.force-refresh{position:absolute!important;top:14px!important;right:14px!important;z-index:3!important;flex:0 0 34px;width:34px;height:34px;padding:0!important;margin:0!important;background:transparent!important;color:#ffad72;border:0!important;border-radius:0!important;box-shadow:none!important;font-size:25px;line-height:1;opacity:.9}.prompt-meta{display:flex;gap:7px;align-items:center;margin:10px 0 2px;color:#aaa;font-size:11px}.refresh-star.active:before{content:'🌟'}.confirm-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#000b;align-items:center;justify-content:center;padding:20px}.confirm-backdrop.open{display:flex}.confirm-box{width:min(100%,420px);background:#202020;border:1px solid #5a3b25;border-radius:16px;padding:20px}.confirm-box p{color:#bbb;font-size:13px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.confirm-actions button{background:#333;color:#fff}.confirm-actions [data-action=yes]{background:#ff9a52;color:#1a1009}.confirm-actions [data-action=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}</style></head><body><main>
+.card-refresh-confirm{display:block;opacity:0;transform:translateY(-8px);background:#21170f;border:1px solid #70451f;border-radius:12px;padding:13px;margin:12px 0 4px;transition:opacity .24s ease,transform .24s ease}.card-refresh-confirm.visible{display:block;animation:refreshIn .24s ease forwards}.card-refresh-confirm.closing{opacity:0;transform:translateY(-8px)}.card-refresh-confirm.success{border-color:#b56a32}.card-refresh-confirm p{font-size:12px;color:#c7b9ad;margin:6px 0 10px}.card-refresh-actions{display:grid;grid-template-columns:1fr;gap:7px}.card-refresh-actions button{background:#333;color:#fff;padding:10px}.card-refresh-actions button[data-choice=yes]{display:block!important;width:100%!important;min-height:48px!important;background:#ff9a52!important;color:#1a1009!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;cursor:pointer!important}.card-refresh-actions button[data-choice=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}@keyframes refreshIn{to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.card-refresh-confirm{animation:none!important;transition:none!important}}.card{position:relative}.card-head{display:block;padding-right:0;min-height:34px}.card-head h2{margin:5px 0 0}.scene-translation{margin:4px 0 0;color:#999;font-size:11px;line-height:1.4;font-weight:400}.force-refresh{position:absolute!important;top:14px!important;right:14px!important;z-index:3!important;flex:0 0 34px;width:34px;height:34px;padding:0!important;margin:0!important;background:transparent!important;color:#ffad72;border:0!important;border-radius:0!important;box-shadow:none!important;font-size:25px;line-height:1;opacity:.9}.prompt-meta{display:flex;gap:7px;align-items:center;margin:10px 0 2px;color:#aaa;font-size:11px}.refresh-star.active:before{content:'🌟'}.confirm-backdrop{display:none;position:fixed;inset:0;z-index:100;background:#000b;align-items:center;justify-content:center;padding:20px}.confirm-backdrop.open{display:flex}.confirm-box{width:min(100%,420px);background:#202020;border:1px solid #5a3b25;border-radius:16px;padding:20px}.confirm-box p{color:#bbb;font-size:13px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.confirm-actions button{background:#333;color:#fff}.confirm-actions [data-action=yes]{background:#ff9a52;color:#1a1009}.confirm-actions [data-action=cancel]{grid-column:1/-1;background:transparent;border:1px solid #555;color:#bbb}</style></head><body><main>
 <div class="topline"><div class="logo"><span class="logo-mark"></span> QUIET PLACE</div><span class="muted">LEAVE THE NOISE BEHIND</span></div>
 <section id="overview" class="view active">
 <h1>Overview</h1><p class="muted">DATE_PLACEHOLDER · Created PROMPTS_CREATED_PLACEHOLDER · 3 new videos ready</p>
@@ -605,6 +675,7 @@ function setupPromptRefresh(){
   const apply=(item,stamp)=>{
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
+   const sceneTranslation=card.querySelector(".scene-translation");if(sceneTranslation)sceneTranslation.textContent=item.scene_ru||"";
    caption.textContent=item.caption;
    const translation=card.querySelector(".caption-translation");if(translation)translation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");
    const question=card.querySelector(".engagement-question");if(question)question.innerHTML="<strong>Question:</strong> "+(item.question_en||"")+"<br><span><strong>Перевод:</strong> "+(item.question_ru||"")+"</span>";
