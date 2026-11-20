@@ -885,7 +885,7 @@ function setupPromptRefresh(){
   const panel=document.createElement('section');
   panel.className='prompt-refresh-confirm';
   panel.style.cssText='display:none;margin:12px 0 0;padding:14px;background:#21170f;border:1px solid #70451f;border-radius:12px';
-  panel.innerHTML='<strong>Update this prompt?</strong><p style="margin:6px 0 12px;color:#c7b9ad;font-size:13px">The current scene, Meta AI prompt, caption and hashtags will be replaced. This cannot be undone from this card.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button type="button" data-confirm-update style="margin:0;background:#ff9a52;color:#1a1009">CONFIRM UPDATE</button><button type="button" data-cancel-update style="margin:0;background:#333;color:#fff">CANCEL</button></div>';
+  panel.innerHTML='<strong>Update this prompt?</strong><p style="margin:6px 0 12px;color:#c7b9ad;font-size:13px">The scene, title translation, Meta AI prompt, caption and question will be replaced. You can roll back the last update.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button type="button" data-confirm-update style="margin:0;background:#ff9a52;color:#1a1009">CONFIRM UPDATE</button><button type="button" data-cancel-update style="margin:0;background:#333;color:#fff">CANCEL</button></div><button type="button" data-rollback-update hidden style="width:100%;margin:10px 0 0;background:#55402e;color:#fff">↶ ROLLBACK LAST UPDATE</button>';
   button.insertAdjacentElement('afterend',panel);
   const status=document.createElement('p');
   status.setAttribute('aria-live','polite');
@@ -894,15 +894,19 @@ function setupPromptRefresh(){
   const apply=(item,stamp)=>{
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
+   const sceneTranslation=card.querySelector(".scene-translation");if(sceneTranslation)sceneTranslation.textContent=item.scene_ru||"";
    caption.textContent=item.caption;
+   const captionTranslation=card.querySelector(".caption-translation");if(captionTranslation)captionTranslation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
    const question=card.querySelector(".engagement-question");if(question)question.innerHTML="<strong>Question:</strong> "+(item.question_en||"")+"<br><span><strong>Перевод:</strong> "+(item.question_ru||"")+"</span>";
    post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+(item.question_en||"")+String.fromCharCode(10,10)+hashtags);
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
   };
+  const rollback=panel.querySelector('[data-rollback-update]');
   const saved=states[key];
   if(saved&&saved.current&&saved.current.prompt)apply(saved.current,saved.current.updatedAt||'Previously updated');
+  rollback.hidden=!(saved&&Array.isArray(saved.history)&&saved.history.length);
   button.type='button';
   button.setAttribute('aria-expanded','false');
   button.addEventListener('click',()=>{
@@ -928,18 +932,35 @@ function setupPromptRefresh(){
    const next=available[Math.floor(Math.random()*available.length)];
    const stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
    const updated={...next,updatedAt:stamp};
+   const previous=old.current&&old.current.prompt?old.current:{scene:title.textContent.trim(),scene_ru:card.querySelector(".scene-translation")?.textContent||"",prompt:JSON.parse(copy.dataset.prompt||'null'),caption:caption.textContent,caption_ru:card.querySelector(".caption-translation")?.textContent.replace(/^Перевод:\\s*/,"")||"",question_en:card.querySelector(".engagement-question")?.textContent.replace(/^Question:\\s*/,"").split("Перевод:")[0].trim()||"",question_ru:card.querySelector(".engagement-question span")?.textContent.replace(/^Перевод:\\s*/,"")||"",hashtags:tags.textContent,updatedAt:time.textContent.replace(/^Prompt updated: /,'').replace(/ Warsaw time$/,'')};
+   if(!previous.prompt){status.textContent='Could not capture the current prompt. Nothing was changed.';return;}
+   const history=Array.isArray(old.history)?old.history.slice():[];
+   history.push(previous);
    used.add(next.scene);
-   const nextStates={...states,[key]:{current:updated,usedScenes:[...used]}};
+   const nextStates={...states,[key]:{current:updated,usedScenes:[...used],history}};
    try{localStorage.setItem(stateKey,JSON.stringify(nextStates));}
-   catch(error){
-    status.textContent='Could not save. The current prompt has not been changed.';
-    return;
-   }
+   catch(error){status.textContent='Could not save. The current prompt has not been changed.';return;}
    states=nextStates;
    apply(updated,stamp);
-   status.textContent='🌟 Prompt updated. New scene, Meta AI prompt and TikTok caption are ready.';
+   rollback.hidden=false;
+   status.textContent='🌟 Prompt updated. Previous version saved — use Rollback to restore it.';
    panel.style.display='none';
    button.setAttribute('aria-expanded','false');
+  });
+  rollback.addEventListener('click',()=>{
+   const old=states[key]||{};
+   const history=Array.isArray(old.history)?old.history.slice():[];
+   if(!history.length){status.textContent='No previous prompt is available to restore.';rollback.hidden=true;return;}
+   const previous=history.pop();
+   const stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
+   const restored={...previous,updatedAt:stamp};
+   const nextStates={...states,[key]:{...old,current:restored,history}};
+   try{localStorage.setItem(stateKey,JSON.stringify(nextStates));}
+   catch(error){status.textContent='Could not save rollback. The current prompt is unchanged.';return;}
+   states=nextStates;
+   apply(restored,stamp);
+   rollback.hidden=!history.length;
+   status.textContent='↶ Previous prompt restored successfully.';
   });
  });
 }
