@@ -153,6 +153,32 @@ def build_caption(category, scene):
         "Nothing needs to happen for this moment to matter. 🤍"
     )
 
+
+def build_caption_ru(caption, scene):
+    """Provide a Russian translation beneath the English TikTok description."""
+    translations = [
+        ("The old stone bridge", "Старый каменный мост видел, как каждое лето сменялось осенью. Но река ничего не запоминает — она просто медленно уносит опавшие листья дальше. Возможно, в этом и есть её тихая мудрость: знать, когда пора отпускать. 🍂"),
+        ("The water keeps the colour", "Вода отражает цвет ноябрьского неба, а берег собирает листья, оставленные ветром. Небольшая волна приходит и уходит, словно ей совершенно некуда спешить. На мгновение кажется, что весь мир доволен таким неспешным ритмом. 🌊"),
+        ("There is a kind of quiet", "У воды существует особенная тишина. Ветер меняет её поверхность, камыши слегка склоняются, а дальний берег постепенно растворяется в серой дымке. Здесь ничто не требует спешки. 🍃"),
+        ("The shoreline has no need", "Берегу не нужно выглядеть идеальным. Немного плавника, неспокойный прилив и мягкий ноябрьский свет — этого вполне достаточно. Вода приходит и уходит, оставляя после себя чуть больше тишины. 🌫️"),
+        ("The water has travelled", "Вода преодолела путь, который трудно даже представить, но она никуда не торопится. Она переливается через старые камни и исчезает среди деревьев, унося с собой тишину леса. Некоторые путешествия прекрасны просто потому, что продолжаются. 💧"),
+        ("Between the bare branches", "Среди голых ветвей вода находит свой спокойный ритм. Она переливается через камни, ловит немного света и течёт дальше, не оглядываясь. Лес молча провожает это мгновение. 🍂"),
+        ("The rain finds every leaf", "Дождь касается каждого листа, каждого камня и каждого тихого уголка тропинки. Крошечные капли собираются, падают и исчезают в земле, пока день медленно угасает. Даже самый обычный дождливый день может хранить немного волшебства. 🌧️"),
+        ("The last leaves are letting go", "Последние листья отпускают ветви — капля за каплей. Тропинка темнеет под ними, а лес слушает мягкий ритм дождя. Кажется, этому мгновению больше ничего не нужно. 🍂"),
+        ("The trees have shed", "Деревья почти расстались со своими красками, но лес совсем не опустел. Ветка качается на ветру, лист пересекает тропинку, и тишина продолжает жить. У осени свой способ освобождать место для спокойствия. 🍁"),
+        ("Every step along this path", "С каждым шагом шум остаётся всё дальше позади. Голые ветви покачиваются над влажной землёй, а последние золотые листья держатся ещё одно мгновение. Лес никогда не просит нас торопиться. 🌲"),
+        ("The wind moves gently", "Ветер мягко проходит сквозь деревья, шевеля последние листья на ветвях. Тропинка исчезает за поворотом, не обещая никакой определённой цели. Иногда самое прекрасное в прогулке — просто быть здесь. 🍃"),
+        ("Beyond the window", "За окном осенний дождь превращает сад в мягкую акварель. Внутри мир кажется далёким, а дню словно больше некуда спешить. В некоторых местах даже ничего не делать — уже достаточно. 🤍"),
+        ("The little shelter stands", "Небольшое укрытие спокойно пережидает непогоду. Дождь касается старых камней, у входа собираются листья, а день идёт своим чередом. Как приятно, когда некуда торопиться. 🍂"),
+        ("The street is almost empty", "Улица почти пуста, а мокрая мостовая хранит последний свет дня. Несколько листьев скользят по тротуару, следуя маршруту, которого никто не планировал. Даже знакомые места становятся новыми, когда мир затихает. 🍁"),
+        ("The old lane settles", "Старая улочка замирает под ноябрьским небом. Голые ветви обрамляют крыши, а дождь оставляет небольшие отражения там, где только что прошли люди. Сегодня совсем необязательно выбирать самую короткую дорогу домой. 🏡")
+    ]
+    for prefix, russian in translations:
+        if caption.startswith(prefix):
+            return russian
+    clean = scene.strip().rstrip(".")
+    return f"{clean}. Здесь даже самые маленькие детали словно движутся медленнее, позволяя сделать ещё один спокойный вдох. Чтобы это мгновение стало важным, совсем необязательно что-то должно происходить. 🤍"
+
 # Keep a small brand core, then match the remaining tags to the actual scene.
 brand_hashtags = ["#QuietPlace", "#SlowLiving"]
 
@@ -226,7 +252,7 @@ for index, (category, scene) in enumerate(selected, start=1):
     prompt = build_prompt(scene, camera_note)
     caption = build_caption(category, scene)
     video_hashtags = build_hashtags(category, scene)
-    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "hashtags": video_hashtags})
+    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "caption_ru": build_caption_ru(caption, scene), "hashtags": video_hashtags})
     video_dir = OUTPUT_DIR / f"video-{index:02d}"
     video_dir.mkdir(parents=True, exist_ok=True)
 
@@ -372,6 +398,7 @@ for item in video_packages:
                     "scene": candidate,
                     "prompt": build_prompt(candidate, camera_approaches[item["index"] - 1]),
                     "caption": build_caption(item["category"], candidate),
+                    "caption_ru": build_caption_ru(build_caption(item["category"], candidate), candidate),
                     "hashtags": build_hashtags(item["category"], candidate),
                 })
     variant_rng.shuffle(scene_options)
@@ -388,6 +415,7 @@ for item in video_packages:
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
+          <p class="caption-translation"><strong>Перевод:</strong> {escape(item["caption_ru"])}</p>
           <p class="tags">{escape(item["hashtags"])}</p>
           <div class="tracker" data-video="{item["index"]}" data-date="DATE_PLACEHOLDER">
             <label>Status
@@ -436,7 +464,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .nav a{display:block;text-align:center;text-decoration:none;background:transparent;color:#888;padding:8px 3px;font-size:10px;border-radius:10px}.nav a.active{color:var(--orange);background:#2b1b12}.nav .nav-icon{display:block;font-size:17px;margin-bottom:2px}
 .view{display:none}.view.active{display:block}
 .card{margin:12px 0}.eyebrow{color:#c6c6c6}.copy{background:#efefea;color:#171717;width:100%;margin:8px 0 0}.copy-post{background:#303030;color:#fff;width:100%;margin-top:8px}
-.caption{margin:12px 0 4px}.tags{font-size:12px;color:#b3b3b3;overflow-wrap:anywhere}.status{min-height:20px;color:#ffad72;font-size:12px;margin:8px 0}
+.caption{margin:12px 0 4px}.caption-translation{margin:5px 0 10px;color:#c7c7c7;font-size:13px;line-height:1.5}.caption-translation strong{color:#ffad72}.tags{font-size:12px;color:#b3b3b3;overflow-wrap:anywhere}.status{min-height:20px;color:#ffad72;font-size:12px;margin:8px 0}
 .tracker{border-top:1px solid var(--line);margin-top:15px;padding-top:13px;display:grid;gap:9px}.tracker label{display:grid;gap:5px;color:#bdbdbd;font-size:12px}
 .tracker input,.tracker select{width:100%;min-width:0;background:#101010;color:#fff;border:1px solid #414141;border-radius:9px;padding:10px;font:inherit}
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record,.export{background:var(--orange);color:#1a1009;width:100%}.saved-note{color:#999;font-size:11px}
@@ -536,6 +564,7 @@ function setupPromptRefresh(){
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
    caption.textContent=item.caption;
+   const translation=card.querySelector(".caption-translation");if(translation)translation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
    post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+hashtags);
@@ -570,7 +599,7 @@ function setupPromptRefresh(){
    const next=available[Math.floor(Math.random()*available.length)];
    const stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
    const updated={...next,updatedAt:stamp};
-   const previous=old.current&&old.current.prompt?old.current:{scene:title.textContent.trim(),prompt:JSON.parse(copy.dataset.prompt||'null'),caption:caption.textContent,hashtags:tags.textContent,updatedAt:time.textContent.replace(/^Prompt updated: /,'').replace(/ Warsaw time$/,'')};
+   const previous=old.current&&old.current.prompt?old.current:{scene:title.textContent.trim(),prompt:JSON.parse(copy.dataset.prompt||'null'),caption:caption.textContent,caption_ru:card.querySelector(".caption-translation")?.textContent.replace(/^Перевод:\\s*/,"")||"",hashtags:tags.textContent,updatedAt:time.textContent.replace(/^Prompt updated: /,'').replace(/ Warsaw time$/,'')};
    if(!previous.prompt){status.textContent='Could not capture the current prompt for rollback. Nothing was changed.';return;}
    const history=Array.isArray(old.history)?old.history.slice():[];
    history.push(previous);
@@ -693,7 +722,7 @@ a{color:#ff9a52}.top{display:flex;justify-content:space-between;font-size:12px;l
 h1{font-size:28px;margin:10px 0 4px}.muted{color:var(--muted);font-size:13px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;margin:15px 0}
 .eyebrow{font-size:11px;letter-spacing:.14em;color:#ccc;font-weight:700}h2{font-size:18px;line-height:1.4}
 button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:700;font-size:14px;margin:6px 0;cursor:pointer}
-.copy{background:#efefea;color:#171717}.copy-post{background:#303030;color:white}.caption{margin:13px 0 4px}.tags{font-size:12px;color:#aaa;overflow-wrap:anywhere}
+.copy{background:#efefea;color:#171717}.copy-post{background:#303030;color:white}.caption{margin:13px 0 4px}.caption-translation{margin:5px 0 10px;color:#c7c7c7;font-size:13px;line-height:1.5}.caption-translation strong{color:#ffad72}.tags{font-size:12px;color:#aaa;overflow-wrap:anywhere}
 .tracker{border-top:1px solid var(--line);margin-top:15px;padding-top:13px;display:grid;gap:10px}.tracker label{display:grid;gap:5px;font-size:12px;color:#bbb}
 .tracker input,.tracker select{width:100%;background:#101010;color:white;border:1px solid #414141;border-radius:9px;padding:11px;font:inherit}
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record{background:var(--orange);color:#1a1009}.saved-note{font-size:11px;color:#999}.status{color:#ffad72;font-size:12px}.prompt-updated{display:inline-block;margin:8px 0 12px;padding:8px 11px;border:1px solid #57351e;border-radius:8px;background:#21150f;color:#ffad72;font-size:11px;font-weight:800;letter-spacing:.08em}
