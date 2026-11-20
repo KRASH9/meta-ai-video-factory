@@ -50,15 +50,28 @@ if len(required_categories) < 3:
 rng = random.Random(date_seed)
 selected = []
 used_scenes = set()
+bad_weather_terms = (
+    "rain", "rainfall", "rain-soaked", "shower", "storm", "thunder",
+    "heavy cloud", "overcast", "fog", "dense fog", "mist", "snowfall",
+    "blizzard", "sleet", "hail", "frozen", "icicles", "frost-covered"
+)
+bad_weather_count = 0
 
 for category in rng.sample(required_categories, k=3):
     options = categories[category]
     available = [scene for scene in options if scene not in used_scenes]
+    # Keep adverse-weather scenes occasional: no more than one of the three daily videos.
+    if bad_weather_count >= 1:
+        fair_options = [scene for scene in available if not any(term in scene.lower() for term in bad_weather_terms)]
+        if fair_options:
+            available = fair_options
     if not available:
         raise ValueError(f"No unused scenes available in category: {category}")
     scene = rng.choice(available)
     selected.append((category, scene))
     used_scenes.add(scene)
+    if any(term in scene.lower() for term in bad_weather_terms):
+        bad_weather_count += 1
 
 camera_approaches = [
     "Use a stable, mostly steady smartphone frame with only very subtle, slow natural movement if it improves the view. No shake, jitter, vibration, wobble, bouncing, fast panning, tilting, zooming or abrupt reframing.",
@@ -320,7 +333,8 @@ def build_prompt(scene, camera_note):
         "The scene may be anywhere in the world, but its actual local climate, vegetation, weather and daylight must genuinely match the current reference season in Central Europe. "
         "Show only real places, real materials, real plants, real animals and physically possible events. No fantasy, fictional worlds, surrealism or impossible architecture. "
         f"{seasonal_direction} "
-        "Keep the Quiet Place identity: peaceful and restorative, but visually captivating. Explore nature, water, wildlife, architecture, real towns, urban atmosphere, coasts, travel landscapes, gardens, weather and macro details. "
+        "Keep the Quiet Place identity: peaceful and restorative, but visually captivating. Explore nature, water, wildlife, architecture, real towns, urban atmosphere, coasts, travel landscapes, gardens and macro details. " 
+        "IMPORTANT WEATHER BALANCE: Prefer pleasant, inviting conditions such as clear skies, gentle sunshine, golden-hour light, bright overcast with visible color, calm water and comfortable natural atmosphere. Across a set of three daily videos, at least two should have neutral, clear or pleasant weather. Use rain, storms, dense fog, gloomy grey skies, heavy snowfall or other adverse weather only occasionally, never as the default mood. Do not add rain, fog or snow unless the chosen scene specifically calls for it. "
         "Give the scene one clear visual focal point and a pleasing sense of depth, with foreground, middle distance and background where natural. "
         "Use a richer, more expressive version of the real seasonal palette: warm amber, copper, golden yellow and deep earthy tones for autumn; "
         "natural contrast and gentle color separation without oversaturation, artificial filters or a fake cinematic look. "
