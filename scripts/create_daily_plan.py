@@ -179,6 +179,44 @@ def build_caption_ru(caption, scene):
     clean = scene.strip().rstrip(".")
     return f"{clean}. Здесь даже самые маленькие детали словно движутся медленнее, позволяя сделать ещё один спокойный вдох. Чтобы это мгновение стало важным, совсем необязательно что-то должно происходить. 🤍"
 
+
+def build_engagement_question(scene):
+    """Add a short, natural English comment prompt and its Russian translation."""
+    text = scene.lower()
+    if any(w in text for w in ("lake", "river", "waterfall", "water", "shore", "beach", "waves", "pond", "tide", "pier")):
+        options = [
+            ("Could you sit here for a while? 🌊", "Ты бы посидел здесь немного? 🌊"),
+            ("Ocean, lake or river — which calms you most?", "Что успокаивает тебя больше: океан, озеро или река?"),
+            ("Would you rather watch the water or listen to it?", "Ты бы предпочёл смотреть на воду или слушать её?")
+        ]
+    elif any(w in text for w in ("forest", "woodland", "birch", "pine", "tree", "trees", "trail", "path")):
+        options = [
+            ("Would you take a walk here? 🍂", "Ты бы отправился сюда на прогулку? 🍂"),
+            ("Forest walk or cozy evening at home?", "Прогулка по лесу или уютный вечер дома?"),
+            ("What would you listen to here — rain or birds?", "Что бы ты хотел здесь слушать — дождь или пение птиц?")
+        ]
+    elif any(w in text for w in ("rain", "drops", "shower", "wet", "window")):
+        options = [
+            ("Do you love rainy days too? 🌧️", "Ты тоже любишь дождливые дни? 🌧️"),
+            ("Rain outside or sunshine — what’s your mood?", "Дождь за окном или солнце — что тебе ближе?"),
+            ("Would you watch the rain with a cup of coffee?", "Ты бы наблюдал за дождём с чашкой кофе?")
+        ]
+    elif any(w in text for w in ("cottage", "veranda", "cabin", "shelter", "outdoor table", "courtyard")):
+        options = [
+            ("Could you spend a whole weekend here? 🤍", "Ты смог бы провести здесь все выходные? 🤍"),
+            ("Who would you bring here?", "Кого бы ты пригласил сюда?"),
+            ("A quiet morning or a peaceful evening here?", "Что выберешь здесь: тихое утро или спокойный вечер?")
+        ]
+    else:
+        options = [
+            ("Would you pause here for a moment? 🤍", "Ты бы остановился здесь хотя бы на минуту? 🤍"),
+            ("What does this place make you feel?", "Какие чувства вызывает у тебя это место?"),
+            ("Would you add this place to your travel list?", "Добавил бы ты это место в список путешествий?")
+        ]
+    choice = sum(ord(char) for char in scene) % len(options)
+    return options[choice]
+
+
 # Keep a small brand core, then match the remaining tags to the actual scene.
 brand_hashtags = ["#QuietPlace", "#SlowLiving"]
 
@@ -252,7 +290,7 @@ for index, (category, scene) in enumerate(selected, start=1):
     prompt = build_prompt(scene, camera_note)
     caption = build_caption(category, scene)
     video_hashtags = build_hashtags(category, scene)
-    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "caption_ru": build_caption_ru(caption, scene), "hashtags": video_hashtags})
+    question_en, question_ru = build_engagement_question(scene)\n    video_packages.append({"index": index, "category": category, "scene": scene, "prompt": prompt, "caption": caption, "caption_ru": build_caption_ru(caption, scene), "question_en": question_en, "question_ru": question_ru, "hashtags": video_hashtags})
     video_dir = OUTPUT_DIR / f"video-{index:02d}"
     video_dir.mkdir(parents=True, exist_ok=True)
 
@@ -398,7 +436,7 @@ for item in video_packages:
                     "scene": candidate,
                     "prompt": build_prompt(candidate, camera_approaches[item["index"] - 1]),
                     "caption": build_caption(item["category"], candidate),
-                    "caption_ru": build_caption_ru(build_caption(item["category"], candidate), candidate),
+                    "caption_ru": build_caption_ru(build_caption(item["category"], candidate), candidate),\n                    "question_en": build_engagement_question(candidate)[0],\n                    "question_ru": build_engagement_question(candidate)[1],
                     "hashtags": build_hashtags(item["category"], candidate),
                 })
     variant_rng.shuffle(scene_options)
@@ -415,7 +453,7 @@ for item in video_packages:
           <button class="copy" data-prompt='{escape(prompt_json, quote=True)}'>Copy Meta AI prompt</button>
           <button class="copy-post" data-post='{escape(post_json, quote=True)}'>Copy TikTok caption + hashtags</button>
           <p class="caption">{escape(item["caption"])}</p>
-          <p class="caption-translation"><strong>Перевод:</strong> {escape(item["caption_ru"])}</p>
+          <p class="caption-translation"><strong>Перевод:</strong> {escape(item["caption_ru"])}</p>\n          <p class="engagement-question"><strong>Question:</strong> {escape(item["question_en"])}<br><span><strong>Перевод:</strong> {escape(item["question_ru"])}</span></p>
           <p class="tags">{escape(item["hashtags"])}</p>
           <div class="tracker" data-video="{item["index"]}" data-date="DATE_PLACEHOLDER">
             <label>Status
@@ -464,7 +502,7 @@ button,a.action{border:0;border-radius:11px;padding:12px 14px;text-align:center;
 .nav a{display:block;text-align:center;text-decoration:none;background:transparent;color:#888;padding:8px 3px;font-size:10px;border-radius:10px}.nav a.active{color:var(--orange);background:#2b1b12}.nav .nav-icon{display:block;font-size:17px;margin-bottom:2px}
 .view{display:none}.view.active{display:block}
 .card{margin:12px 0}.eyebrow{color:#c6c6c6}.copy{background:#efefea;color:#171717;width:100%;margin:8px 0 0}.copy-post{background:#303030;color:#fff;width:100%;margin-top:8px}
-.caption{margin:12px 0 4px}.caption-translation{margin:5px 0 10px;color:#c7c7c7;font-size:13px;line-height:1.5}.caption-translation strong{color:#ffad72}.tags{font-size:12px;color:#b3b3b3;overflow-wrap:anywhere}.status{min-height:20px;color:#ffad72;font-size:12px;margin:8px 0}
+.caption{margin:12px 0 4px}.caption-translation{margin:5px 0 10px;color:#c7c7c7;font-size:13px;line-height:1.5}.caption-translation strong{color:#ffad72}.engagement-question{margin:8px 0 10px;padding:10px 12px;border-left:2px solid #ffad72;background:#24211e;color:#f0e6dc;font-size:13px;line-height:1.5}.engagement-question strong{color:#ffad72}.engagement-question span{color:#bdb5ae}.tags{font-size:12px;color:#b3b3b3;overflow-wrap:anywhere}.status{min-height:20px;color:#ffad72;font-size:12px;margin:8px 0}
 .tracker{border-top:1px solid var(--line);margin-top:15px;padding-top:13px;display:grid;gap:9px}.tracker label{display:grid;gap:5px;color:#bdbdbd;font-size:12px}
 .tracker input,.tracker select{width:100%;min-width:0;background:#101010;color:#fff;border:1px solid #414141;border-radius:9px;padding:10px;font:inherit}
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.save-record,.export{background:var(--orange);color:#1a1009;width:100%}.saved-note{color:#999;font-size:11px}
@@ -564,10 +602,10 @@ function setupPromptRefresh(){
    copy.dataset.prompt=JSON.stringify(item.prompt);
    title.textContent=item.scene;
    caption.textContent=item.caption;
-   const translation=card.querySelector(".caption-translation");if(translation)translation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");
+   const translation=card.querySelector(".caption-translation");if(translation)translation.innerHTML="<strong>Перевод:</strong> "+(item.caption_ru||"");\n   const question=card.querySelector(".engagement-question");if(question)question.innerHTML="<strong>Question:</strong> "+(item.question_en||"")+"<br><span><strong>Перевод:</strong> "+(item.question_ru||"")+"</span>";
    const hashtags=item.hashtags||item.tags||'';
    tags.textContent=hashtags;
-   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+hashtags);
+   post.dataset.post=JSON.stringify(item.caption+String.fromCharCode(10,10)+(item.question_en||"")+(item.question_ru?String.fromCharCode(10)+"("+item.question_ru+")":"")+String.fromCharCode(10,10)+hashtags);
    time.textContent='Prompt updated: '+stamp+' Warsaw time';
   };
   const rollback=panel.querySelector('[data-rollback-update]');
@@ -599,7 +637,7 @@ function setupPromptRefresh(){
    const next=available[Math.floor(Math.random()*available.length)];
    const stamp=new Date().toLocaleString('en-GB',{timeZone:'Europe/Warsaw'});
    const updated={...next,updatedAt:stamp};
-   const previous=old.current&&old.current.prompt?old.current:{scene:title.textContent.trim(),prompt:JSON.parse(copy.dataset.prompt||'null'),caption:caption.textContent,caption_ru:card.querySelector(".caption-translation")?.textContent.replace(/^Перевод:\\s*/,"")||"",hashtags:tags.textContent,updatedAt:time.textContent.replace(/^Prompt updated: /,'').replace(/ Warsaw time$/,'')};
+   const previous=old.current&&old.current.prompt?old.current:{scene:title.textContent.trim(),prompt:JSON.parse(copy.dataset.prompt||'null'),caption:caption.textContent,caption_ru:card.querySelector(".caption-translation")?.textContent.replace(/^Перевод:\\s*/,"")||"",question_en:card.querySelector(".engagement-question")?.textContent.replace(/^Question:\\s*/,"").split("Перевод:")[0].trim()||"",question_ru:card.querySelector(".engagement-question span")?.textContent.replace(/^Перевод:\\s*/,"")||"",hashtags:tags.textContent,updatedAt:time.textContent.replace(/^Prompt updated: /,'').replace(/ Warsaw time$/,'')};
    if(!previous.prompt){status.textContent='Could not capture the current prompt for rollback. Nothing was changed.';return;}
    const history=Array.isArray(old.history)?old.history.slice():[];
    history.push(previous);
